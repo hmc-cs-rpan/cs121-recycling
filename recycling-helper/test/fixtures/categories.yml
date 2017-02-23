@@ -1,9 +1,9 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  image_url: MyString
+plastic:
+  name: plastic
+  image_url: http://www.alternet.org/sites/default/files/styles/story_image/public/story_images/plastic.png?itok=8_NKVjx4
 
-two:
-  name: MyString
-  image_url: MyString
+paper:
+  name: paper
+  image_url: https://static.vecteezy.com/system/resources/previews/000/094/161/original/free-notebook-paper-vector.jpg

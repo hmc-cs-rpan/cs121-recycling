@@ -1,13 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  state: MyString
-  zip: MyString
-  website_url: MyString
+claremont:
+  name: Claremont
+  state: California
+  zip: 91711
+  website_url: http://www.ci.claremont.ca.us/
 
-two:
-  name: MyString
-  state: MyString
-  zip: MyString
-  website_url: MyString
+pasadena:
+  name: Pasadena
+  state: California
+  zip: 91001
+  website_url: http://www.cityofpasadena.net/

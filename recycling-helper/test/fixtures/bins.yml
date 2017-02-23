@@ -1,9 +1,16 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  city: one
+claremont_recycling:
+  name: recycling
+  city: claremont
+  items: newspaper, plastic_bottle
 
-two:
-  name: MyString
-  city: two
+pasadena_green:
+  name: green
+  city: pasadena
+  items: plastic_bottle
+
+pasadena_compost:
+  name: compost
+  city: pasadena
+  items: newspaper
