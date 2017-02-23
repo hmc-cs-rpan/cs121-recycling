@@ -19,7 +19,7 @@ Unfortunately, this breakdown would be incorrect in both New York and Los Angele
 
 # Existing solutions
 
-The [EPA](www.epa.gov) includes a list of recyclable materiels yet advises its readers to “Check what your community or office program accepts before you put it into the bin”. It offers links to two databases of recyclable materiels - namely [Earth911](www.earth911.com) and [RecycleNation](www.recyclenation.com).
+The [EPA](http://www.epa.gov) includes a list of recyclable materiels yet advises its readers to “Check what your community or office program accepts before you put it into the bin”. It offers links to two databases of recyclable materiels - namely [Earth911](http://www.earth911.com) and [RecycleNation](http://www.recyclenation.com).
 
 Both of these websites feature item searching by zip code, offering solutions to recycle specific material by location by listing local third party recycling warehouses and services. Unfortunately most users simply wish to look up which colored bin to throw what item into, and are possibly uninterested in being referred to a recycling warehouse out of their way.
 
