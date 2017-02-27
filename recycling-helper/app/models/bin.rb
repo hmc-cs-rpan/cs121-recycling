@@ -2,14 +2,26 @@ class Bin < ApplicationRecord
   belongs_to :city
   has_and_belongs_to_many :items
 
-  # Add an item to this bin, reusing an existing item if possible. Returns the added item.
+  # Add an item to this bin, reusing an existing item if possible. Returns the added item. If the
+  # item exists but does not match category, then an exception will be raised and the database will
+  # not be touched.
   def add_item!(name, category)
-    existing = Item.where({name: name, category: category})
-    if existing.empty?
-      result = items.create(name: name, category: category)
-    else
-      items << existing[0]
-      result = existing[0]
+    begin
+      result = Item.create(name: name, category: category)
+      items << result
+    rescue ActiveRecord::RecordNotUnique
+      # This item already exists in the database
+      existing = Item.find_by name: name
+
+      # Verify that this is really the item we think it is: it should have the correct category
+      if existing.category == category
+        result = existing
+        items << result
+      else
+        # Something has gone wrong
+        raise Errors::InvalidCategoryForItem,
+          "category for \"#{name}\" should be \"#{existing.category.name}\""
+      end
     end
 
     result

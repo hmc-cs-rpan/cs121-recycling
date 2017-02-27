@@ -13,7 +13,7 @@ class BinTest < ActiveSupport::TestCase
   test "can add existing item" do
     bin = bins(:claremont_recycling)
     item = Item.create(name: 'new item', category: categories(:paper))
-    item_in_bin = bin.add_item! 'new item', categories(:paper)
+    item_in_bin = bin.add_item! item.name, item.category
 
     # Should just refer to the same item
     assert_includes bin.items, item, 'new item is not in bin'
@@ -32,5 +32,25 @@ class BinTest < ActiveSupport::TestCase
 
     assert_equal 'new item', item.name
     assert_equal categories(:paper), item.category
+  end
+
+  test "cannot add existing item with the wrong category" do
+    bin = bins(:claremont_recycling)
+    item = Item.create(name: 'new item', category: categories(:paper))
+    wrong_category = categories(:plastic)
+    assert_not_equal item.category, wrong_category, 'the test is broken'
+
+    # Get the state before the test, so we can make sure it doesn't change when the operation fails
+    before_items = Item.all
+    before_items_in_bin = bin.items.all
+
+    # Misbehave
+    assert_raise Errors::InvalidCategoryForItem do
+      bin.add_item! item.name, wrong_category
+    end
+
+    # the database should be unchanged
+    assert_equal before_items, Item.all, 'items table was changed by the failed operation'
+    assert_equal before_items_in_bin, bin.items.all, 'bin\'s items were changed by the failed operation'
   end
 end
