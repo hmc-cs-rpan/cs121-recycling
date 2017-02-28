@@ -1,29 +1,29 @@
 # Categories (based heavily on Claremont, so we will want to relook when we add more cities to avoid
 # overfitting our categories)
-aluminum = Category.create(
+aluminum = Category.create!(
   name: 'Aluminum & Other Metals',
   image_url: 'http://www.knappsnacks.com/wp-content/uploads/2014/08/aluminumcan1.jpg')
-paper = Category.create(
+paper = Category.create!(
   name: 'Paper',
   image_url: 'https://static.vecteezy.com/system/resources/previews/000/094/161/original/free-notebook-paper-vector.jpg')
-cardboard = Category.create(
+cardboard = Category.create!(
   name: 'Cardboard',
   image_url: 'https://recycling.ncsu.edu/wp-content/uploads/2014/10/cardboard.png')
-glass = Category.create(
+glass = Category.create!(
   name: 'Glass',
   image_url: 'http://www.ikea.com/PIAimages/0183694_PE334729_S5.JPG')
-plastic = Category.create(
+plastic = Category.create!(
   name: 'Plastic',
   image_url: 'http://www.alternet.org/sites/default/files/styles/story_image/public/story_images/plastic.png?itok=8_NKVjx4')
 
-claremont = City.create(
+claremont = City.create!(
   name: 'Claremont',
   state: 'California',
   zip: '91711',
   website_url: 'http://www.ci.claremont.ca.us/'
 )
 
-claremont_bin = claremont.bins.create(name: 'recycling')
+claremont_bin = claremont.bins.create!(name: 'recycling')
 
 # Items for Claremont (based on the information at http://www.ci.claremont.ca.us/home/showdocument?id=610)
 claremont_bin.add_items!([
@@ -91,7 +91,7 @@ claremont_bin.add_items!([
 
 # Terms for the glossary. Selected terms and definitions take from
 # http://www.rethinkrecycling.com/businesses/glossary
-Term.create([
+Term.create!([
   { name: 'biodegradable', definition:
     'Capable of being decomposed by organic processes into elements found in nature when under ' +
     'conditions that allow decomposition. The term may be used in marketing products, sometimes ' +
@@ -110,7 +110,7 @@ Term.create([
 
 # A sample article
 md = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
-Article.create(
+Article.create!(
   title: 'About',
   content: md.render(File.read(Rails.root.join('..', 'README.md')))
 )
@@ -119,7 +119,7 @@ Article.create(
 # the (public) repository, we have to be careful not to seed them into the production database.
 if Rails.env == 'development'
 
-  claremont.officials.create(
+  claremont.officials.create!(
     first_name: 'Harvey',
     middle_name: 'Daniel',
     last_name: 'Mudd',
@@ -128,7 +128,7 @@ if Rails.env == 'development'
     password_confirmation: 'password'
   )
 
-  Admin.create(
+  Admin.create!(
     first_name: 'Louis',
     last_name: 'Spanias',
     email: 'team.daniel.cs121@gmail.com',
