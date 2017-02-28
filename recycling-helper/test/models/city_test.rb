@@ -1,6 +1,17 @@
 require 'test_helper'
 
 class CityTest < ActiveSupport::TestCase
+  require_properties_for City, :name, :state, :zip
+
+  test "can create city with name, state, zip, and valid url" do
+    assert_valid City, name: 'Claremont', state: 'California', zip: '91711', website_url: valid_url
+  end
+
+  test "cannot create city with invalid url" do
+    city = City.new(name: 'Claremont', state: 'California', zip: '91711', website_url: invalid_url)
+    refute city.save, 'saved city with invalid URL'
+  end
+
   test "can get all city officials" do
     assert_equal CityOfficial.where(city: cities(:claremont)), cities(:claremont).officials
   end

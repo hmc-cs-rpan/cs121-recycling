@@ -5,4 +5,5 @@ class CityOfficial < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   belongs_to :city
+  validates :first_name, :last_name, :city, presence: true
 end

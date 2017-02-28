@@ -1,4 +1,6 @@
 class Bin < ApplicationRecord
+  validates :name, :city, presence: true
+
   belongs_to :city
   has_and_belongs_to_many :items
 

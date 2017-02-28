@@ -1,9 +1,16 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  title: MyString
-  content: MyText
-
-two:
-  title: MyString
-  content: MyText
+lorem_ipsum:
+  title: Lorem Ipsum
+  content:
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed nisi in augue ultrices
+    feugiat. Integer blandit ante id urna ultrices gravida. Sed dapibus viverra urna, tristique
+    vestibulum augue sodales nec. Nunc commodo augue id erat aliquet pretium. Duis massa diam,
+    congue nec feugiat vel, ultricies vitae enim. Etiam et congue dui. Praesent malesuada sem urna,
+    nec tincidunt ex feugiat sed.
+    <br>
+    Fusce viverra augue quis ornare pellentesque. Nullam eleifend suscipit turpis eu lacinia. Etiam
+    tristique lorem nisi, ac hendrerit lacus egestas et. Sed at dui iaculis, semper mi suscipit,
+    sagittis dui. Aenean sit amet urna at metus blandit finibus sit amet vel ante. Ut quis interdum
+    diam, in tristique augue. Maecenas euismod metus a massa euismod, in fringilla tellus
+    scelerisque.
