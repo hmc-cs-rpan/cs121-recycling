@@ -21,6 +21,10 @@ class CitiesController < ApplicationController
   def edit
   end
 
+  def itemLookupResult
+    render 
+  end
+
   # POST /cities
   # POST /cities.json
   def create
