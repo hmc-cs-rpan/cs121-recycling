@@ -2,7 +2,7 @@ require 'test_helper'
 
 class CitiesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @city = cities(:one)
+    @city = cities(:claremont)
   end
 
   test "should get index" do
@@ -17,7 +17,7 @@ class CitiesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create city" do
     assert_difference('City.count') do
-      post cities_url, params: { city: {  } }
+      post cities_url, params: { city: { name: 'new city', state: 'california', zip: '99999' } }
     end
 
     assert_redirected_to city_url(City.last)
@@ -34,7 +34,7 @@ class CitiesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update city" do
-    patch city_url(@city), params: { city: {  } }
+    patch city_url(@city), params: { city: { name: 'updated name' } }
     assert_redirected_to city_url(@city)
   end
 

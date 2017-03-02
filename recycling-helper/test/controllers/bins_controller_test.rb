@@ -2,7 +2,7 @@ require 'test_helper'
 
 class BinsControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @bin = bins(:one)
+    @bin = bins(:claremont_recycling)
   end
 
   test "should get index" do
@@ -17,7 +17,7 @@ class BinsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create bin" do
     assert_difference('Bin.count') do
-      post bins_url, params: { bin: {  } }
+      post bins_url, params: { bin: { name: 'new bin', city_id: cities(:claremont).id } }
     end
 
     assert_redirected_to bin_url(Bin.last)
@@ -34,7 +34,7 @@ class BinsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update bin" do
-    patch bin_url(@bin), params: { bin: {  } }
+    patch bin_url(@bin), params: { bin: { name: 'updated name' } }
     assert_redirected_to bin_url(@bin)
   end
 

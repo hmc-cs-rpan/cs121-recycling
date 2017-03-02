@@ -22,7 +22,7 @@ class CitiesController < ApplicationController
   end
 
   def itemLookupResult
-    render 
+    render
   end
 
   # POST /cities
@@ -73,6 +73,6 @@ class CitiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def city_params
-      params.fetch(:city, {})
+      params.require(:city).permit(:name, :state, :zip)
     end
 end

@@ -69,6 +69,6 @@ class BinsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def bin_params
-      params.fetch(:bin, {})
+      params.require(:bin).permit(:name, :city_id)
     end
 end
