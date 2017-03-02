@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @bin.name %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @bin.city %>
+</p>
+
+<%= link_to 'Edit', edit_bin_path(@bin) %> |
+<%= link_to 'Back', bins_path %>

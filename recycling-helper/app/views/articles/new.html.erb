@@ -1,17 +1,17 @@
-<h2> New General Information Page </h2>
-<hr>
+<h1>New Educational Page</h1>
 
 <%= form_for @article, html: { multipart: true } do |f| %>
+  <br>
   <%= f.label :title %>
-  <%= f.text_area :title %>
+  <%= f.text_field :title %>
+  <br>
   <%= f.label :content %>
   <%= f.text_area :content %>
+  <br>
 	<%= f.label :image %>
 	<%= f.file_field :image %>
-  <br>
-  <%= f.label :description %>
-  <%= f.text_area :description %>
-  <br>
   <%= f.submit %>
+
+<%= link_to 'Back', articles_path %>
 
 <% end %>
