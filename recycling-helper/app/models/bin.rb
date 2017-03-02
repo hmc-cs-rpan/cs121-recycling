@@ -3,6 +3,7 @@ class Bin < ApplicationRecord
 
   belongs_to :city
   has_and_belongs_to_many :items
+  has_many :categories, -> { distinct }, through: :items
 
   # Add an item to this bin, reusing an existing item if possible. Returns the added item. If the
   # item exists but does not match category, then an exception will be raised and the database will
