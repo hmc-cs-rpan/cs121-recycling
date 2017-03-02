@@ -4,12 +4,22 @@ class CityTest < ActiveSupport::TestCase
   require_properties_for City, :name, :state, :zip
 
   test "can create city with name, state, zip, and valid url" do
-    assert_valid City, name: 'Claremont', state: 'California', zip: '91711', website_url: valid_url
+    assert_valid City, name: 'Claremont', state: valid_state, zip: valid_zip, website_url: valid_url
+  end
+
+  test "cannot create city with invalid state" do
+    assert_invalid City, { state: :invalid },
+      name: 'Claremont', state: invalid_state, zip: valid_zip
   end
 
   test "cannot create city with invalid url" do
-    city = City.new(name: 'Claremont', state: 'California', zip: '91711', website_url: invalid_url)
-    refute city.save, 'saved city with invalid URL'
+    assert_invalid City, { website_url: :invalid },
+      name: 'Claremont', state: valid_state, zip: valid_zip, website_url: invalid_url
+  end
+
+  test "cannot create city with invalid zip" do
+    assert_invalid City, { zip: :invalid },
+      name: 'Claremont', state: valid_state, zip: invalid_zip
   end
 
   test "can get all city officials" do

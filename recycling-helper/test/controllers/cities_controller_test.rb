@@ -17,7 +17,7 @@ class CitiesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create city" do
     assert_difference('City.count') do
-      post cities_url, params: { city: { name: 'new city', state: 'california', zip: '99999' } }
+      post cities_url, params: { city: { name: 'new city', state: valid_state, zip: '99999' } }
     end
 
     assert_redirected_to city_url(City.last)

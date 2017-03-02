@@ -1,6 +1,9 @@
 class City < ApplicationRecord
   validates :name, :state, :zip, presence: true
-  validates :website_url, format: { with: URI.regexp }, if: 'website_url.present?'
+  validates :zip, format: { with: /\A\d{5}(-\d{4})?\z/, message: 'is not a valid zip code' }
+  validates :state, state: true
+  validates :website_url, format: { with: URI.regexp, message: 'is not a valid URL' },
+    if: 'website_url.present?'
 
   has_many :bins, inverse_of: :city
   has_many :items, through: :bins
