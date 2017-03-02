@@ -10,6 +10,7 @@ class BinsController < ApplicationController
   # GET /bins/1
   # GET /bins/1.json
   def show
+    @bin = Bin.find(params[:id])
   end
 
   # GET /bins/new
@@ -71,4 +72,5 @@ class BinsController < ApplicationController
     def bin_params
       params.require(:bin).permit(:name, :city_id)
     end
+
 end

@@ -45,4 +45,16 @@ class BinsControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to bins_url
   end
+
+
+  test "should get show" do
+    get bins_show_url
+    assert_response :success
+  end
+
+  test "should get create" do
+    get bins_create_url
+    assert_response :success
+  end
+
 end
