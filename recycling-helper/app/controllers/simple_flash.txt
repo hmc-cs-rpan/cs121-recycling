@@ -1,3 +1,0 @@
-+<% flash.each do |a, b| %>
-+	<div class="art alert-success"> <%= b %> </div>
-+<% end%>

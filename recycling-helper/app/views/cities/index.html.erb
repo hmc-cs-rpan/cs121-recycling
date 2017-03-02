@@ -13,16 +13,38 @@
   </thead>
 
   <tbody>
-    <% @cities.each do |city| %>
-      <tr>
+
+  	<% @cities.each do |city| %>
+	<tr>
         <td><%= city.name %> </td>
         <td><%= city.state %></td>
         <td><%= city.zip %></td>
-      </tr>
-    <% end %>
+    </tr>
+
+	<% city.bins.each do |bin| %>
+		<div>bin: <%= bin.name %></div>
+
+		<p><% bin.categories.each do |category| %>
+			<b><div><%= category.name %></div></b>
+
+			<% category.items.each do |item| %>
+				<div><%= item.name %></div>
+			<% end %>
+
+		<% end %></p>
+
+	<% end %>
+
+<% end %>
+
+
+
   </tbody>
 </table>
+
+
 
 <br>
 
 <%= link_to 'New City', new_city_path %>
+

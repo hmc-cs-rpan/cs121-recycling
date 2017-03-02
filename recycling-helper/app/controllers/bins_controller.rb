@@ -10,6 +10,7 @@ class BinsController < ApplicationController
   # GET /bins/1
   # GET /bins/1.json
   def show
+    @bin = Bin.find(params[:id])
   end
 
   # GET /bins/new
@@ -69,6 +70,7 @@ class BinsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def bin_params
-      params.fetch(:bin, {})
+      params.require(:bin).permit(:name, :city_id)
     end
+
 end

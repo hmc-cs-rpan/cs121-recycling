@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <p id="notice"><%= notice %></p>
 
 <style>
@@ -56,3 +57,16 @@ td{
 <br>
 
 <%= link_to 'New Bin', new_bin_path %>
+=======
+<h1>Bins#index</h1>
+<p>Find me in app/views/bins/index.html.erb</p>
+
+<% @bins.each do |x| %>
+	<h3><%= x.name %></h3>
+	<% x.items.each do |y| %>
+		<p><%= y.name %></p>
+	<% end %>
+
+
+<% end %>
+>>>>>>> Add files for bin and city controllers

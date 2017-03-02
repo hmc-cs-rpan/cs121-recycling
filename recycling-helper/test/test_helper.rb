@@ -14,6 +14,22 @@ class ActiveSupport::TestCase
     'notaurl'
   end
 
+  def valid_state
+    'California'
+  end
+
+  def invalid_state
+    'Shmorbodia'
+  end
+
+  def valid_zip
+    '28717'
+  end
+
+  def invalid_zip
+    '2871'
+  end
+
   # Check that a model can be created with the given properties, and cannot be created without any
   # one of those properties. Usage:
   #    require_properties Model, :property1, :property2, ...
@@ -39,14 +55,22 @@ class ActiveSupport::TestCase
 
   # Check that a model cannot be created with the given properties. Usage:
   #    assert_invalid Model, { p1: [:error1, :error2] }, p1: 'some_property', p2: 'another'
+  # or
+  #   assert_invalid Model, { p1: :just_one_error }, p1: 'some_property', ...
   def assert_invalid(model, errors, options = {})
     #instance = model.to_s.classify.constantize.new(options)
     instance = model.new(options)
     refute instance.valid?, "model #{model} with properties #{options} is valid"
 
-    errors.each do |property, error|
-      assert_includes instance.errors.details[property], {error: error},
-        "did not find expected error #{error} on property #{property}"
+    errors.each do |property, property_errors|
+      # Convert to array if the caller only passed in a single error
+      Array(property_errors).each do |error|
+        # Try to find the given error in the details. We're looking for a hash with a key :error
+        # pointing to a value matching the given error.
+        assert instance.errors.details[property].any?{ |detail| detail[:error] == error },
+          "did not find expected error \"#{error}\" on property #{property}; " +
+          "found errors: #{instance.errors.details}"
+      end
     end
   end
 

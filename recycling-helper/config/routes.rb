@@ -13,6 +13,16 @@ Rails.application.routes.draw do
   resources :categories
   resources :items
   resources :bins
+  resources :cities
+
+  get 'bins/new'
+
+  get 'bins/index'
+
+  get 'bins/show'
+
+  get 'bins/create'
+
   devise_for :admins
   devise_for :city_officials
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

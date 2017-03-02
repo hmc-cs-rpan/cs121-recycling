@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170228033502) do
+ActiveRecord::Schema.define(version: 20170302044746) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 20170228033502) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["city_id"], name: "index_bins_on_city_id"
+    t.index ["name", "city_id"], name: "index_bins_on_name_and_city_id", unique: true
   end
 
   create_table "bins_items", id: false, force: :cascade do |t|

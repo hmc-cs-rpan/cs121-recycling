@@ -17,7 +17,7 @@ class TermsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create term" do
     assert_difference('Term.count') do
-      post terms_url, params: { term: {  } }
+      post terms_url, params: { term: { name: 'new term', definition: 'definition of new term' } }
     end
 
     assert_redirected_to term_url(Term.last)
@@ -34,7 +34,7 @@ class TermsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update term" do
-    patch term_url(@term), params: { term: {  } }
+    patch term_url(@term), params: { term: { name: 'updated name' } }
     assert_redirected_to term_url(@term)
   end
 

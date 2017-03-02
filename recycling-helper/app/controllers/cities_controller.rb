@@ -10,6 +10,7 @@ class CitiesController < ApplicationController
   # GET /cities/1
   # GET /cities/1.json
   def show
+    @city = City.find(params[:id])
   end
 
   # GET /cities/new
@@ -22,13 +23,15 @@ class CitiesController < ApplicationController
   end
 
   def itemLookupResult
-    render 
+    render
   end
 
   # POST /cities
   # POST /cities.json
   def create
     @city = City.new(city_params)
+    bin = Bin.new(name: 'recycling')
+    @city.bins << bin
 
     respond_to do |format|
       if @city.save
@@ -73,6 +76,8 @@ class CitiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def city_params
-      params.fetch(:city, {})
+      params.require(:city).permit(:name, :state, :zip)
     end
+
+
 end
