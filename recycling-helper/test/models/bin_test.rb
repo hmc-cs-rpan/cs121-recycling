@@ -12,6 +12,14 @@ class BinTest < ActiveSupport::TestCase
                  bins(:claremont_recycling).items
   end
 
+  test "cannot create duplicate bins for the same city" do
+    bin = bins(:claremont_recycling)
+
+    assert_raise ActiveRecord::RecordNotUnique do
+      Bin.create(name: bin.name, city: bin.city)
+    end
+  end
+
   test "can add existing item" do
     bin = bins(:claremont_recycling)
     item = Item.create(name: 'new item', category: categories(:paper))

@@ -23,7 +23,7 @@ claremont = City.create!(
   website_url: 'http://www.ci.claremont.ca.us/'
 )
 
-claremont_bin = claremont.bins.create!(name: 'recycling')
+claremont_bin = claremont.add_bin! 'recycling'
 
 # Items for Claremont (based on the information at http://www.ci.claremont.ca.us/home/showdocument?id=610)
 claremont_bin.add_items!([
