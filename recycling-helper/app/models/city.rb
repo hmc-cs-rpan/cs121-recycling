@@ -1,3 +1,4 @@
+require_dependency 'validators/state_validator.rb'
 class City < ApplicationRecord
   validates :name, :state, :zip, presence: true
   validates :zip, format: { with: /\A\d{5}(-\d{4})?\z/, message: 'is not a valid zip code' }

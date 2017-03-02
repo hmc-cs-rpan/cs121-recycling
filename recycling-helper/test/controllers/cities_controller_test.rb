@@ -46,9 +46,4 @@ class CitiesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to cities_url
   end
 
-  test "should get create" do
-    get cities_create_url
-    assert_response :success
-  end
-
 end
