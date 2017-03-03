@@ -1,10 +1,12 @@
-require_dependency 'validators/state_validator.rb'
 class City < ApplicationRecord
   validates :name, :state, :zip, presence: true
   validates :zip, format: { with: /\A\d{5}(-\d{4})?\z/, message: 'is not a valid zip code' }
   validates :state, state: true
   validates :website_url, format: { with: URI.regexp, message: 'is not a valid URL' },
     if: 'website_url.present?'
+
+  # This is expensive, so we only do it if we haven't already failed a validation
+  validate :city_state_zip_must_be_real_location, if: :validate_location?
 
   has_many :bins, inverse_of: :city
   has_many :items, through: :bins
@@ -29,6 +31,42 @@ class City < ApplicationRecord
   def add_bins!(*names)
     names.map do |name|
       add_bin!(name)
+    end
+  end
+
+private
+
+  def validate_location?
+    errors.empty?
+  end
+
+  def city_state_zip_must_be_real_location
+    # Look up the zip code in the USPS registry.
+    # See https://www.usps.com/business/web-tools-apis/address-information-api.htm for API docs.
+    xml = <<XML
+      <CityStateLookupRequest USERID="#{Rails.application.secrets.usps_api_key}">
+        <ZipCode ID="0">
+          <Zip5>#{zip[0,5]}</Zip5>
+        </ZipCode>
+      </CityStateLookupRequest>
+XML
+    params = {
+      API: 'CityStateLookup',
+      XML: xml
+    }
+    res = HTTP::get("http://production.shippingapis.com/ShippingAPI.dll?#{params.to_param}").to_s
+    data = Hash.from_xml(res)
+
+    if data['CityStateLookupResponse']['ZipCode']['Error']
+      errors.add(:zip, :unknown, message: 'is not a US zip code')
+    else
+      actual_city = data['CityStateLookupResponse']['ZipCode']['City'].titleize
+      actual_state = data['CityStateLookupResponse']['ZipCode']['State']
+      if actual_city != name || actual_state != Geography.state_abbreviation(state)
+        errors.add(:base, :unknown, message: 'is not a US city')
+        errors.add(:zip, :invalid, message:
+          "is registered to #{actual_city}, #{actual_state}, not #{name}, #{Geography.state_abbreviation(state)}")
+      end
     end
   end
 

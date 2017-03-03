@@ -4,15 +4,24 @@ class CityTest < ActiveSupport::TestCase
   require_properties_for City, :name, :state, :zip
   define_property :website_url, as: :url
 
-  test "can create city with name, state, zip, and valid url" do
-    with_properties valid: [:state, :zip, :website_url], name: 'Claremont' do |props|
-      assert_valid City, props
+  valid :location,
+      { name: 'Claremont', state: 'California', zip: '91711' },
+      { name: 'Claremont', state: 'California', zip: '91711-3116' }
+
+  invalid :location,
+      { name: 'Claremont', state: 'California', zip: '28717' },     # 28717 is Cashiers, NC
+      { name: 'Claremont', state: 'North Carolina', zip: '91711' }, # Claremont is in CA
+      { name: 'Claremont', state: 'North Carolina', zip: '28717' }
+
+  test "can create city with valid location" do
+    valid_locations.each do |loc|
+      assert_valid City, loc
     end
   end
 
-  test "cannot create city with invalid state" do
-    with_properties invalid: :state, valid: :zip, name: 'Claremont' do |props|
-      assert_invalid City, { state: :invalid }, props
+  test "can create city with valid location and url" do
+    with_properties valid: [:location, :website_url] do |props|
+      assert_valid City, props[:location].merge(website_url: props[:website_url])
     end
   end
 
@@ -22,9 +31,38 @@ class CityTest < ActiveSupport::TestCase
     end
   end
 
+  test "cannot create city with invalid state" do
+    with_properties invalid: :state, valid: :zip, name: 'Claremont' do |props|
+      assert_invalid City, { state: :invalid }, props
+    end
+  end
+
   test "cannot create city with invalid zip" do
     with_properties invalid: :zip, valid: :state, name: 'Claremont' do |props|
       assert_invalid City, { zip: :invalid }, props
+    end
+  end
+
+  test "cannot create city with nonexistant zip" do
+    with_properties valid: :state, name: 'Claremont' do |props|
+      assert_invalid City, { zip: :unknown }, props.merge(zip: '99999')
+    end
+  end
+
+  test "cannot create city with invalid location" do
+    invalid_locations.each do |loc|
+      assert_invalid City, { base: :unknown }, loc
+    end
+  end
+
+  test "cannot create duplicate city" do
+    city = cities(:claremont)
+    assert_no_difference 'City.count' do
+      assert_raise ActiveRecord::RecordNotUnique do
+        city = City.create(name: city.name, state: city.state, zip: city.zip)
+        assert city.valid?, "the test appears to be broken; " +
+          "city should have been valid, but found the following errors: #{city.errors.details}"
+      end
     end
   end
 

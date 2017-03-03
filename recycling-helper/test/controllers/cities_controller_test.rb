@@ -18,7 +18,7 @@ class CitiesControllerTest < ActionDispatch::IntegrationTest
   test "should create city" do
     assert_difference('City.count') do
       post cities_url, params: {
-        city: { name: 'new city', state: valid_state, zip: '99999'},
+        city: { name: 'Cashiers', state: 'North Carolina', zip: '28717'},
         item_ids: []
       }
     end
@@ -34,11 +34,6 @@ class CitiesControllerTest < ActionDispatch::IntegrationTest
   test "should get edit" do
     get edit_city_url(@city)
     assert_response :success
-  end
-
-  test "should update city" do
-    patch city_url(@city), params: { city: { name: 'updated name' } }
-    assert_redirected_to city_url(@city)
   end
 
   test "should destroy city" do

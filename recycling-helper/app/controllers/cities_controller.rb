@@ -16,7 +16,7 @@ class CitiesController < ApplicationController
   # GET /cities/new
   def new
     @city = City.new
-    @states = Geography::STATES
+    @states = Geography.states
   end
 
   # GET /cities/1/edit
@@ -33,6 +33,7 @@ class CitiesController < ApplicationController
     @city = City.create(city_params)
     if @city.invalid?
       flash[:error] = @city.errors.full_messages
+      @states = Geography.states
       render 'new'
     else
       bin = @city.add_bin! 'recycling'
