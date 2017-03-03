@@ -1,13 +1,22 @@
+<!DOCTYPE html>
+<style type="text/css">
+body {
+    background: light-green;
+}</style>
+
+<html>
 <p id="notice"><%= notice %></p>
 
-<h1>Cities</h1>
+<h1>Welcome to the Recycling Helper</h1>
+<body background="background.jpg">
+  <p> Click on your city to get started </p>
 
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>State</th>
-      <th>Zip</th>
+      <th  width="40%">Name</th>
+      <th width="30%">State</th>
+      <th width="50%">Zip</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -16,26 +25,15 @@
 
   	<% @cities.each do |city| %>
 	<tr>
-        <td><%= city.name %> </td>
+        <td ><%= link_to city.name, city_path(city) %> </td>
         <td><%= city.state %></td>
         <td><%= city.zip %></td>
     </tr>
 
-	<% city.bins.each do |bin| %>
-		<div>bin: <%= bin.name %></div>
-
-		<p><% bin.categories.each do |category| %>
-			<b><div><%= category.name %></div></b>
-
-			<% category.items.each do |item| %>
-				<div><%= item.name %></div>
-			<% end %>
-
-		<% end %></p>
 
 	<% end %>
 
-<% end %>
+
 
 
 
@@ -46,5 +44,6 @@
 
 <br>
 
-<%= link_to 'New City', new_city_path %>
-
+Don't see your city? Add a <%= link_to 'New City', new_city_path %>.
+</body>
+</html>
