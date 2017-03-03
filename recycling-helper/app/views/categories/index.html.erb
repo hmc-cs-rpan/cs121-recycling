@@ -1,4 +1,7 @@
-<%= location = City.name if City %>
+
+<!DOCTYPE html>
+<html>
+<%= location = @city %>
 <% currentCategory = Category.name if Category %>
 <p id="notice"><%= notice %></p>
 
@@ -6,28 +9,38 @@
 
 h1 { 
   text-align: center;
-  font-size:20;
-  color: yellow;
+  font-size:8;
+  color: black;
+
+}
+
+h2 { 
+  text-align: left;
+  font-size:114;
+  color: black;
 
 }
 
 th { 
   text-align: left;
   font-size:20;
-  color: yellow;
+  color: black;
 
 }
 
+
+
 body {
-  background-color:black;
+  background-color:white;
 }
 
 table{
-  color:green;
-  text-align: center;
+  color:black;
+  text-align: left;
   width: 100%;
   height: 150px;
   vertical-align: middle;
+
 }
 
 td{
@@ -41,20 +54,25 @@ td{
 <table>
   <thead>
     <tr>
-      <th>Please select Item type:</th>
-      <th colspan="3"></th>
+      <h2>Here are items that can be disposed:</h2>
+      <th colspan="10"></th>
     </tr>
   </thead>
-
-  <tbody>
-    <% @categories.each do |category| %>
-      <tr>
-        <td><li><% currentCategory = category.name %> <%= link_to currentCategory, 'bins' + '/' + currentCategory %></li></td>
-      </tr>
-    <% end %>
-  </tbody>
 </table>
+
+<h2>
+  <%@categories.each do |category| %>
+    <%=category.name%>
+      <%category.items.each do |item| %>
+      <%= item.name %>
+      <br>
+    <% end %>  
+  <% end %>
+</h2>
+
+
 
 <br>
 
 <%= link_to 'New Category', new_category_path %>
+</html>

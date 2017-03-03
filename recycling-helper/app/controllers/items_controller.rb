@@ -10,6 +10,7 @@ class ItemsController < ApplicationController
   # GET /items/1
   # GET /items/1.json
   def show
+  @items = Item.find(params[:id])
   end
 
   # GET /items/new
@@ -24,18 +25,20 @@ class ItemsController < ApplicationController
   # POST /items
   # POST /items.json
   def create
-    @item = Item.new(item_params)
-
-    respond_to do |format|
-      if @item.save
-        format.html { redirect_to @item, notice: 'Item was successfully created.' }
-        format.json { render :show, status: :created, location: @item }
-      else
-        format.html { render :new }
-        format.json { render json: @item.errors, status: :unprocessable_entity }
+    @item = Item.create(item_params)
+    if @item.invalid?
+      flash[:error] = @item.errors.full_messages
+      render 'new'
+    else
+      bin = @item.add_bin! 'recycling'
+      if params[:item_ids] && !params[:item_ids].empty?
+        bin.items += Item.find(params[:item_ids])
       end
+      flash[:success] = "#{@item.name},successfully created!"
+      redirect_to @city
     end
   end
+
 
   # PATCH/PUT /items/1
   # PATCH/PUT /items/1.json
