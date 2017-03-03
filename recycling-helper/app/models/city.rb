@@ -54,18 +54,30 @@ XML
       API: 'CityStateLookup',
       XML: xml
     }
-    res = HTTP::get("http://production.shippingapis.com/ShippingAPI.dll?#{params.to_param}").to_s
-    data = Hash.from_xml(res)
 
-    if data['CityStateLookupResponse']['ZipCode']['Error']
-      errors.add(:zip, :unknown, message: 'is not a US zip code')
+    begin
+      res = HTTP::get("http://production.shippingapis.com/ShippingAPI.dll?#{params.to_param}")
+    rescue HTTP::ConnectionError
+      errors.add(:base, :usps_error, message: 'could not be validated at this time')
     else
-      actual_city = data['CityStateLookupResponse']['ZipCode']['City'].titleize
-      actual_state = data['CityStateLookupResponse']['ZipCode']['State']
-      if actual_city != name || actual_state != Geography.state_abbreviation(state)
-        errors.add(:base, :unknown, message: 'is not a US city')
-        errors.add(:zip, :invalid, message:
-          "is registered to #{actual_city}, #{actual_state}, not #{name}, #{Geography.state_abbreviation(state)}")
+      if res.code != 200
+        errors.add(:base, :usps_error, message: "could not be validated at this time (#{code})")
+      else
+        data = Hash.from_xml(res.to_s)
+
+        if data['CityStateLookupResponse']['ZipCode']['Error']
+          errors.add(:zip, :unknown, message: 'is not a US zip code')
+        else
+          actual_city = data['CityStateLookupResponse']['ZipCode']['City'].titleize
+          actual_state = data['CityStateLookupResponse']['ZipCode']['State']
+          if actual_city != name || actual_state != Geography.state_abbreviation(state)
+            errors.add(:base, :unknown, message: 'is not a US city')
+            errors.add(:zip, :invalid, message:
+              "is registered to #{actual_city}, #{actual_state}, " +
+              "not #{name}, #{Geography.state_abbreviation(state)}")
+          end
+        end
+
       end
     end
   end
