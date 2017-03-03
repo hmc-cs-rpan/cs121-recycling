@@ -28,8 +28,10 @@
 
         <div class="form-group">
             <% Item.all.each do |item| %>
-                <%= f.label item.name %>
-                <%= check_box_tag "item_ids[]", item.id, @city.items.include?(item), class: 'form-control' %>
+                <div class="checkbox">
+                    <%= check_box_tag "item_ids[]", item.id, @city.items.include?(item), class: 'form-control' %>
+                    <%= item.name %><br><br>
+                </div>
             <% end %>
         </div>
 
