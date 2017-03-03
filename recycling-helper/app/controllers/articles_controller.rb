@@ -26,8 +26,8 @@ class ArticlesController < ApplicationController
   # POST /articles.json
   def create
     @article = Article.new(article_params)
-    term = Term.new(term: 'composting')
-    @article.terms << term
+    # term = Term.new(term: 'composting')
+    # @article.terms << term
 
     respond_to do |format|
       if @article.save
@@ -72,6 +72,6 @@ class ArticlesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def article_params
-      params.require(:article).permit(:image, :title, :content)
+      params.require(:article).permit(:title, :content)
     end
 end
