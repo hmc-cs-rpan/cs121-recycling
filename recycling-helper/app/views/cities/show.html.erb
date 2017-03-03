@@ -1,6 +1,7 @@
 <p id="notice"><%= notice %></p>
-
-<p>
+<h2>Welcome to <%= @city.name %>, <%= @city.state %> </h2>
+<h4><%= @city.state %>, <%= @city.zip %></h4>
+<!-- <p>
   <strong>Name:</strong>
   <%= @city.name %>
 </p>
@@ -13,7 +14,19 @@
 <p>
   <strong>Zip:</strong>
   <%= @city.zip %>
-</p>
+</p> -->
+
+<% @city.bins.each do |bin| %>
+	<div>The following items can be thrown in the <%= bin.name %> bin: </div>
+	
+	<p><% bin.categories.each do |category| %>
+		<p><b><div><%= category.name %></div></b></p>
+		
+		<% category.items.each do |item| %>
+			<div><%= item.name %></div>
+		<% end %>
+	<% end %></p>
+<% end %>
 
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>
