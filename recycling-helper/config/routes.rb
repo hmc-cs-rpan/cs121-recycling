@@ -29,5 +29,5 @@ Rails.application.routes.draw do
   resources :cities
 
   #get to 'cities#itemLookupResult'
-  root 'categories#index'
+  root 'cities#index'
 end
