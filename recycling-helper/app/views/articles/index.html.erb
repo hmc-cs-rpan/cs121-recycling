@@ -5,7 +5,7 @@
 
   <% @articles.each do |article| %>
       <center><h2> <%= article.title %> </h2>
-      <%= article.content %>
+      <%= simple_format article.content %>
       <br>
       <br>
       <%= link_to 'Show', article %>
