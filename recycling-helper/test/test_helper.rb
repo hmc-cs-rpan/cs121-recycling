@@ -6,28 +6,72 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  def valid_url
-    'http://www.example.com'
+  # Provide a list of valid values for the given property, to be used as example data. This creates
+  # two instance methods:
+  #   valid_#{property}, which returns an arbitrary element from the example values
+  #   valid_#{properties}, which returns an array of all provided values
+  def self.valid(property, *values)
+    define_method('valid_' + property.to_s) do
+      values.first
+    end
+    define_method('valid_' + property.to_s.pluralize(2)) do
+      values.flatten
+    end
   end
 
-  def invalid_url
-    'notaurl'
+  # Provide a list of invalid values for the given property, to be used as example data. This
+  # creates two instance methods:
+  #   invalid_#{property}, which returns an arbitrary element from the example values
+  #   invalid_#{properties}, which returns an array of all provided values
+  def self.invalid(property, *values)
+    define_method('invalid_' + property.to_s) do
+      values.first
+    end
+    define_method('invalid_' + property.to_s.pluralize(2)) do
+      values.flatten
+    end
   end
 
-  def valid_state
-    'California'
+  # Declare that the given property is really a certain kind of property, but with a special name.
+  # For example, to declare that the property :image_url is really a :url (and thus have acces to
+  # the valid and invalid url examples via the methods valid_image_url, etc.) you could write:
+  #    define_property :image_url, as: :url
+  def self.define_property(property, as:)
+    define_method('valid_' + property.to_s) do
+      public_send('valid_' + as.to_s)
+    end
+    define_method('valid_' + property.to_s.pluralize(2)) do
+      public_send('valid_' + as.to_s.pluralize(2))
+    end
+    define_method('invalid_' + property.to_s) do
+      public_send('invalid_' + as.to_s)
+    end
+    define_method('invalid_' + property.to_s.pluralize(2)) do
+      public_send('invalid_' + as.to_s.pluralize(2))
+    end
   end
 
-  def invalid_state
-    'Shmorbodia'
-  end
+  valid :url,
+    'http://example.com', 'http://www.example.com', 'http://www.example.edu', 'http://example.org'
+  invalid :url, 'www.example.com', 'example.com', 'justplainwrong'
 
-  def valid_zip
-    '28717'
-  end
+  valid :state, 'California', 'Maryland', 'North Carolina'
+  invalid :state, 'notastate'
 
-  def invalid_zip
-    '2871'
+  valid :zip, '28717', '20817-1411'
+  invalid :zip, '2871', '287178', '208171411', '20817-141', '20814-14111'
+
+  # Run a block with various combinations of valid and invalid properties. Usage:
+  #    with_properties valid: :p1, invalid: [:p2, :p3], fixed_property: 'Value' do |props|
+  #        assert ...something with props
+  #    end
+  def with_properties(valid: [], invalid: [], **others)
+    valid_properties = Array(valid).map { |prop| examples_of_property(prop, valid: true) }
+    invalid_properties = Array(invalid).map { |prop| examples_of_property(prop, valid: false) }
+
+    cartesian_product(valid_properties + invalid_properties).each do |props|
+      yield(props.to_h.merge(others))
+    end
   end
 
   # Check that a model can be created with the given properties, and cannot be created without any
@@ -93,4 +137,28 @@ private
     end
     return defaults
   end
+
+  def cartesian_product(sets)
+    if sets.empty?
+      return [[]]
+    end
+
+    res = []
+    sets.first.each do |elem|
+      cartesian_product(sets[1, sets.length]).each do |elems|
+        res << [elem] + elems
+      end
+    end
+
+    return res
+
+  end
+
+  def examples_of_property(prop, valid: true)
+    prefix = valid ? 'valid_' : 'invalid_'
+    public_send(prefix + prop.to_s.pluralize(2)).map do |property|
+        [prop, property]
+    end
+  end
+
 end

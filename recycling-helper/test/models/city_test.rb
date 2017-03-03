@@ -2,24 +2,30 @@ require 'test_helper'
 
 class CityTest < ActiveSupport::TestCase
   require_properties_for City, :name, :state, :zip
+  define_property :website_url, as: :url
 
   test "can create city with name, state, zip, and valid url" do
-    assert_valid City, name: 'Claremont', state: valid_state, zip: valid_zip, website_url: valid_url
+    with_properties valid: [:state, :zip, :website_url], name: 'Claremont' do |props|
+      assert_valid City, props
+    end
   end
 
   test "cannot create city with invalid state" do
-    assert_invalid City, { state: :invalid },
-      name: 'Claremont', state: invalid_state, zip: valid_zip
+    with_properties invalid: :state, valid: :zip, name: 'Claremont' do |props|
+      assert_invalid City, { state: :invalid }, props
+    end
   end
 
   test "cannot create city with invalid url" do
-    assert_invalid City, { website_url: :invalid },
-      name: 'Claremont', state: valid_state, zip: valid_zip, website_url: invalid_url
+    with_properties invalid: :website_url, valid: [:state, :zip], name: 'Claremont' do |props|
+      assert_invalid City, { website_url: :invalid }, props
+    end
   end
 
   test "cannot create city with invalid zip" do
-    assert_invalid City, { zip: :invalid },
-      name: 'Claremont', state: valid_state, zip: invalid_zip
+    with_properties invalid: :zip, valid: :state, name: 'Claremont' do |props|
+      assert_invalid City, { zip: :invalid }, props
+    end
   end
 
   test "can get all city officials" do
