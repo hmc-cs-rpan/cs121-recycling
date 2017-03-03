@@ -2,7 +2,7 @@ require 'test_helper'
 
 class ArticleControllerTest < ActionDispatch::IntegrationTest
   test "should get new" do
-    get article_new_url
+    get new_article_path
     assert_response :success
   end
 

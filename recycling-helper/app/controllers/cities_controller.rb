@@ -16,6 +16,7 @@ class CitiesController < ApplicationController
   # GET /cities/new
   def new
     @city = City.new
+    @states = Geography::STATES
   end
 
   # GET /cities/1/edit
@@ -29,18 +30,17 @@ class CitiesController < ApplicationController
   # POST /cities
   # POST /cities.json
   def create
-    @city = City.new(city_params)
-    bin = Bin.new(name: 'recycling')
-    @city.bins << bin
-
-    respond_to do |format|
-      if @city.save
-        format.html { redirect_to @city, notice: 'City was successfully created.' }
-        format.json { render :show, status: :created, location: @city }
-      else
-        format.html { render :new }
-        format.json { render json: @city.errors, status: :unprocessable_entity }
+    @city = City.create(city_params)
+    if @city.invalid?
+      flash[:error] = @city.errors.full_messages
+      render 'new'
+    else
+      bin = @city.add_bin! 'recycling'
+      if params[:item_ids] && !params[:item_ids].empty?
+        bin.items += Item.find(params[:item_ids])
       end
+      flash[:success] = "#{@city.name}, #{@city.state} successfully created!"
+      redirect_to @city
     end
   end
 
