@@ -1,28 +1,14 @@
 <p id="notice"><%= notice %></p>
 <h2>Welcome to <%= @city.name %>, <%= @city.state %> </h2>
-<h4><%= @city.state %>, <%= @city.zip %></h4>
-<!-- <p>
-  <strong>Name:</strong>
-  <%= @city.name %>
-</p>
-
-<p>
-  <strong>State:</strong>
-  <%= @city.state %>
-</p>
-
-<p>
-  <strong>Zip:</strong>
-  <%= @city.zip %>
-</p> -->
+<h4><%= @city.zip %></h4>
 
 <% @city.bins.each do |bin| %>
 	<div>The following items can be thrown in the <%= bin.name %> bin: </div>
-	
+
 	<p><% bin.categories.each do |category| %>
 		<p><b><div><%= category.name %></div></b></p>
-		
-		<% category.items.each do |item| %>
+
+		<% bin.items.where(category: category).each do |item| %>
 			<div><%= item.name %></div>
 		<% end %>
 	<% end %></p>
