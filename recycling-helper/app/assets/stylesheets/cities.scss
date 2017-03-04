@@ -1,3 +1,166 @@
 // Place all the styles related to the Cities controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 20px;
+
+}
+
+h3 {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 30px;
+
+}
+
+p {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 20px;
+
+
+}
+
+header nav {
+  text-align: center;
+  background: rgba(0,0,0,0.6);
+  color: white;
+  font-size: 1.5em;
+  position: fixed;
+  width: 100%;
+}
+
+
+
+header nav a {
+  color: inherit;
+  text-decoration: none;
+  display: inline-block;
+  padding: 2em 1em .5em;
+  -webkit-transition: all .3s ease-in;
+}
+
+
+.small {
+  padding: .5em 1em;
+}
+header nav a:hover {
+  text-decoration: underline;
+}
+
+.active {
+  background: rgba(255,255,255,0.3);
+}
+
+.portion {
+  
+  background-image:  url('http://p1.pichost.me/640/60/1842352.jpg');
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+  text-align: center;
+}
+
+
+.portion.Metal {
+
+  background-image: url('https://aos.iacpublishinglabs.com/question/aq/700px-394px/make-homemade-aluminum-polish_547f3f63c57fa8d9.jpg?domain=cx.aos.ask.com');
+
+}
+
+.portion.Paper {
+  background-image: url('https://i.ytimg.com/vi/w7ma8mweDGw/maxresdefault.jpg');
+}
+
+.portion.Cardboard {
+  background-image: url('http://bgfons.com/upload/cardboard_texture995.jpg');
+}
+
+.portion.Glass {
+  background-image: url('http://www.accu1glass.com/wp-content/uploads/2012/06/Shatter-Glass-Blue-1.jpg');
+}
+
+.portion.Plastic {
+  background-image: url('https://3c1703fe8d.site.internapcdn.net/newman/csz/news/800/2016/56e28b8f3d01e.jpg');
+}
+
+
+.portion h2 {
+  color: white;
+  font-weight: normal;
+  font-size: 3em;
+  padding: 2em 0;
+  margin: 0;
+  text-shadow: 0 0 10px black;
+  background: rgba(0,0,0,0.6);
+}
+
+
+
+.info {
+  background: #FFFAF0;
+  color: #777;
+  padding: 3em 20%;
+}
+
+.button {
+  text-align: center;
+}
+.button a {
+  display: inline-block;
+  border: 2px solid #777;
+  padding: .75em 1.5em;
+  color: #777;
+  text-decoration: none;
+  text-transform: uppercase;
+  border-radius: 5px;
+  letter-spacing: .15em;
+  word-spacing: .25em;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+.button a:hover {
+  color: #FFFAF0;
+  background: #777;
+}
+footer.info {
+  color: #FFFAF0;
+  background: #777;
+  padding: 0 auto;
+  text-align: center;
+}
+
+#toTop img {
+  width: 50px;
+}
+#toTop img:hover {
+  cursor: pointer;
+}
+nav img {
+  z-index: 1000;
+  height: 2.5em;
+  position: absolute;
+  left: 40px;
+  top: 10px;
+  transition: all 0.5s linear;
+}
+
+.move {
+  top: -60px;
+}
+
+nav span {
+  position: absolute;
+  left: 40px;
+  top: 10px;
+  font-weight: bold;
+  transition: all 0.5s ease-in;
+}
+
+.movetext {
+  top: -40px;
+  color: #000;
+  font-size: 1.5em;
+}

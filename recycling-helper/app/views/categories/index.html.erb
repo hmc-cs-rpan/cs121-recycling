@@ -62,10 +62,15 @@ td{
 
 <h2>
   <%@categories.each do |category| %>
+
     <%=category.name%>
+    <br>
+    <br>
       <%category.items.each do |item| %>
-      <%= item.name %>
       <br>
+      <%= item.name %>
+      
+      
     <% end %>  
   <% end %>
 </h2>
