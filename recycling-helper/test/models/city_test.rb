@@ -4,15 +4,6 @@ class CityTest < ActiveSupport::TestCase
   require_properties_for City, :name, :state, :zip
   define_property :website_url, as: :url
 
-  valid :location,
-      { name: 'Claremont', state: 'California', zip: '91711' },
-      { name: 'Claremont', state: 'California', zip: '91711-3116' }
-
-  invalid :location,
-      { name: 'Claremont', state: 'California', zip: '28717' },     # 28717 is Cashiers, NC
-      { name: 'Claremont', state: 'North Carolina', zip: '91711' }, # Claremont is in CA
-      { name: 'Claremont', state: 'North Carolina', zip: '28717' }
-
   test "can create city with valid location" do
     valid_locations.each do |loc|
       assert_valid City, loc
@@ -63,6 +54,23 @@ class CityTest < ActiveSupport::TestCase
         assert city.valid?, "the test appears to be broken; " +
           "city should have been valid, but found the following errors: #{city.errors.details}"
       end
+    end
+  end
+
+  test "gracefully handles USPS timeout" do
+    apis[:usps].stub_recursive.to_timeout
+    valid_locations.each do |loc|
+      assert_invalid City, { base: :usps_error }, loc
+    end
+  end
+
+  test "gracefully handles unexpected USPS response" do
+    garbage = {
+      'boguskey' => 'bogusvalue'
+    }.to_xml
+    apis[:usps].stub_recursive.to_return({ body: garbage })
+    valid_locations.each do |loc|
+      assert_invalid City, { base: :usps_error }, loc
     end
   end
 

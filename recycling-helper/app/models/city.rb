@@ -40,6 +40,16 @@ private
     errors.empty?
   end
 
+  # Query the USPS registry to determine whether this city's combination of name, state, and zip
+  # code correspond to that of a real city. If this fails, it will do so in one of the following
+  # ways:
+  #   * fail to connect to the USPS server (base: :usps_error)
+  #   * received an HTTP error in the response from the USPS server (base: :usps_error)
+  #   * received unexpected/unparseable response (base: :usps_error)
+  #   * received a response indicating that the ZIP code does not correspond to any known US city
+  #       (zip: :unkown)
+  #   * received a response indicating that the ZIP code belongs to a different city
+  #       (base: :unknown) and (zip: :invalid)
   def city_state_zip_must_be_real_location
     # Look up the zip code in the USPS registry.
     # See https://www.usps.com/business/web-tools-apis/address-information-api.htm for API docs.
@@ -59,27 +69,42 @@ XML
       res = HTTP::get("http://production.shippingapis.com/ShippingAPI.dll?#{params.to_param}")
     rescue HTTP::ConnectionError
       errors.add(:base, :usps_error, message: 'could not be validated at this time')
-    else
-      if res.code != 200
-        errors.add(:base, :usps_error, message: "could not be validated at this time (#{code})")
-      else
-        data = Hash.from_xml(res.to_s)
-
-        if data['CityStateLookupResponse']['ZipCode']['Error']
-          errors.add(:zip, :unknown, message: 'is not a US zip code')
-        else
-          actual_city = data['CityStateLookupResponse']['ZipCode']['City'].titleize
-          actual_state = data['CityStateLookupResponse']['ZipCode']['State']
-          if actual_city != name || actual_state != Geography.state_abbreviation(state)
-            errors.add(:base, :unknown, message: 'is not a US city')
-            errors.add(:zip, :invalid, message:
-              "is registered to #{actual_city}, #{actual_state}, " +
-              "not #{name}, #{Geography.state_abbreviation(state)}")
-          end
-        end
-
-      end
+      return
     end
+
+    unless res.code == 200
+      errors.add(:base, :usps_error, message: "could not be validated at this time (#{code})")
+      return
+    end
+
+    begin
+      data = Hash.from_xml(res.to_s)
+    rescue REXML::ParseException
+      errors.add(:base, :usps_error, message: 'could not be validated at this time')
+      return
+    end
+
+    zip_response = data.dig('CityStateLookupResponse', 'ZipCode')
+    unless zip_response
+      errors.add(:base, :usps_error, message: 'could not be validated at this time')
+      return
+    end
+
+    if zip_response['Error']
+      errors.add(:zip, :unknown, message: zip_response['Error']['Description'])
+    elsif zip_response['City'] && zip_response['State']
+      actual_city = zip_response['City'].titleize
+      actual_state = zip_response['State']
+      if actual_city != name || actual_state != Geography.state_abbreviation(state)
+        errors.add(:base, :unknown, message: 'is not a US city')
+        errors.add(:zip, :invalid, message:
+          "is registered to #{actual_city}, #{actual_state}, " +
+          "not #{name}, #{Geography.state_abbreviation(state)}")
+      end
+    else
+      errors.add(:base, :usps_error, message: "could not be validated at this time')")
+    end
+
   end
 
 end

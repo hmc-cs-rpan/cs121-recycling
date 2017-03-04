@@ -62,3 +62,9 @@ gem 'redcarpet'
 
 # HTTP request lib
 gem 'http'
+
+# Mock HTTP library
+gem 'webmock'
+
+# URI parsing
+gem 'addressable'

@@ -1,10 +1,15 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+require 'webmock/minitest'
+require 'mock_usps.rb'
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
+
+  # Setup mock versions of third party APIs
+  setup :stub_apis
 
   # Provide a list of valid values for the given property, to be used as example data. This creates
   # two instance methods:
@@ -51,6 +56,10 @@ class ActiveSupport::TestCase
     end
   end
 
+  def apis
+    @apis
+  end
+
   valid :url,
     'http://example.com', 'http://www.example.com', 'http://www.example.edu', 'http://example.org'
   invalid :url, 'www.example.com', 'example.com', 'justplainwrong'
@@ -60,6 +69,10 @@ class ActiveSupport::TestCase
 
   valid :zip, '28717', '20817-1411'
   invalid :zip, '2871', '287178', '208171411', '20817-141', '20814-14111'
+
+  # Locations recognized by our USPS API stub
+  valid :location, MockUsps.valid_cities
+  invalid :location, MockUsps.invalid_cities
 
   # Run a block with various combinations of valid and invalid properties. Usage:
   #    with_properties valid: :p1, invalid: [:p2, :p3], fixed_property: 'Value' do |props|
@@ -159,6 +172,14 @@ private
     public_send(prefix + prop.to_s.pluralize(2)).map do |property|
         [prop, property]
     end
+  end
+
+  def stub_apis
+    WebMock.disable_net_connect!(allow_localhost: true)
+    @apis = {}
+
+    @apis[:usps] = MockUsps.new(self)
+    @apis[:usps].stub_all
   end
 
 end
