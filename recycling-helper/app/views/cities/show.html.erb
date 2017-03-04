@@ -1,25 +1,9 @@
 <%= stylesheet_link_tag "cities" %>
-<!--
-<% @city.bins.each do |bin| %>
-	<div>The following items can be thrown in the <%= bin.name %> bin: </div>
-
-	<p><% bin.categories.each do |category| %>
-		<p><b><div><%= category.name %></div></b></p>
-
-		<% bin.items.where(category: category).each do |item| %>
-			<div><%= item.name %></div>
-		<% end %>
-	<% end %></p>
-<% end %>
 
 
--->
 
-<!--
-<p id="notice"><%= notice %></p>
-<h2>Welcome to <%= @city.name %>, <%= @city.state %> </h2>
-<h4><%= @city.zip %></h4>
--->
+<P>Items that are recycled in <%= @city.name %>, <%= @city.state %>. </P>
+
 
 
 
@@ -53,12 +37,6 @@
 		<% end %>
 	<% end %>
 	
-
-   <!--  <a href="#portion1" class="active">Metals</a>
-    <a href="#portion2">Paper</a>
-    <a href="#portion3">Cardboard</a>
-    <a href="#portion4">Glass</a>
-    <a href="#portion5">Plastic</a> -->
   </nav>
 </header>
 
@@ -71,7 +49,7 @@
 
 
 <div class="info">
-  <h3>Aluminum And Other Metals</h3>
+  <h3>Aluminum And Other Metal Items:</h3>
   
   <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
@@ -91,7 +69,7 @@
   <h2>Paper</h2>
 </div>
 <div class="info">
-  <h3>Recyclable Papers</h3>
+  <h3>Paper Items:</h3>
    <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
 		<% bin.items.where(category: category).each do |item| %>
@@ -109,7 +87,7 @@
   <h2>Cardboards</h2>
 </div>
 <div class="info">
-  <h3>Recyclable Cardboards:</h3>
+  <h3>Cardboard Items:</h3>
    <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
 		<% bin.items.where(category: category).each do |item| %>
