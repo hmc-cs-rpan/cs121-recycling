@@ -7,7 +7,8 @@ class MockUsps
   def self.valid_cities
     [
       { name: 'Claremont', state: 'California', zip: '91711' },
-      { name: 'Cashiers', state: 'North Carolina', zip: '28717' }
+      { name: 'Cashiers', state: 'North Carolina', zip: '28717' },
+      { name: 'Coeur d\'Alene', state: 'Idaho', zip: '83814' }
     ]
   end
 
@@ -72,6 +73,10 @@ class MockUsps
     }
   end
 
+  def format_city(city)
+    city.gsub(/[^a-zA-Z]/, ' ').gsub(/\s+/, ' ').upcase.strip
+  end
+
   def city_state_lookup(xml)
     unless xml.dig('CityStateLookupRequest','USERID') == Rails.application.secrets.usps_api_key
       return error_validate_user('CityStateLookup')
@@ -95,7 +100,7 @@ class MockUsps
       status: 200,
       body: {
         'ZipCode' => {
-          'City' => loc[:name],
+          'City' => format_city(loc[:name]),
           'State' => Geography.state_abbreviation(loc[:state])
         }
       }.to_xml(root: 'CityStateLookupResponse')

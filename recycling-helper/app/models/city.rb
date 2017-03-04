@@ -1,7 +1,7 @@
 class City < ApplicationRecord
   validates :name, :state, :zip, presence: true
   validates :zip, format: { with: /\A\d{5}(-\d{4})?\z/, message: 'is not a valid zip code' }
-  validates :state, state: true
+  validates :state, state: true, if: 'state.present?'
   validates :website_url, format: { with: URI.regexp, message: 'is not a valid URL' },
     if: 'website_url.present?'
 
@@ -32,6 +32,12 @@ class City < ApplicationRecord
     names.map do |name|
       add_bin!(name)
     end
+  end
+
+  # A transformation that takes various alternative formattings and their USPS counterparts to the
+  # same string. For example, "Coeur d'Alene" will map to the same string as "COEUR D ALENE"
+  def self.format(city)
+    city.gsub(/[^a-zA-Z]/, ' ').gsub(/\s+/, ' ').upcase.strip
   end
 
 private
@@ -93,13 +99,13 @@ XML
     if zip_response['Error']
       errors.add(:zip, :unknown, message: zip_response['Error']['Description'])
     elsif zip_response['City'] && zip_response['State']
-      actual_city = zip_response['City'].titleize
+      actual_city = zip_response['City']
       actual_state = zip_response['State']
-      if actual_city != name || actual_state != Geography.state_abbreviation(state)
+      if City.format(actual_city) != City.format(name) || actual_state != Geography.state_abbreviation(state)
         errors.add(:base, :unknown, message: 'is not a US city')
         errors.add(:zip, :invalid, message:
-          "is registered to #{actual_city}, #{actual_state}, " +
-          "not #{name}, #{Geography.state_abbreviation(state)}")
+          "is registered to #{City.format(actual_city)}, #{actual_state}, " +
+          "not #{City.format(name)}, #{Geography.state_abbreviation(state)}")
       end
     else
       errors.add(:base, :usps_error, message: "could not be validated at this time')")
