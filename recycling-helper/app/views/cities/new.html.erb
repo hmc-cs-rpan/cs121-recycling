@@ -1,3 +1,13 @@
+<%= javascript_include_tag "cities" %>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+      console.log("<%= Category.all.map {|category| "#{category.name}:[#{category.items.map {
+      |item| "'#{item.name}'"}.join(",")}]"}.join(",")
+        %>")
+  });
+</script>
+
 <div class="container">
 
   <div class="panel panel-default">
@@ -29,7 +39,7 @@
             </li>
 
             <% Category.all.each do |category| %>
-              <li class="list-group-item btn btn-default">
+              <li onclick = "console.log('<%= category.name %>')" class="list-group-item btn btn-default">
                 <!-- TODO make onclick action -->
                 <%= category.name %>
               </li>
