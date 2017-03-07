@@ -28,3 +28,20 @@
 .alert-error {
   @extend .alert-danger;
 }
+
+.scrollable-list ul {
+    overflow-y: auto;
+    border-radius: 0px;
+}
+
+.scrollable-list li {
+    border-radius: 0px;
+}
+
+.scrollable-list .list-group-item:first-child {
+    border-radius: 0px;
+}
+
+.scrollable-list .list-group-item:last-child {
+    border-radius: 0px;
+}
