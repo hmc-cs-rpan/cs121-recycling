@@ -1,11 +1,7 @@
-<%= javascript_include_tag "cities" %>
-
 <script type="text/javascript">
-  $(document).ready(function(){
-      console.log("<%= Category.all.map {|category| "#{category.name}:[#{category.items.map {
-      |item| "'#{item.name}'"}.join(",")}]"}.join(",")
-        %>")
-  });
+  $(document).ready(function() {
+    display_all_items()
+  })
 </script>
 
 <div class="container">
@@ -33,13 +29,13 @@
       <div class="col-xs-6" style="padding-right: 0;">
 
         <div class="scrollable-list">
-          <ul class="list-group" style="<%= set_height %>">
-            <li class="list-group-item btn btn-default active">
+          <ul id="categories" class="list-group" style="<%= set_height %>">
+            <li id="all_categories" onclick="display_all_items()" class="list-group-item btn btn-default">
               All Items
             </li>
 
             <% Category.all.each do |category| %>
-              <li onclick = "console.log('<%= category.name %>')" class="list-group-item btn btn-default">
+              <li id="category<%= category.id %>" onclick="filter_by_category(<%= category.id %>)" class="list-group-item btn btn-default">
                 <!-- TODO make onclick action -->
                 <%= category.name %>
               </li>
@@ -52,13 +48,8 @@
       <div class="col-xs-6" style="padding-left: 0;">
 
         <div class="scrollable-list">
-          <ul class="list-group" style="<%= set_height %>">
-            <% Item.all.each do |category| %>
-              <li class="list-group-item btn btn-default">
-                <!-- TODO make onclick action -->
-                <%= category.name %>
-              </li>
-            <% end %>
+          <ul id="items" class="list-group" style="<%= set_height %>">
+            <!-- Filled in by JS -->
           </ul>
         </div>
 

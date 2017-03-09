@@ -1,0 +1,67 @@
+var items_by_category = JSON.parse(
+    '<%= raw Category.order(:name).map { |category| [category.id, category.items.order(:name)] }.to_h.to_json %>'
+)
+
+/**
+ * Remove all items from the items picker.
+ */
+function clear_items() {
+    var items = $("#items")[0]
+    while (items.firstChild) {
+        items.removeChild(items.firstChild)
+    }
+
+    // Unselect the category filter button
+    var categories = $('#categories')[0]
+    var buttons = Array.from(categories.children)
+    buttons.forEach(function(button) {
+        button.className = button.className.split(' ').filter((className) => className != 'active').join(' ')
+    })
+}
+
+/**
+ * Append all items from the given category to the items picker.
+ */
+function append_items_by_category(category_id) {
+    var items = $("#items")[0]
+
+    items_by_category[category_id].forEach(function(item) {
+        var list_item = document.createElement('li')
+        list_item.className = 'list-group-item btn btn-default'
+        list_item.appendChild(document.createTextNode(item['name']))
+        items.appendChild(list_item)
+    });
+}
+
+/**
+ * Display only items belonging to the given category in the items picker.
+ */
+function filter_by_category(category_id) {
+    var btn = $(`#category${category_id}`)[0]
+    if (btn.className.split(' ').includes('active')) {
+        // We're already filtering by this category
+        return
+    }
+
+    clear_items()
+    append_items_by_category(category_id)
+    btn.className += ' active'
+}
+
+/**
+ * Display all items from all categories in the items picker.
+ */
+function display_all_items() {
+    var btn = $('#all_categories')[0]
+    if (btn.className.split(' ').includes('active')) {
+        // We're already displaying all items
+        return
+    }
+
+    clear_items()
+    for (category_id in items_by_category) {
+        append_items_by_category(category_id)
+    }
+
+    btn.className += ' active'
+}
