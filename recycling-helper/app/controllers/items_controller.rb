@@ -30,12 +30,8 @@ class ItemsController < ApplicationController
       flash[:error] = @item.errors.full_messages
       render 'new'
     else
-      bin = @item.add_bin! 'recycling'
-      if params[:item_ids] && !params[:item_ids].empty?
-        bin.items += Item.find(params[:item_ids])
-      end
       flash[:success] = "#{@item.name},successfully created!"
-      redirect_to @city
+      redirect_to @item
     end
   end
 
