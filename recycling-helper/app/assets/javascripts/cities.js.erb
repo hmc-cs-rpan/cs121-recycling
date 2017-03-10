@@ -26,11 +26,31 @@ function append_items_by_category(category_id) {
     var items = $("#items")[0]
 
     items_by_category[category_id].forEach(function(item) {
-        var list_item = document.createElement('li')
-        list_item.className = 'list-group-item btn btn-default'
-        list_item.appendChild(document.createTextNode(item['name']))
-        items.appendChild(list_item)
+        items.appendChild(create_button(item.name))
     });
+}
+/**
+ * Helper function to create a button for each JS Item
+ */
+function create_button(name) {
+    var list_item = document.createElement('li')
+    list_item.className = 'list-group-item btn btn-default'
+    list_item.appendChild(document.createTextNode(name))
+    list_item.onclick = 
+        function() {
+            toggle_active(list_item)
+        }
+    return list_item
+}
+
+function toggle_active(elem) {
+    if (elem.className.split(' ').includes('active')) {
+        elem.className = elem.className.split(' ').filter(
+            (className) => className != 'active').join(' ')
+    }
+    else {
+        elem.className += ' active'
+    }
 }
 
 /**
@@ -63,5 +83,21 @@ function display_all_items() {
         append_items_by_category(category_id)
     }
 
-    btn.className += ' active'
+    toggle_active(btn)
+}
+
+/**
+ * Set active on all the Items within a category
+ */
+function select_all(select) {
+    var items = $('#items')[0]
+    var buttons = Array.from(items.children)
+    buttons.forEach(function(button) {
+        if (is_active(button) != select) 
+            toggle_active(button)
+    });
+}
+
+function is_active(elem) {
+    return (elem.className.split(' ').includes('active'))
 }
