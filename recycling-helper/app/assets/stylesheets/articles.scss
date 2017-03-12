@@ -1,3 +1,15 @@
 // Place all the styles related to the articles controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.article {
+  font-family: "Times New Roman", Times, serif;
+}
+.article-title {
+  font-weight: bold;
+  font-size: 2.25em;
+}
+
+.article-text {
+  font-size: 1.25em;
+}

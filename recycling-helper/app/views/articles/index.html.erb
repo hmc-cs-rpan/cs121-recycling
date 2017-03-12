@@ -1,19 +1,21 @@
-<p id="notice"><%= notice %></p>
+<% if current_admin %>
+  <%= link_to 'New Article', new_article_path, class: 'btn btn-default' %>
+<% end %>
 
-<center><h1>Articles</h1></center>
+<% @articles.each do |article| %>
 
+  <div class="panel panel-default article clickable" onclick="location.href='<%= article_path(article) %>'" >
 
-  <% @articles.each do |article| %>
-      <center><h2> <%= article.title %> </h2>
+    <div class="panel-heading">
+      <h3 class="panel-title article-title"><%= article.title %></h3>
+    </div>
+    <div class="panel-body article-text">
+      <% if article.content.length > 500 %>
+        <%= simple_format article.content[0..500] + '...' %>
+      <% else %>
       <%= simple_format article.content %>
-      <br>
-      <br>
-      <%= link_to 'Show', article %>
-      <%= link_to 'Edit', edit_article_path(article) %>
-      <%= link_to 'Destroy', article, method: :delete, data: { confirm: 'Are you sure?' } %></center>
+    <% end %>
+  </div>
+</div>
 
-  <% end %>
-
-<br>
-<br>
-<%= link_to 'New Article', new_article_path %>
+<% end %>
