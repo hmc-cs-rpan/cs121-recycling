@@ -1,0 +1,16 @@
+<div class="panel panel-default" >
+  <div class="panel-heading">
+    <h3 class="panel-title"> <%= bin.name.titleize%> </h3>
+  </div>
+
+  <div class="scrollable-list">
+    <ul class="list-group" style="<%= set_height %> <%= set_width %>">  <!-- set_height function? -->
+
+      <% bin.items.each do |item| %>
+        <li class="list-group-item btn btn-default">
+          <%= item.name %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
