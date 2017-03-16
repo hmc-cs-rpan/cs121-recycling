@@ -1,7 +1,7 @@
 # Categories (based heavily on Claremont, so we will want to relook when we add more cities to avoid
 # overfitting our categories)
-aluminum = Category.create!(
-  name: 'Aluminum & Other Metals',
+metal = Category.create!(
+  name: 'Metal',
   image_url: 'http://www.knappsnacks.com/wp-content/uploads/2014/08/aluminumcan1.jpg')
 paper = Category.create!(
   name: 'Paper',
@@ -28,16 +28,16 @@ claremont_bin = claremont.add_bin! 'recycling'
 # Items for Claremont (based on the information at http://www.ci.claremont.ca.us/home/showdocument?id=610)
 claremont_bin.add_items!([
   # Aluminum items
-  { name: 'Aluminum soda cans', category: aluminum },
-  { name: 'Aluminum beer cans', category: aluminum },
-  { name: 'Fruit cans', category: aluminum },
-  { name: 'Vegetable cans', category: aluminum },
-  { name: 'Pet food cans', category: aluminum },
-  { name: 'Juice cans', category: aluminum },
-  { name: 'Soup cans', category: aluminum },
-  { name: 'Sauce cans', category: aluminum },
-  { name: 'Assorted food cans', category: aluminum },
-  { name: 'Metal Hangers', category: aluminum },
+  { name: 'Aluminum soda cans', category: metal },
+  { name: 'Aluminum beer cans', category: metal },
+  { name: 'Fruit cans', category: metal },
+  { name: 'Vegetable cans', category: metal },
+  { name: 'Pet food cans', category: metal },
+  { name: 'Juice cans', category: metal },
+  { name: 'Soup cans', category: metal },
+  { name: 'Sauce cans', category: metal },
+  { name: 'Assorted food cans', category: metal },
+  { name: 'Metal Hangers', category: metal },
 
   # Paper items
   { name: 'Junk mail', category: paper },
