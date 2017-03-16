@@ -17,7 +17,7 @@
 
 
 	<% @city.categories.each do |category| %>
-		<% if category.name == 'Aluminum & Other Metals'%>
+		<% if category.name == 'Metal'%>
 		  <a href= "#metal" + "ss"><%= 'Aluminum/Metals' %></a>
 		  <% end %>
 
@@ -42,20 +42,21 @@
 
 
 <div id="metal" class="portion Metal">
-  <h2>Metals</h2>
+  <h2>Aluminum/Metals</h2>
 </div>
 
 
 <div class="info">
-
-  <% @city.bins.each do |bin| %>
-	<% bin.categories.each do |category| %>
-		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+<% @city.bins.each do |bin| %>
+	<% category = 'Metal' %>
+	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% if ordered.empty? %>
+		<%= "Sorry, there is no info about the " + category + " items in this city." %>
+		<%= "Suggest a change!" %>
+	<% else %>
 		<% ordered.each do |item| %>
-			<% if category.name == 'Aluminum & Other Metals'%>
-				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
-				<p><%= description %></p>
-			<% end %>
+			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
+			<p><%= description %></p>
 		<% end %>
 	<% end %>
 <% end %>
@@ -65,19 +66,19 @@
   <h2>Paper</h2>
 </div>
 <div class="info">
-
-  <% @city.bins.each do |bin| %>
-	<% bin.categories.each do |category| %>
-		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+<% @city.bins.each do |bin| %>
+	<% category = 'Paper' %>
+	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% if ordered.empty? %>
+		<%= "Sorry, there is no info about the " + category + " items in this city." %>
+		<%= "Suggest a change!" %>
+	<% else %>
 		<% ordered.each do |item| %>
-			<% if category.name == 'Paper'%>
-				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
-				<p><%= description %></p>
-			<% end %>
+			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
+			<p><%= description %></p>
 		<% end %>
 	<% end %>
 <% end %>
-
 </div>
 
 
@@ -85,14 +86,16 @@
   <h2>Cardboards</h2>
 </div>
 <div class="info">
-  <% @city.bins.each do |bin| %>
-	<% bin.categories.each do |category| %>
-		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+<% @city.bins.each do |bin| %>
+	<% category = 'Cardboard' %>
+	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% if ordered.empty? %>
+		<%= "Sorry, there is no info about the " + category + " items in this city." %>
+		<%= "Suggest a change!" %>
+	<% else %>
 		<% ordered.each do |item| %>
-			<% if category.name == 'Cardboard'%>
-				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
-				<p><%= description %></p>
-			<% end %>
+			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
+			<p><%= description %></p>
 		<% end %>
 	<% end %>
 <% end %>
@@ -104,15 +107,16 @@
 </div>
 
 <div class="info">
-
-  <% @city.bins.each do |bin| %>
-	<% bin.categories.each do |category| %>
-		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+<% @city.bins.each do |bin| %>
+	<% category = 'Glass' %>
+	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% if ordered.empty? %>
+		<%= "Sorry, there is no info about the " + category + " items in this city." %>
+		<%= "Suggest a change!" %>
+	<% else %>
 		<% ordered.each do |item| %>
-			<% if category.name == 'Glass'%>
-				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
-				<p><%= description %></p>
-			<% end %>
+			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
+			<p><%= description %></p>
 		<% end %>
 	<% end %>
 <% end %>
@@ -125,15 +129,16 @@
 </div>
 
 <div class="info">
-
-  <% @city.bins.each do |bin| %>
-	<% bin.categories.each do |category| %>
-		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+<% @city.bins.each do |bin| %>
+	<% category = 'Plastic' %>
+	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% if ordered.empty? %>
+		<%= "Sorry, there is no info about the " + category + " items in this city." %>
+		<%= "Suggest a change!" %>
+	<% else %>
 		<% ordered.each do |item| %>
-			<% if category.name == 'Plastic'%>
-				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
-				<p><%= description %></p>
-			<% end %>
+			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
+			<p><%= description %></p>
 		<% end %>
 	<% end %>
 <% end %>
