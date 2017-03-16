@@ -5,7 +5,7 @@
 
 
 
-<P>Items that are recycled in <%= @city.name %>, <%= @city.state %>. </P>
+<P>Items in <%= @city.name %>, <%= @city.state %>. </P>
 
 
 
@@ -15,29 +15,26 @@
   <nav>
     <img class="" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
 
-    <% @city.bins.each do |bin| %>
-		<% bin.categories.each do |category| %>
-			<% if category.name == 'Aluminum & Other Metals'%>
-			  <a href="#portion1"><%= category.name %></a>
-			  <% end %>
 
-			  <% if category.name == 'Paper'%>
-			  <a href="#portion2"><%= category.name %></a>
-			  <% end %>
+	<% @city.categories.each do |category| %>
+		<% if category.name == 'Aluminum & Other Metals'%>
+		  <a href= "#metal" + "ss"><%= 'Aluminum/Metals' %></a>
+		  <% end %>
 
-			  <% if category.name == 'Cardboard'%>
-			  <a href="#portion3"><%= category.name %></a>
-			  <% end %>
+		  <% if category.name == 'Paper'%>
+		  <a href="#paper"><%= category.name %></a>
+		  <% end %>
 
-			  <% if category.name == 'Glass'%>
-			  <a href="#portion4"><%= category.name %></a>
-			  <% end %>
-			  <% if category.name == 'Plastic'%>
-			  <a href="#portion5"><%= category.name %></a>
-			  <% end %>
+		  <% if category.name == 'Cardboard'%>
+		  <a href="#cardboard"><%= category.name %></a>
+		  <% end %>
 
-
-		<% end %>
+		  <% if category.name == 'Glass'%>
+		  <a href="#glass"><%= category.name %></a>
+		  <% end %>
+		  <% if category.name == 'Plastic'%>
+		  <a href="#plastic"><%= category.name %></a>
+		  <% end %>
 	<% end %>
 	
   </nav>
@@ -45,34 +42,29 @@
 
 
 
-
-<div id="portion1" class="portion Metal">
+<div id="metal" class="portion Metal">
   <h2>Metals</h2>
 </div>
 
 
 <div class="info">
-  <h3>Aluminum And Other Metal Items:</h3>
   
   <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
 		<% bin.items.where(category: category).each do |item| %>
 			<% if category.name == 'Aluminum & Other Metals'%>
-			<b><p><%= item.name %></p></b>
+			<b><p><%= item.name "," item.bin %></p></b>
 			<% end %>
 		<% end %>
 	<% end %>
 <% end %>
 
 </div>
-
-
  
-<div id="portion2" class="portion Paper">
+<div id="paper" class="portion Paper">
   <h2>Paper</h2>
 </div>
 <div class="info">
-  <h3>Paper Items:</h3>
    <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
 		<% bin.items.where(category: category).each do |item| %>
@@ -86,11 +78,10 @@
 </div>
 
 
-<div id="portion3" class="portion Cardboard">
+<div id="cardboard" class="portion Cardboard">
   <h2>Cardboards</h2>
 </div>
 <div class="info">
-  <h3>Cardboard Items:</h3>
    <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
 		<% bin.items.where(category: category).each do |item| %>
@@ -104,11 +95,10 @@
 </div>
 
 
-<div id="portion4" class="portion Glass">
-  <h2>Glass</h2>
+<div id="glass" class="portion Glass">
+	<h2>Glass</h2>
 </div>
-<div i class="info">
-  <h3>Glass Items:</h3>
+<div class="info">
    <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
 		<% bin.items.where(category: category).each do |item| %>
@@ -124,12 +114,11 @@
 
 
 
-<div id="portion5" class="portion Plastic">
-  <h2>Plastic</h2>
+<div id="plastic" class="portion Plastic">
+	<h2>Plastic</h2>
 </div>
 
-<div  class="info">
-  <h3>Plastic Items:</h3>
+<div class="info">
    <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
 		<% bin.items.where(category: category).each do |item| %>
