@@ -36,7 +36,6 @@
 		  <a href="#plastic"><%= category.name %></a>
 		  <% end %>
 	<% end %>
-	
   </nav>
 </header>
 
@@ -48,28 +47,32 @@
 
 
 <div class="info">
-  
+
   <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
-		<% bin.items.where(category: category).each do |item| %>
+		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+		<% ordered.each do |item| %>
 			<% if category.name == 'Aluminum & Other Metals'%>
-			<b><p><%= item.name "," item.bin %></p></b>
+				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
+				<p><%= description %></p>
 			<% end %>
 		<% end %>
 	<% end %>
 <% end %>
-
 </div>
  
 <div id="paper" class="portion Paper">
   <h2>Paper</h2>
 </div>
 <div class="info">
-   <% @city.bins.each do |bin| %>
+
+  <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
-		<% bin.items.where(category: category).each do |item| %>
+		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+		<% ordered.each do |item| %>
 			<% if category.name == 'Paper'%>
-			<b><p><%= item.name %></p></b>
+				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
+				<p><%= description %></p>
 			<% end %>
 		<% end %>
 	<% end %>
@@ -82,34 +85,37 @@
   <h2>Cardboards</h2>
 </div>
 <div class="info">
-   <% @city.bins.each do |bin| %>
+  <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
-		<% bin.items.where(category: category).each do |item| %>
+		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+		<% ordered.each do |item| %>
 			<% if category.name == 'Cardboard'%>
-			<b><p><%= item.name %></p></b>
+				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
+				<p><%= description %></p>
 			<% end %>
 		<% end %>
 	<% end %>
 <% end %>
-
 </div>
 
 
 <div id="glass" class="portion Glass">
 	<h2>Glass</h2>
 </div>
+
 <div class="info">
-   <% @city.bins.each do |bin| %>
+
+  <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
-		<% bin.items.where(category: category).each do |item| %>
+		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+		<% ordered.each do |item| %>
 			<% if category.name == 'Glass'%>
-			<b><p><%= item.name %></p></b>
+				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
+				<p><%= description %></p>
 			<% end %>
 		<% end %>
 	<% end %>
 <% end %>
-
- 
 </div>
 
 
@@ -119,17 +125,18 @@
 </div>
 
 <div class="info">
-   <% @city.bins.each do |bin| %>
+
+  <% @city.bins.each do |bin| %>
 	<% bin.categories.each do |category| %>
-		<% bin.items.where(category: category).each do |item| %>
+		<% ordered = bin.items.where(category: category).sort_by{ |item| item.name.downcase } %>
+		<% ordered.each do |item| %>
 			<% if category.name == 'Plastic'%>
-			<b><p><%= item.name %></p></b>
+				<% description = item.name + ": " + bin.name.capitalize + " bin"%>
+				<p><%= description %></p>
 			<% end %>
 		<% end %>
 	<% end %>
 <% end %>
-
-  
 </div>
 
 
