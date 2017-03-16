@@ -49,7 +49,7 @@
 <div class="info">
 <% @city.bins.each do |bin| %>
 	<% category = 'Metal' %>
-	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
 	<% if ordered.empty? %>
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
@@ -68,7 +68,7 @@
 <div class="info">
 <% @city.bins.each do |bin| %>
 	<% category = 'Paper' %>
-	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
 	<% if ordered.empty? %>
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
@@ -85,10 +85,11 @@
 <div id="cardboard" class="portion Cardboard">
   <h2>Cardboards</h2>
 </div>
+
 <div class="info">
 <% @city.bins.each do |bin| %>
 	<% category = 'Cardboard' %>
-	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
 	<% if ordered.empty? %>
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
@@ -109,7 +110,7 @@
 <div class="info">
 <% @city.bins.each do |bin| %>
 	<% category = 'Glass' %>
-	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
 	<% if ordered.empty? %>
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
@@ -131,7 +132,7 @@
 <div class="info">
 <% @city.bins.each do |bin| %>
 	<% category = 'Plastic' %>
-	<% ordered = bin.items.select { |item| item.category.name == category } %>
+	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
 	<% if ordered.empty? %>
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
