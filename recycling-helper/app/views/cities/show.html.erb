@@ -5,7 +5,7 @@
 
 
 
-<P>Items in <%= @city.name %>, <%= @city.state %>. </P>
+<!-- P>Items in <%= @city.name %>, <%= @city.state %>. </P> -->
 
 
 
@@ -14,11 +14,12 @@
 <header>
   <nav>
     <img class="" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
+    <b><%= @city.name %>, <%= @city.state %></b>
 
 
 	<% @city.categories.each do |category| %>
 		<% if category.name == 'Metal'%>
-		  <a href= "#metal" + "ss"><%= 'Aluminum/Metals' %></a>
+		  <a href= "#metal" + "ss"><%= category.name %></a>
 		  <% end %>
 
 		  <% if category.name == 'Paper'%>
@@ -42,9 +43,9 @@
 
 
 <div id="metal" class="portion Metal">
-  <h2>Aluminum/Metals</h2>
+	
+  <h2>Metal/Aluminum</h2>
 </div>
-
 
 <div class="info">
 <% @city.bins.each do |bin| %>
@@ -53,18 +54,27 @@
 	<% if ordered.empty? %>
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
+
 	<% else %>
+	<ol>
 		<% ordered.each do |item| %>
 			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<p><%= description %></p>
+			<li><%= description %></li>
+		
 		<% end %>
+
+	</ol>
+
 	<% end %>
+
 <% end %>
 </div>
- 
+
+
 <div id="paper" class="portion Paper">
   <h2>Paper</h2>
 </div>
+
 <div class="info">
 <% @city.bins.each do |bin| %>
 	<% category = 'Paper' %>
@@ -73,10 +83,12 @@
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
 	<% else %>
+	<ol>
 		<% ordered.each do |item| %>
 			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<p><%= description %></p>
+			<li><%= description %></li>
 		<% end %>
+	</ol>
 	<% end %>
 <% end %>
 </div>
@@ -94,10 +106,12 @@
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
 	<% else %>
+	<ol>
 		<% ordered.each do |item| %>
 			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<p><%= description %></p>
+			<li><%= description %></li>
 		<% end %>
+	</ol>
 	<% end %>
 <% end %>
 </div>
@@ -115,10 +129,12 @@
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
 	<% else %>
+	<ol>
 		<% ordered.each do |item| %>
 			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<p><%= description %></p>
+			<li><%= description %></li>
 		<% end %>
+	</ol>
 	<% end %>
 <% end %>
 </div>
@@ -137,10 +153,12 @@
 		<%= "Sorry, there is no info about the " + category + " items in this city." %>
 		<%= "Suggest a change!" %>
 	<% else %>
+	<ol>
 		<% ordered.each do |item| %>
 			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<p><%= description %></p>
+			<li><%= description %></li>
 		<% end %>
+	</ol>
 	<% end %>
 <% end %>
 </div>
@@ -150,6 +168,6 @@
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>
   <div id="toTop"><a href="#">Back To Top</a></div>
-  <p>&copy; 2014 Arif Hussain Bangash</p>
+ <!--  <p>&copy; 2014 Arif Hussain Bangash</p> -->
   
 </footer>
