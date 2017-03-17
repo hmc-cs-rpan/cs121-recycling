@@ -15,7 +15,9 @@ glass = Category.create!(
 plastic = Category.create!(
   name: 'Plastic',
   image_url: 'http://www.alternet.org/sites/default/files/styles/story_image/public/story_images/plastic.png?itok=8_NKVjx4')
-
+food = Category.create!(
+  name: 'Food',
+  image_url: 'http://www.ikea.com/PIAimages/0183694_PE334729_S5.JPG')
 claremont = City.create!(
   name: 'Claremont',
   state: 'California',
@@ -23,10 +25,14 @@ claremont = City.create!(
   website_url: 'http://www.ci.claremont.ca.us/'
 )
 
-claremont_bin = claremont.add_bin! 'recycling'
+claremont_recycle_bin = claremont.add_bin! 'recycling'
+
+claremont_compost_bin = claremont.add_bin! 'compost'
+
+claremont_trash_bin = claremont.add_bin! 'trash'
 
 # Items for Claremont (based on the information at http://www.ci.claremont.ca.us/home/showdocument?id=610)
-claremont_bin.add_items!([
+claremont_recycle_bin.add_items!([
   # Aluminum items
   { name: 'Aluminum soda cans', category: metal },
   { name: 'Aluminum beer cans', category: metal },
@@ -87,6 +93,15 @@ claremont_bin.add_items!([
   { name: 'Condiment bottles', category: plastic },
   { name: 'Motor oil containers', category: plastic },
   { name: 'Vegetable oil bottles', category: plastic },
+])
+
+# Random items for food
+claremont_compost_bin.add_items!([
+  # Food items
+  { name: 'Organic fruit', category: food },
+  { name: 'Food scraps', category: food },
+  { name: 'Compostable paper plates', category: paper },
+  { name: 'Biodegradable glass', category: glass },
 ])
 
 # Terms for the glossary. Selected terms and definitions take from
