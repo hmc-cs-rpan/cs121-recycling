@@ -38,18 +38,88 @@ ol {
     -webkit-column-gap: 50px;
     -moz-column-gap: 30px;
     list-style-type: none;
-    display: inline-block;
+    display: inline-grid;
     width: 100%;
 
+
 }
 
 
-bli {
-  list-style-position:inside;
-  border: 1px solid black;
+.box {
+  background-color:  #808080;
+  color: #fff;
+  border-radius: 5px;
+  padding: 25px;
+  font-size: 150%;
+  margin-top: 15px;
+  cursor: pointer;
+  
 }
 
 
+.info {
+  background: #FFFFFF;
+  color: #000;
+
+  padding: 3em 20%;
+}
+
+.popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    margin-top: 15px;
+    user-select: none;
+}
+
+/* The actual popup */
+.popup .popuptext {
+    visibility: hidden;
+    width: 160px;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -80px;
+}
+
+/* Popup arrow */
+.popup .popuptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Toggle this class - hide and show the popup */
+.popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+/* Add animation (fade in the popup) */
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity:1 ;}
+}
 
 
 header nav {
@@ -130,11 +200,6 @@ header nav a:hover {
 
 
 
-.info {
-  background: #FFFFFF;
-  color: #000;
-  padding: 3em 20%;
-}
 
 .button {
   text-align: center;
@@ -181,7 +246,6 @@ nav img {
 .move {
   top: -60px;
 }
-
 
 
 nav span {
