@@ -1,0 +1,96 @@
+items_by_category = JSON.parse(
+  '<%= raw Category.order(:name).map { |category| [category.id, category.items.order(:name)] }.to_h.to_json %>'
+)
+
+###
+Display only items belonging to the given category in the items picker.
+###
+@filter_by_category = (category_id) ->
+  btn = $('#category' + category_id)[0]
+  if btn.className.split(' ').includes('active')
+    # We're already filtering by this category
+    return
+  clear_items()
+  append_items_by_category category_id
+  btn.className += ' active'
+  return
+
+
+###
+Display all items from all categories in the items picker.
+###
+@display_all_items = ->
+  btn = $('#all_categories')[0]
+  if btn.className.split(' ').includes('active')
+    # We're already displaying all items
+    return
+  clear_items()
+  for category_id of items_by_category
+    append_items_by_category category_id
+  toggle_active btn
+  return
+
+###
+Set or unset (based on value of select) active class on all the Items within a category
+###
+@select_all = (select) ->
+  items = $('#items')[0]
+  buttons = Array.from(items.children)
+  buttons.forEach (button) ->
+    if is_active(button) != select
+      toggle_active button
+    return
+  return
+
+is_active = (elem) ->
+  elem.className.split(' ').includes 'active'
+
+###
+Remove all items from the items picker.
+###
+clear_items = ->
+  items = $('#items')[0]
+  while items.firstChild
+    items.removeChild items.firstChild
+  # Unselect the category filter button
+  categories = $('#categories')[0]
+  buttons = Array.from(categories.children)
+  buttons.forEach (button) ->
+    button.className = button.className.split(' ').filter((className) ->
+      className != 'active'
+    ).join(' ')
+    return
+  return
+
+###
+Append all items from the given category to the items picker.
+###
+append_items_by_category = (category_id) ->
+  items = $('#items')[0]
+  items_by_category[category_id].forEach (item) ->
+    items.appendChild create_button(item.name)
+    return
+  return
+
+###
+Helper function to create a button for each JS Item
+###
+create_button = (name) ->
+  list_item = document.createElement('li')
+  list_item.className = 'list-group-item btn btn-default'
+  list_item.appendChild document.createTextNode(name)
+
+  list_item.onclick = ->
+    toggle_active list_item
+    return
+
+  list_item
+
+toggle_active = (elem) ->
+  if elem.className.split(' ').includes('active')
+    elem.className = elem.className.split(' ').filter((className) ->
+      className != 'active'
+    ).join(' ')
+  else
+    elem.className += ' active'
+  return
