@@ -45,3 +45,59 @@ selector: JQuery selector indicating the DOM element that should contain the mes
 
 @flash_success = (msg, {dismissible, selector} = {}) ->
     flash msg, type: 'success', dismissible: dismissible, selector: selector
+
+###
+Get a JSON object from a REST API call. The endpoint specified by URL must support JSON requests
+and return an object with a boolean property "ok", and, if !ok, must contain a property "errors"
+which is a list of error messages. These are the conventions followed by our own API. The return
+value of this function supports the callbacks described in JSONRequest.
+
+method: specify the HTTP method to use. Default is "GET".
+data: specify data to be sent in the request. Default is {}.
+###
+@get_json = (url, {method, data} = {}) -> new JSONRequest url, method: method, data: data
+
+###
+Object representing an outstanding REST API call and supporting success and error callbacks.
+###
+class JSONRequest
+    constructor: (url, {method, data} = {}) ->
+        method ?= 'GET'
+        data ?= {}
+
+        @xhr = $.ajax url, {
+            method: method,
+            dataType: 'json',
+            data: data
+        }
+
+    ###
+    If the request is successful, the response JSON will be passed to cb.
+    ###
+    on_success: (cb) ->
+        @xhr.done (res) ->
+            if res.ok
+                cb res
+        return this
+
+    ###
+    If the request is unsuccessful, either because of an HTTP error code or an API response
+    indicating failure, cb will be called once for each error, and passed an error message each time.
+    ###
+    on_error: (cb) ->
+        @on_errors (errs) ->
+            for err in errs
+                cb err
+        return this
+
+    ###
+    If the request is unsuccessful, cb will be passed an array of error messages.
+    ###
+    on_errors: (cb) ->
+        @xhr
+        .done (res) ->
+            if !res.ok
+                cb res.errors
+        .fail (req, status, message) ->
+            cb ["#{status} (#{req.status}): #{message}"]
+        return this

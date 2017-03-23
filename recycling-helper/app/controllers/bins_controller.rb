@@ -58,7 +58,7 @@ class BinsController < ApplicationController
     @bin.destroy
     respond_to do |format|
       format.html { redirect_to bins_url, notice: 'Bin was successfully destroyed.' }
-      format.json { head :no_content }
+      format.json { render json: { ok: true } }
     end
   end
 

@@ -87,7 +87,7 @@ Set or unset (based on value of select) active class on all the Items within a c
 Add a new item to the items picker based on the contents of #new-item-form
 ###
 @save_new_item = ->
-  item = form_to_json $('#new-bin-form')
+  item = form_to_json $('#new-item-form')
 
   if !item.name
     flash_error("Please enter a name for the item.", selector: '#new-item-errors')
@@ -97,13 +97,8 @@ Add a new item to the items picker based on the contents of #new-item-form
     return
 
   # Tell the server to create the item
-  $.ajax '<%= items_path %>', {
-    method: 'POST',
-    dataType: 'json',
-    data: { item: item }
-  }
-  .done (res) ->
-    if res.ok
+  get_json '<%= items_path %>', method: 'POST', data: { item: item }
+    .on_success (res) ->
       # Close the dialog
       $('#new-item').modal('hide')
 
@@ -122,10 +117,8 @@ Add a new item to the items picker based on the contents of #new-item-form
 
       # Let the user know we did it
       flash_success("Item \"#{item.name}\" created")
-    else
-      res.errors.forEach (err) -> flash_error(err, selector: '#new-item-errors')
-  .fail (xhr, status, msg) ->
-    flash_error("#{status} (#{xhr.status}): #{msg}", selector: '#new-item-errors')
+    .on_error (err) ->
+        flash_error(err, selector: '#new-item-errors')
 
 ###
 Add a new bin to the city based on the contents of #new-bin-form
@@ -133,30 +126,21 @@ Add a new bin to the city based on the contents of #new-bin-form
 @save_new_bin = ->
   bin = form_to_json $('#new-bin-form')
 
-  console.log bin
-
   if !bin.name
     flash_error('Please enter a name for the bin.')
     return
 
-  $.ajax '<%= bins_path %>', {
-    method: 'POST',
-    dataType: 'json',
-    data: { bin: bin }
-  }
-  .done (res) ->
-    if res.ok
+  get_json '<%= bins_path %>', method: 'POST', data: { bin: bin }
+    .on_success (res) ->
       # Add the new bin to our in-browser model
-      bins[bin.name] = { id: res.bin.id, items: [] }
+      res.bin.items ?= []
+      bins.push res.bin
       # Clear the form
       $('#new-bin-form [name=name]').val('')
 
       refresh_bins()
       flash_success("Bin \"#{bin.name}\" created.")
-    else
-      res.errors.forEach flash_error
-  .fail (xhr, status, msg) ->
-      flash_error("#{status} (#{xhr.status}): #{msg}")
+    .on_error flash_error
 
 ###
 Get the category_id by which we are currently filtering, or null if we are not.
@@ -174,17 +158,25 @@ Render the data contained in bins
 ###
 @refresh_bins = ->
   last_bin = $("#bins li").last()
+  $("#bins li").not(last_bin).html("")
 
-  for name, bin of bins
-    if $("#bins").has("[name=#{name}]").length > 0
-      # This bin is already in the list
-      continue
-
+  for bin in bins
     panel = $("<div class=\"panel panel-default\">")
     panel.width(300)
 
     header = $('<div class="panel-heading">')
-    header.append name
+    header.append bin.name
+    delete_btn = $("<button type=\"button\" class=\"close\">&times;</button>")
+
+    # Delete the bin associated with this button on click. We need to capture a different id in each
+    # iteration of the loop, so we bind the id in an anonymous function. Thank you Javascript.
+    (->
+      id = bin.id
+      delete_btn.click ->
+        delete_bin(id)
+    )()
+
+    header.append delete_btn
 
     body = $('<div class="panel-body scrollable-list">')
     body.height(300)
@@ -197,10 +189,26 @@ Render the data contained in bins
     panel.append header
     panel.append body
 
-    bin_li = $("<li class=\"inline\" name=\"#{name}\">")
+    bin_li = $("<li class=\"inline\" name=\"#{bin.name}\">")
     bin_li.append panel
 
     bin_li.insertBefore(last_bin)
+
+###
+Delete the specified bin from the database and the DOM.
+###
+delete_bin = (id) ->
+  get_json "/bins/#{id}", method: 'DELETE'
+    .on_success ->
+      index = _.findIndex bins, (bin) -> bin.id == id
+      if index == -1
+        console.log "Unable to remove bin #{id} from GUI"
+      else
+        bins.splice index, 1
+      refresh_bins()
+
+      flash_success 'Bin deleted'
+    .on_error flash_error
 
 is_active = (elem) ->
   elem.hasClass 'active'

@@ -3,8 +3,8 @@
 
     bins = JSON.parse(
       '<%= raw @city.bins.order(:name).map { |bin|
-        [bin.name, { id: bin.id, items: bin.items.order(:name).select(:name, :id) }]
-      }.to_h.to_json %>'
+        { id: bin.id, name: bin.name, items: bin.items.order(:name).select(:name, :id) }
+      }.to_json %>'
     )
 
     refresh_bins()
