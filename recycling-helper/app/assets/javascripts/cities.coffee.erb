@@ -1,6 +1,8 @@
 # Include routes helpers
 <% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
 
+all_items = JSON.parse('<%= raw Item.order(:name).select(:name).to_json %>')
+
 items_by_category = JSON.parse(
   '<%= raw Category.order(:name).map { |category|
     [category.id, category.items.order(:name).select(:name, :category_id)]
@@ -69,8 +71,7 @@ Display all items from all categories in the items picker.
     # We're already displaying all items
     return
   clear_items()
-  for category_id of items_by_category
-    append_items_by_category category_id
+  append_items all_items
   activate btn
   return
 
@@ -153,7 +154,13 @@ clear_items = ->
 Append all items from the given category to the items picker.
 ###
 append_items_by_category = (category_id) ->
-  items_by_category[category_id].forEach (item) ->
+  append_items(items_by_category[category_id])
+
+###
+Add the given items to the items picker.
+###
+append_items = (items) ->
+  items.forEach (item) ->
     $('#items').append create_button(item.name)
 
 ###
