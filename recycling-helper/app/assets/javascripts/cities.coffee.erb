@@ -1,5 +1,10 @@
+# Include routes helpers
+<% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
+
 items_by_category = JSON.parse(
-  '<%= raw Category.order(:name).map { |category| [category.id, category.items.order(:name)] }.to_h.to_json %>'
+  '<%= raw Category.order(:name).map { |category|
+    [category.id, category.items.order(:name).select(:name, :category_id)]
+  }.to_h.to_json %>'
 )
 
 @init_smooth_scrolling = ->
@@ -39,15 +44,19 @@ items_by_category = JSON.parse(
 
 ###
 Display only items belonging to the given category in the items picker.
+If !force, then this founction is a noop if the given category is already displayed. Force can be
+specified as a means of refreshing the items picker after an update.
 ###
-@filter_by_category = (category_id) ->
-  btn = $('#category' + category_id)[0]
-  if btn.className.split(' ').includes('active')
+@filter_by_category = (category_id, {force} = {}) ->
+  force ?= false
+
+  btn = $('#category' + category_id)
+  if is_active(btn) and not force
     # We're already filtering by this category
     return
   clear_items()
   append_items_by_category category_id
-  btn.className += ' active'
+  activate btn
   return
 
 
@@ -55,77 +64,119 @@ Display only items belonging to the given category in the items picker.
 Display all items from all categories in the items picker.
 ###
 @display_all_items = ->
-  btn = $('#all_categories')[0]
-  if btn.className.split(' ').includes('active')
+  btn = $('#all_categories')
+  if is_active btn
     # We're already displaying all items
     return
   clear_items()
   for category_id of items_by_category
     append_items_by_category category_id
-  toggle_active btn
+  activate btn
   return
 
 ###
 Set or unset (based on value of select) active class on all the Items within a category
 ###
 @select_all = (select) ->
-  items = $('#items')[0]
-  buttons = Array.from(items.children)
-  buttons.forEach (button) ->
-    if is_active(button) != select
-      toggle_active button
+  $('#items').children('li').each ->
+    if is_active($(this)) != select
+      toggle_active $(this)
+
+###
+Add a new item to the items picker based on the contents of #new-item-form
+###
+@save_new_item = ->
+  # Get the parameters from the form
+  data = {}
+  $.each $('#new-item-form').serializeArray(), (_, field) ->
+    data[field.name] = field.value
+
+  if !data.name
+    flash_error("Please enter a name for the item.", selector: '#new-item-errors')
     return
-  return
+  if !data.category_id
+    flash_error("Please choose a category for the item.", selector: '#new-item-errors')
+    return
+
+  # Tell the server to create the item
+  $.ajax '<%= items_path %>', {
+    method: 'POST',
+    dataType: 'json',
+    data: {
+      item: {
+        name: data.name,
+        category_id: data.category_id
+      }
+    }
+  }
+  .done (res) ->
+    if res.ok
+      # Close the dialog
+      $('#new-item').modal('hide')
+
+      # Add the new item to the items picker (maintaining sorted order) and display it
+      index = _.sortedIndex(items_by_category[data.category_id], data, 'name')
+      items_by_category[data.category_id].splice index, 0, data
+      filter_by_category(data.category_id, force: true)
+
+      # Let the user know we did it
+      flash_success("Item \"#{data.name}\" created")
+    else
+      res.errors.forEach (err) -> flash_error(err, selector: '#new-item-errors')
+  .fail (xhr, status, msg) ->
+    flash_error("#{status} (#{xhr.status}): #{msg}", selector: '#new-item-errors')
+
+###
+Get the category_id by which we are currently filtering, or null if we are not.
+###
+@active_category = ->
+  <% Category.all.each do |category| %>
+    if is_active $("#category<%= category.id %>")
+      return <%= category.id %>
+  <% end %>
+    else
+      return null
 
 is_active = (elem) ->
-  elem.className.split(' ').includes 'active'
+  elem.hasClass 'active'
 
 ###
 Remove all items from the items picker.
 ###
 clear_items = ->
-  items = $('#items')[0]
-  while items.firstChild
-    items.removeChild items.firstChild
+  $('#items').empty()
+
   # Unselect the category filter button
-  categories = $('#categories')[0]
-  buttons = Array.from(categories.children)
-  buttons.forEach (button) ->
-    button.className = button.className.split(' ').filter((className) ->
-      className != 'active'
-    ).join(' ')
-    return
-  return
+  $('#categories').children('li').each -> deactivate $(this)
 
 ###
 Append all items from the given category to the items picker.
 ###
 append_items_by_category = (category_id) ->
-  items = $('#items')[0]
   items_by_category[category_id].forEach (item) ->
-    items.appendChild create_button(item.name)
-    return
-  return
+    $('#items').append create_button(item.name)
 
 ###
 Helper function to create a button for each JS Item
 ###
 create_button = (name) ->
-  list_item = document.createElement('li')
-  list_item.className = 'list-group-item btn btn-default'
-  list_item.appendChild document.createTextNode(name)
+  list_item = $(document.createElement('li'))
+  list_item.addClass 'list-group-item btn btn-default'
+  list_item.append $(document.createTextNode(name))
 
-  list_item.onclick = ->
+  list_item.click ->
     toggle_active list_item
-    return
 
   list_item
 
+activate = (elem) ->
+  elem.addClass 'active'
+
+deactivate = (elem) ->
+  elem.removeClass 'active'
+
 toggle_active = (elem) ->
-  if elem.className.split(' ').includes('active')
-    elem.className = elem.className.split(' ').filter((className) ->
-      className != 'active'
-    ).join(' ')
+  if is_active elem
+    deactivate elem
   else
-    elem.className += ' active'
-  return
+    activate elem
