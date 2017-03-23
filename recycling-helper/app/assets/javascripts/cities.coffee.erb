@@ -165,18 +165,40 @@ Render the data contained in bins
     panel.width(300)
 
     header = $('<div class="panel-heading">')
-    header.append bin.name
-    delete_btn = $("<button type=\"button\" class=\"close\">&times;</button>")
 
-    # Delete the bin associated with this button on click. We need to capture a different id in each
+    edit_btn = $("<button type=\"button\" class=\"icon\">")
+    edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
+    header.append edit_btn
+
+    header.append $("<span id=\"bin_#{bin.id}_title\">#{bin.name}</span>")
+
+    delete_btn = $("<button type=\"button\" class=\"close\">&times;</button>")
+    header.append delete_btn
+
+    # Bind onclick actions to the edit and delete buttons. We need to capture a different id in each
     # iteration of the loop, so we bind the id in an anonymous function. Thank you Javascript.
     (->
       id = bin.id
+      name = bin.name
+
+      edit_btn.click ->
+        title = $("#bin_#{id}_title")
+        title.html("")
+
+        form = $("<form class=\"inline\">")
+        form.width('80%')
+        input = $("<input type=\"text\" placeholder=\"Name\" class=\"form-control\" autofocus>")
+        input.val(name)
+        form.append input
+        form.submit (e) ->
+          e.preventDefault()
+          rename_bin(id, input.val())
+
+        title.append form
+
       delete_btn.click ->
         delete_bin(id)
     )()
-
-    header.append delete_btn
 
     body = $('<div class="panel-body scrollable-list">')
     body.height(300)
@@ -209,6 +231,30 @@ delete_bin = (id) ->
 
       flash_success 'Bin deleted'
     .on_error flash_error
+
+###
+Set the name of the bin with the given id.
+###
+rename_bin = (id, new_name) ->
+  if !new_name
+    flash_error 'Please enter a name for the bin.'
+    return
+
+  bin = _.find bins, (bin) -> bin.id == id
+  unless bin?
+    console.log "Could not find bin with id #{id}"
+    return
+
+  # Save old name so we can rollback if the transaction fails
+  [old_name, bin.name] = [bin.name, new_name]
+
+  get_json "/bins/#{id}", method: 'PATCH', data: { bin: bin }
+    .on_success ->
+      refresh_bins()
+      flash_success "Renamed bin."
+    .on_error flash_error
+    .on_errors ->
+      bin.name = old_name
 
 is_active = (elem) ->
   elem.hasClass 'active'

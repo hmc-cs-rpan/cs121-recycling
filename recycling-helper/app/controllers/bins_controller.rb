@@ -41,13 +41,15 @@ class BinsController < ApplicationController
   # PATCH/PUT /bins/1
   # PATCH/PUT /bins/1.json
   def update
+    @bin.assign_attributes bin_params
+
     respond_to do |format|
-      if @bin.update(bin_params)
+      if save_bin @bin
         format.html { redirect_to @bin, notice: 'Bin was successfully updated.' }
-        format.json { render :show, status: :ok, location: @bin }
+        format.json { render json: { ok: true, bin: @bin } }
       else
         format.html { render :edit }
-        format.json { render json: @bin.errors, status: :unprocessable_entity }
+        format.json { render json: { ok: false, errors: @bin.errors.full_messages } }
       end
     end
   end
