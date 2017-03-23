@@ -14,61 +14,38 @@
     <img class="" id ="logo" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
     <b><%= @city.name %>, <%= @city.state %></b>
 
-
 	<% @city.categories.each do |category| %>
-		<% if category.name == 'Metal'%>
-		  <a href= "#metal" + "ss"><%= category.name %></a>
-		  <% end %>
-
-		  <% if category.name == 'Paper'%>
-		  <a href="#paper"><%= category.name %></a>
-		  <% end %>
-
-		  <% if category.name == 'Cardboard'%>
-		  <a href="#cardboard"><%= category.name %></a>
-		  <% end %>
-
-		  <% if category.name == 'Glass'%>
-		  <a href="#glass"><%= category.name %></a>
-		  <% end %>
-		  <% if category.name == 'Plastic'%>
-		  <a href="#plastic"><%= category.name %></a>
-		  <% end %>
+		<% link = "#" + category.name.downcase %>
+		<a href= "<%=link%>" ><%= category.name %></a>
 	<% end %>
   </nav>
 </header>
 
 
+<% @categories.each do |category| %>
+	<% myId = category.name.downcase %>
+	<% myClass = "portion " + category.name %>
 
-<div id="metal" class="portion Metal">
-	
-  <h2>Metal/Aluminum</h2>
-</div>
+	<div id="<%=myId%>" class="<%=myClass%>">
+		<h2><%=category.name%></h2>
+	</div>
 
-<div class="info">
-
-<% @city.bins.each do |bin| %>
-	<% category = 'Metal' %>
-	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
-	<% if ordered.empty? %>
-		<%= "Sorry, there is no info about the " + category + " items in this city." %>
-		<%= "Suggest a change!" %>
-
-	<% else %>
-	<ol>
-		<% ordered.each do |item| %>
-			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<li class = "box" onclick="myFunction()"><%= description %></li>
-		
+	<div class="info">
+		Need to add a few query statements
+		<% mycategory = @city.categories.find(category) %>
+		<% if mycategory.present? %>
+			<% ordered = mycategory.items.sort_by{|item| item.name} %>
+			<% ordered.each do |item| %>
+				<% bin = item.bins.where(city: @city).first %>
+				<% description = item.name + ': ' + bin.name.capitalize + " bin" %>
+				<li class = "box" onclick="myFunction()"><%= description %></li>
+			<% end %>
+		<% else %>
+			<%= "Sorry, there is no info about the " + mycategory.name + " items in this city. Suggest a change!" %>
 		<% end %>
 
-	</ol>
-
-	<% end %>
-
+	</div>
 <% end %>
-</div>
-
 
 <div id="paper" class="portion Paper">
   <h2>Paper</h2>
@@ -92,75 +69,6 @@
 <% end %>
 </div>
 
-
-<div id="cardboard" class="portion Cardboard">
-  <h2>Cardboards</h2>
-</div>
-
-<div class="info">
-<% @city.bins.each do |bin| %>
-	<% category = 'Cardboard' %>
-	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
-	<% if ordered.empty? %>
-		<%= "Sorry, there is no info about the " + category + " items in this city." %>
-		<%= "Suggest a change!" %>
-	<% else %>
-	<ol>
-		<% ordered.each do |item| %>
-			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<li class = "box" onclick="myFunction()"><%= description %></li>
-		<% end %>
-	</ol>
-	<% end %>
-<% end %>
-</div>
-
-
-<div id="glass" class="portion Glass">
-	<h2>Glass</h2>
-</div>
-
-<div class="info">
-<% @city.bins.each do |bin| %>
-	<% category = 'Glass' %>
-	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
-	<% if ordered.empty? %>
-		<%= "Sorry, there is no info about the " + category + " items in this city." %>
-		<%= "Suggest a change!" %>
-	<% else %>
-	<ol>
-		<% ordered.each do |item| %>
-			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<li class = "box" onclick="myFunction()"><%= description %></li>
-		<% end %>
-	</ol>
-	<% end %>
-<% end %>
-</div>
-
-
-
-<div id="plastic" class="portion Plastic">
-	<h2>Plastic</h2>
-</div>
-
-<div class="info">
-<% @city.bins.each do |bin| %>
-	<% category = 'Plastic' %>
-	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
-	<% if ordered.empty? %>
-		<%= "Sorry, there is no info about the " + category + " items in this city." %>
-		<%= "Suggest a change!" %>
-	<% else %>
-	<ol>
-		<% ordered.each do |item| %>
-			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<li class = "box" onclick="myFunction()"><%= description %></li>
-		<% end %>
-	</ol>
-	<% end %>
-<% end %>
-</div>
 
 
 <footer class="info">
