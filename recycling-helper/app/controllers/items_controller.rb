@@ -30,10 +30,10 @@ class ItemsController < ApplicationController
     respond_to do |format|
       if save_item(@item)
         format.html { redirect_to @item }
-        format.json { render json: {ok: true } }
+        format.json { render json: { ok: true, item: @item } }
       else
         format.html { render 'new' }
-        format.json { render json: {ok: false, errors: @item.errors.full_messages } }
+        format.json { render json: { ok: false, errors: @item.errors.full_messages } }
       end
     end
 

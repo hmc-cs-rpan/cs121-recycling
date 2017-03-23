@@ -1,5 +1,13 @@
 <script type="text/javascript">
   $(document).ready(function() {
+
+    bins = JSON.parse(
+      '<%= raw @city.bins.order(:name).map { |bin|
+        [bin.name, { id: bin.id, items: bin.items.order(:name).select(:name, :id) }]
+      }.to_h.to_json %>'
+    )
+
+    refresh_bins()
     display_all_items()
 
     $('.modal').on('shown.bs.modal', function() {
@@ -21,6 +29,12 @@
     $('#new-item-form').submit(function(e) {
       e.preventDefault()
       save_new_item()
+    })
+
+    // Handle new bin submission
+    $('#new-bin-form').submit(function(e) {
+      e.preventDefault()
+      save_new_bin()
     })
   })
 </script>
@@ -127,18 +141,23 @@
   </div> <!-- panel -->
 </div>
 
-<ul class="list-inline" style = "white-space: nowrap;">
-  <% @city.bins.each do |bin| %>
-    <li>
-      <%= render bin %>
-    </li>
-  <% end %>
-  <li>
-    <div class="panel panel-default" style = "<%= set_height %> <%= set_width %>">
-      <div class="panel-heading">
-        <h3 class="panel-title"> <%= "Add new bin"%> </h3>
+<ul id="bins" class="list-group">
+  <!-- Filled in dynamically -->
+
+  <li class="inline">
+    <!-- New bin -->
+    <form id="new-bin-form">
+      <div class="panel panel-default" style = "<%= set_height %> <%= set_width %>">
+        <div class="panel-heading">
+          <div class="form-group">
+            <input class="form-control" type="text" name="name" placeholder="Add a new bin"/>
+          </div>
+          <input type="hidden" name="city_id" value="<%= @city.id %>"/>
+        </div>
+        <div class="panel-body">
+          <button type="submit"><span class = "glyphicon glyphicon-plus"></span></button>
+        </div>
       </div>
-      <span class = "glyphicon glyphicon-plus"> </span>
-    </div>
+    </form>
   </li>
 </ul>
