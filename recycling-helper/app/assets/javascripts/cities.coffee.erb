@@ -88,14 +88,14 @@ Add a new item to the items picker based on the contents of #new-item-form
 ###
 @save_new_item = ->
   # Get the parameters from the form
-  data = {}
+  item = {}
   $.each $('#new-item-form').serializeArray(), (_, field) ->
-    data[field.name] = field.value
+    item[field.name] = field.value
 
-  if !data.name
+  if !item.name
     flash_error("Please enter a name for the item.", selector: '#new-item-errors')
     return
-  if !data.category_id
+  if !item.category_id
     flash_error("Please choose a category for the item.", selector: '#new-item-errors')
     return
 
@@ -105,8 +105,8 @@ Add a new item to the items picker based on the contents of #new-item-form
     dataType: 'json',
     data: {
       item: {
-        name: data.name,
-        category_id: data.category_id
+        name: item.name,
+        category_id: item.category_id
       }
     }
   }
@@ -115,13 +115,21 @@ Add a new item to the items picker based on the contents of #new-item-form
       # Close the dialog
       $('#new-item').modal('hide')
 
-      # Add the new item to the items picker (maintaining sorted order) and display it
-      index = _.sortedIndex(items_by_category[data.category_id], data, 'name')
-      items_by_category[data.category_id].splice index, 0, data
-      filter_by_category(data.category_id, force: true)
+      # Add the new item to the items picker (maintaining sorted order) and filter by its category
+      index = _.sortedIndex(items_by_category[item.category_id], item, 'name')
+      items_by_category[item.category_id].splice index, 0, item
+      filter_by_category(item.category_id, force: true)
+
+      # Scroll to the new item
+      first = $('#items li').first().position().top
+      elem = $("#items li[name=#{item.name}]").position().top
+      $('#items').scrollTop(elem - first);
+
+      # And select it
+      activate $("#items li[name=#{item.name}")
 
       # Let the user know we did it
-      flash_success("Item \"#{data.name}\" created")
+      flash_success("Item \"#{item.name}\" created")
     else
       res.errors.forEach (err) -> flash_error(err, selector: '#new-item-errors')
   .fail (xhr, status, msg) ->
@@ -167,9 +175,10 @@ append_items = (items) ->
 Helper function to create a button for each JS Item
 ###
 create_button = (name) ->
-  list_item = $(document.createElement('li'))
+  list_item = $('<li>')
+  list_item.attr('name', name)
   list_item.addClass 'list-group-item btn btn-default'
-  list_item.append $(document.createTextNode(name))
+  list_item.append name
 
   list_item.click ->
     toggle_active list_item
