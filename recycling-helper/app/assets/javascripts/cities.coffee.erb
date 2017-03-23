@@ -2,6 +2,41 @@ items_by_category = JSON.parse(
   '<%= raw Category.order(:name).map { |category| [category.id, category.items.order(:name)] }.to_h.to_json %>'
 )
 
+@init_smooth_scrolling = ->
+  # Smooth Scroll on clicking nav items
+  $('nav a').click ->
+    $href = $(this).attr('href')
+    $('body').stop().animate { scrollTop: $($href).offset().top }, 1000
+    false
+  # back to top
+  $('#toTop a').click ->
+    $('body').animate { scrollTop: 0 }, 1000
+    false
+  # Parallaxing + add class active on scroll
+  $(document).scroll ->
+    # parallaxing
+    $movebg = $(window).scrollTop() * -0.3
+    $('.portion').css 'background-positionY', $movebg + 'px'
+    # add class active to nav a on scroll
+    scrollPos = $(document).scrollTop() + 100
+    $('nav a').each ->
+      currLink = $(this)
+      refElement = $(currLink.attr('href'))
+      if refElement.position().top <= scrollPos and refElement.position().top + refElement.height() > scrollPos
+        $('nav a').removeClass 'active'
+        currLink.addClass 'active'
+      return
+    # changing padding of nav a on scroll
+    if scrollPos > 250
+      $('nav a').addClass 'small'
+      $('nav img').addClass 'move'
+      $('nav span').removeClass 'movetext'
+    else
+      $('nav a').removeClass 'small'
+      $('nav img').removeClass 'move'
+      $('nav span').addClass 'movetext'
+    return
+
 ###
 Display only items belonging to the given category in the items picker.
 ###
