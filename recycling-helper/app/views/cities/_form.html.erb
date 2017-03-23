@@ -1,11 +1,16 @@
 <script type="text/javascript">
   $(document).ready(function() {
 
+    // Initialize bins
     bins = JSON.parse(
-      '<%= raw @city.bins.order(:name).map { |bin|
-        { id: bin.id, name: bin.name, items: bin.items.order(:name).select(:name, :id) }
-      }.to_json %>'
+      '<%= raw @city.bins.order(:id).to_json %>'
     )
+
+    // Make sure each bin's items exist and are sorted
+    <% @city.bins.order(:id).each do |bin| %>
+      bin = _.find(bins, (b) => b.id == <%= bin.id %>)
+      bin.items = JSON.parse('<%= raw bin.items.order(:name).to_json %>')
+    <% end %>
 
     refresh_bins()
     display_all_items()
@@ -101,39 +106,33 @@
     <div class="row no-gutters">
       <div class="col-xs-6" style="padding-right: 0;">
 
-        <div class="scrollable-list">
-          <ul id="categories" class="list-group" style="<%= set_height %>">
-            <li id="all_categories" onclick="display_all_items()" class="list-group-item btn btn-default">
-              All Items
-            </li>
+        <ul id="categories" class="scrollable-list" style="<%= set_height %>">
+          <li id="all_categories" onclick="display_all_items()" class="list-group-item btn btn-default">
+            All Items
+          </li>
 
-            <% Category.all.each do |category| %>
-              <li id="category<%= category.id %>" onclick="filter_by_category(<%= category.id %>)" class="list-group-item btn btn-default">
-                <%= category.name %>
-              </li>
-            <% end %>
-          </ul>
-        </div>
+          <% Category.all.each do |category| %>
+            <li id="category<%= category.id %>" onclick="filter_by_category(<%= category.id %>)" class="list-group-item btn btn-default">
+              <%= category.name %>
+            </li>
+          <% end %>
+        </ul>
 
       </div> <!-- col -->
 
       <div class="col-xs-6" style="padding-left: 0;">
+        <ul id="items" class="scrollable-list" style="<%= set_height %>">
+          <!-- Filled in by JS -->
+        </ul>
 
-        <div class="scrollable-list" class="btn-group" data-toggle="buttons">
-          <ul id="items" class="list-group" style="<%= set_height %>">
-            <!-- Filled in by JS -->
-          </ul>
+        <div class="btn-group" >
+          <button type="button" class="btn btn-default" onclick="select_all(true)">Select All</button>
+          <button type="button" class="btn btn-default" onclick="select_all(false)">Unselect All</button>
+          <button type="button" class="btn btn-default" data-keyboard="true" data-toggle="modal" data-target="#new-item">
+            <span class = "glyphicon glyphicon-plus"> </span>
+            New item
+          </button>
         </div>
-
-      <div class="btn-group" >
-        <button type="button" class="btn btn-default" onclick="select_all(true)">Select All</button>
-        <button type="button" class="btn btn-default" onclick="select_all(false)">Unselect All</button>
-        <button type="button" class="btn btn-default" data-keyboard="true" data-toggle="modal" data-target="#new-item">
-          <span class = "glyphicon glyphicon-plus"> </span>
-          New item
-        </button>
-        <!-- TODO: "Add item" functionality -->
-      </div>
 
       </div> <!-- col -->
     </div> <!-- row -->
@@ -141,21 +140,21 @@
   </div> <!-- panel -->
 </div>
 
-<ul id="bins" class="list-group">
+<ul id="bins" class="bin-group">
   <!-- Filled in dynamically -->
 
-  <li class="inline">
+  <li class="bin-group-item">
     <!-- New bin -->
-    <form id="new-bin-form">
-      <div class="panel panel-default" style = "<%= set_height %> <%= set_width %>">
-        <div class="panel-heading">
-          <div class="form-group">
-            <input class="form-control" type="text" name="name" placeholder="Add a new bin"/>
-          </div>
-          <input type="hidden" name="city_id" value="<%= @city.id %>"/>
+    <form class="bin" id="new-bin-form">
+      <div class="heading">
+        <div class="form-group">
+          <input class="form-control" type="text" name="name" placeholder="Add a new bin"/>
         </div>
-        <div class="panel-body">
-          <button type="submit"><span class = "glyphicon glyphicon-plus"></span></button>
+        <input type="hidden" name="city_id" value="<%= @city.id %>"/>
+      </div>
+      <div class="body concentric">
+        <div class="clickable well inset" onclick="click_new_bin()">
+          <span class = "glyphicon glyphicon-plus"></span>
         </div>
       </div>
     </form>

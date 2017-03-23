@@ -14,6 +14,7 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "articles";
+@import "cities";
 
 .clickable {
   cursor: pointer;
@@ -29,21 +30,24 @@
   @extend .alert-danger;
 }
 
-.scrollable-list ul {
-    overflow-y: auto;
-    border-radius: 0px;
-}
+.scrollable-list {
+  @extend .list-group;
 
-.scrollable-list li {
-    border-radius: 0px;
-}
+  height: inherit;
+  overflow-y: auto;
+  border-radius: 0px;
 
-.scrollable-list .list-group-item:first-child {
+  li {
     border-radius: 0px;
-}
+  }
 
-.scrollable-list .list-group-item:last-child {
+  .list-group-item:first-child {
     border-radius: 0px;
+  }
+
+  .list-group-item:last-child {
+    border-radius: 0px;
+  }
 }
 
 .inline {
@@ -76,4 +80,21 @@ button.icon {
   background: transparent;
   border: 0;
   -webkit-appearance: none;
+}
+
+.concentric {
+  position: relative;
+
+  * {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    margin: auto;
+  }
+}
+
+.inset {
+  height: 95%;
+  width: 95%;
 }

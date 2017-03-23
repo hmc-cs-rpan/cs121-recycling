@@ -158,63 +158,24 @@ Render the data contained in bins
 ###
 @refresh_bins = ->
   last_bin = $("#bins li").last()
-  $("#bins li").not(last_bin).html("")
+  $("#bins li").not(last_bin).remove()
+  last_bin.detach()
 
   for bin in bins
-    panel = $("<div class=\"panel panel-default\">")
-    panel.width(300)
+    bin_li = $("<li class=\"bin-group-item\" name=\"#{bin.name}\">")
+    $("#bins").append bin_li
+    append_bin bin_li, bin
 
-    header = $('<div class="panel-heading">')
+  $("#bins").append last_bin
+  fit_to last_bin.find('.heading'), last_bin.find('input')
 
-    edit_btn = $("<button type=\"button\" class=\"icon\">")
-    edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
-    header.append edit_btn
-
-    header.append $("<span id=\"bin_#{bin.id}_title\">#{bin.name}</span>")
-
-    delete_btn = $("<button type=\"button\" class=\"close\">&times;</button>")
-    header.append delete_btn
-
-    # Bind onclick actions to the edit and delete buttons. We need to capture a different id in each
-    # iteration of the loop, so we bind the id in an anonymous function. Thank you Javascript.
-    (->
-      id = bin.id
-      name = bin.name
-
-      edit_btn.click ->
-        title = $("#bin_#{id}_title")
-        title.html("")
-
-        form = $("<form class=\"inline\">")
-        form.width('80%')
-        input = $("<input type=\"text\" placeholder=\"Name\" class=\"form-control\" autofocus>")
-        input.val(name)
-        form.append input
-        form.submit (e) ->
-          e.preventDefault()
-          rename_bin(id, input.val())
-
-        title.append form
-
-      delete_btn.click ->
-        delete_bin(id)
-    )()
-
-    body = $('<div class="panel-body scrollable-list">')
-    body.height(300)
-    list = $('<ul class="list-group">')
-    list.height('100%')
-    for item in bin.items
-      list.append create_button item.name
-    body.append list
-
-    panel.append header
-    panel.append body
-
-    bin_li = $("<li class=\"inline\" name=\"#{bin.name}\">")
-    bin_li.append panel
-
-    bin_li.insertBefore(last_bin)
+@click_new_bin = ->
+  form = $("#new-bin-form")
+  input = form.find('input')
+  if input.val()
+    form.submit()
+  else
+    input.focus()
 
 ###
 Delete the specified bin from the database and the DOM.
@@ -236,9 +197,6 @@ delete_bin = (id) ->
 Set the name of the bin with the given id.
 ###
 rename_bin = (id, new_name) ->
-  if !new_name
-    flash_error 'Please enter a name for the bin.'
-    return
 
   bin = _.find bins, (bin) -> bin.id == id
   unless bin?
@@ -246,7 +204,12 @@ rename_bin = (id, new_name) ->
     return
 
   # Save old name so we can rollback if the transaction fails
-  [old_name, bin.name] = [bin.name, new_name]
+  old_name = bin.name
+  if !new_name || new_name == old_name
+    # Nothing to do, just close the form
+    refresh_bins()
+    return
+  bin.name = new_name
 
   get_json "/bins/#{id}", method: 'PATCH', data: { bin: bin }
     .on_success ->
@@ -255,6 +218,57 @@ rename_bin = (id, new_name) ->
     .on_error flash_error
     .on_errors ->
       bin.name = old_name
+
+###
+Create a DOM structure representing a bin and append it to parent.
+###
+append_bin = (parent, bin) ->
+  panel = $("<div class=\"bin\">")
+  parent.append panel
+  append_bin_header panel, bin
+  append_bin_body panel, bin
+
+###
+Create and a DOM structure representing a given bin and append it to parent. The structure includes
+the name of the bin, a button to edit the name, and a button to delete the bin.
+###
+append_bin_header = (parent, bin) ->
+  title = $("<h3 class=\"title inline\">#{bin.name}</h3>")
+
+  form = $("<form class=\"inline\">")
+  input = $("<input type=\"text\" placeholder=\"#{bin.name}\" class=\"form-control\">")
+  input.blur -> form.submit() # Submit form on focus out
+  form.append input
+  form.submit (e) ->
+    e.preventDefault()
+    rename_bin bin.id, input.val()
+
+  edit_btn = $("<button type=\"button\" class=\"icon\">")
+  edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
+  edit_btn.click ->
+    title.html("").append(form)
+    input.focus()
+
+  delete_btn = $("<button type=\"button\" class=\"close\">&times;</button>")
+  delete_btn.click ->
+    delete_bin(bin.id)
+
+  heading = $('<div class="heading">').append edit_btn, title, delete_btn
+
+  parent.append heading
+
+  # Make the heading large enough to fit the form
+  fit_to heading, form
+
+###
+Create a DOM structure representing the items in a given bin and append it to parent.
+###
+append_bin_body = (parent, bin) ->
+  list = $('<ul class="body scrollable-list">')
+  for item in bin.items
+    list.append create_button item.name
+
+  parent.append list
 
 is_active = (elem) ->
   elem.hasClass 'active'
@@ -312,3 +326,39 @@ form_to_json = (form) ->
   $.each form.serializeArray(), (_, field) ->
     data[field.name] = field.value
   return data
+
+###
+Set the height of the first element to the outer height of the second.
+###
+fit_to = (parent, child) ->
+  parent.height outer_height_of(child)
+
+###
+Get the height of an element which may or may not be in the DOM.
+###
+height_of = (elem) ->
+  hypothetical_element elem, (e) -> e.height()
+
+###
+Get the height of an element (which may or may not be in the DOM) and its padding.
+###
+outer_height_of = (elem) ->
+  hypothetical_element elem, (e) -> e.outerHeight()
+
+###
+Perform an operation on an element which may or may not be in the DOM, as if it were. For example,
+this can be used to read what the height of an element is going to be before adding it to the DOM.
+###
+hypothetical_element = (elem, cont) ->
+  if $.contains(document, elem)
+    return cont elem
+  else
+    hyp = elem.clone()
+    hyp.css 'visibility', 'hidden'
+
+    # Add the (hidden) element to the DOM, do something, then remove it
+    $(document.body).append hyp
+    res = cont hyp
+    hyp.remove()
+
+    return res

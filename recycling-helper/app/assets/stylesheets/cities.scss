@@ -1,6 +1,8 @@
 // Place all the styles related to the Cities controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+@import "bootstrap-sprockets";
+@import "bootstrap";
 
 body {
   padding-top: 100px;
@@ -11,7 +13,6 @@ body {
 
 b {
   margin-right:50px;
-
 }
 
 
@@ -27,11 +28,6 @@ b {
   list-style-type: none;
   display: grid;
   height: 100%;
-
-  
-
-
-  
 }
 
 
@@ -53,9 +49,6 @@ b {
 
 }
 
-
-
-
 header nav{
   text-align: center;
   background: #000;
@@ -69,7 +62,7 @@ header nav{
   margin-left: auto;
   margin-right: auto;
   right: 0%;
-  
+
 }
 
 
@@ -96,17 +89,16 @@ header nav a:hover {
 }
 
 .portion {
-  
   background-position: center ;
   text-align: center;
   background-attachment: fixed;
   background-size: cover;
- 
+
 }
 
 
 .portion.Metal {
-  
+
   background-image: url('https://aos.iacpublishinglabs.com/question/aq/700px-394px/make-homemade-aluminum-polish_547f3f63c57fa8d9.jpg?domain=cx.aos.ask.com');
 
 }
@@ -204,4 +196,35 @@ nav span {
   top: -40px;
   color: #000;
   font-size: 1.5em;
+}
+
+ul.bin-group {
+  width: 100%;
+  float: left;
+
+  li.bin-group-item {
+    display: inline-block;
+    width: 25%; // 4 bins per row
+    float: left;
+
+    .bin {
+      @extend .panel, .panel-default;
+
+      h3.title {
+        @extend .panel-title;
+      }
+
+      .heading {
+        @extend .panel-heading;
+      }
+
+      .body {
+        @extend .panel-body;
+
+        width: inherit;
+        height: 300px;
+        padding: 0px;
+      }
+    }
+  }
 }
