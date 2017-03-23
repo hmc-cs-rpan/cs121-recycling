@@ -1,0 +1,47 @@
+# This is a manifest file that'll be compiled into application.js, which will include all the files
+# listed below.
+#
+# Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+# or any plugin's vendor/assets/javascripts directory can be referenced here using a relative path.
+#
+# It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+# compiled file. JavaScript code in this file should be added after the last require_* statement.
+#
+# Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
+# about supported directives.
+#
+#= require jquery
+#= require jquery_ujs
+#= require underscore
+#= require turbolinks
+#= require bootstrap-sprockets
+#= require ckeditor/init
+#= require ckeditor-autogrow
+#= require_tree .
+
+###
+Display a notification to the user, as if it were rendered by the server with flash.
+type: the type of notification. Can be "info", "success", "warning", or "danger". Default is "info".
+dismissible: whether the notification can be closed by the user. Default is true.
+selector: JQuery selector indicating the DOM element that should contain the message. Default is the
+    global flash notification section of the application layout.
+###
+@flash = (msg, {type, dismissible, selector} = {}) ->
+    type ?= 'notify'
+    dismissible ?= true
+    selector ?= '#flash'
+
+    error = $('<div>')
+    error.addClass "alert alert-#{type}"
+    if dismissible
+        error.addClass "alert-dismissible"
+        error.append $('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+    error.append msg
+
+    $(selector).append $(error)
+
+@flash_error = (msg, {dismissible, selector} = {}) ->
+    flash msg, type: 'danger', dismissible: dismissible, selector: selector
+
+@flash_success = (msg, {dismissible, selector} = {}) ->
+    flash msg, type: 'success', dismissible: dismissible, selector: selector
