@@ -1,14 +1,6 @@
 # Include routes helpers
 <% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
 
-all_items = JSON.parse('<%= raw Item.order(:name).select(:name).to_json %>')
-
-items_by_category = JSON.parse(
-  '<%= raw Category.order(:name).map { |category|
-    [category.id, category.items.order(:name).select(:name, :id)]
-  }.to_h.to_json %>'
-)
-
 @init_smooth_scrolling = ->
   # Smooth Scroll on clicking nav items
   $('nav a').click ->
@@ -71,7 +63,7 @@ Display all items from all categories in the items picker.
     # We're already displaying all items
     return
   clear_items()
-  append_items all_items
+  append_items all_items()
   activate btn
   return
 
@@ -362,3 +354,6 @@ hypothetical_element = (elem, cont) ->
     hyp.remove()
 
     return res
+
+all_items = ->
+  _.sortBy (_.flatten Object.values(items_by_category), true), 'name'

@@ -1,9 +1,14 @@
 <script type="text/javascript">
   $(document).ready(function() {
 
-    // Initialize bins
+    // Initialize the state of the world
     bins = JSON.parse(
       '<%= raw @city.bins.order(:id).to_json %>'
+    )
+    items_by_category = JSON.parse(
+      '<%= raw Category.order(:name).map { |category|
+        [category.id, category.items.order(:name).select(:name, :id)]
+      }.to_h.to_json %>'
     )
 
     // Make sure each bin's items exist and are sorted
