@@ -218,6 +218,8 @@ Create and a DOM structure representing a given bin and append it to parent. The
 the name of the bin, a button to edit the name, and a button to delete the bin.
 ###
 append_bin_header = (parent, bin) ->
+  header = $('<div class="heading">')
+
   title = $("<h3 class=\"title inline\">#{bin.name}</h3>")
 
   form = $("<form class=\"inline\">")
@@ -231,19 +233,18 @@ append_bin_header = (parent, bin) ->
   edit_btn = $("<button type=\"button\" class=\"icon\">")
   edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
   edit_btn.click ->
-    title.html("").append(form)
+    header.empty().append(form)
     input.focus()
 
   delete_btn = $("<button type=\"button\" class=\"close\">&times;</button>")
   delete_btn.click ->
     delete_bin(bin.id)
 
-  heading = $('<div class="heading">').append edit_btn, title, delete_btn
+  header.append edit_btn, title, delete_btn
+  parent.append header
 
-  parent.append heading
-
-  # Make the heading large enough to fit the form
-  fit_to heading, form
+  # Make the header large enough to fit the form
+  fit_to header, form
 
 ###
 Create a DOM structure representing the items in a given bin and append it to parent.

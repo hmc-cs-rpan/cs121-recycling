@@ -199,13 +199,10 @@ nav span {
 }
 
 ul.bin-group {
-  width: 100%;
-  float: left;
 
   li.bin-group-item {
-    display: inline-block;
-    width: 25%; // 4 bins per row
-    float: left;
+    display: inline-table;
+    width: 250px;
 
     .bin {
       @extend .panel, .panel-default;
