@@ -3,12 +3,9 @@
   <%= javascript_include_tag "application", "cities", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
 
-<<<<<<< HEAD
 
 
 
-=======
->>>>>>> 4e6a8af8f14ed99e625f73c9341f1c57ce0d9f22
 <header>
   <nav>
     <img class="" id ="logo" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
@@ -20,6 +17,7 @@
 	<% end %>
   </nav>
 </header>
+
 
 <% @categories.each do |category| %>
 	<% myId = category.name.downcase %>
@@ -57,9 +55,7 @@
 	</div>
 <% end %>
 
-<div id="paper" class="portion Paper">
-  <h2>Paper</h2>
-</div>
+
 
 
 <footer class="info">
