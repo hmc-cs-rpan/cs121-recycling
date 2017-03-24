@@ -47,7 +47,7 @@
 			<!-- Print each item with its bin information -->
 			<% ordered.each do |obj| %>
 				<% description = obj[0].name + ': ' + obj[1].name.capitalize + " bin" -%> 
-				<li class = "box" onclick="myFunction()"><%= description %></li>
+				<li class="box" onclick="myFunction()"><%= description %></li>
 			<% end %>
 			
 		<% else %>
