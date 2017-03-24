@@ -8,7 +8,6 @@
     <tr>
       <th  width="40%">Name</th>
       <th width="30%">State</th>
-      <th width="50%">Zip</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -19,7 +18,6 @@
 	<tr>
         <td ><%= link_to city.name, city_path(city) %> </td>
         <td><%= city.state %></td>
-        <td><%= city.zip %></td>
     </tr>
 
 
@@ -35,5 +33,3 @@
 
 
 <br>
-
-Don't see your city? Add a <%= link_to 'New City', new_city_path %>.

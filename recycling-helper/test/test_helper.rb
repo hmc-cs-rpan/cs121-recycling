@@ -12,7 +12,7 @@ class ActiveSupport::TestCase
   #   valid_#{properties}, which returns an array of all provided values
   def self.valid(property, *values)
     define_method('valid_' + property.to_s) do
-      values.first
+      values.flatten.first
     end
     define_method('valid_' + property.to_s.pluralize(2)) do
       values.flatten
@@ -25,7 +25,7 @@ class ActiveSupport::TestCase
   #   invalid_#{properties}, which returns an array of all provided values
   def self.invalid(property, *values)
     define_method('invalid_' + property.to_s) do
-      values.first
+      values.flatten.first
     end
     define_method('invalid_' + property.to_s.pluralize(2)) do
       values.flatten
@@ -51,6 +51,11 @@ class ActiveSupport::TestCase
     end
   end
 
+  # Declare that the given property is a reference to another model (i.e. a foreign key).
+  def self.refer_property(property, to:)
+    valid property, to.all
+  end
+
   valid :url,
     'http://example.com', 'http://www.example.com', 'http://www.example.edu', 'http://example.org'
   invalid :url, 'www.example.com', 'example.com', 'justplainwrong'
@@ -60,6 +65,9 @@ class ActiveSupport::TestCase
 
   valid :zip, '28717', '20817-1411'
   invalid :zip, '2871', '287178', '208171411', '20817-141', '20814-14111'
+
+  valid :location, 'NA-US-CA-CLAREMONT'
+  define_property :location_id, as: :location
 
   # Run a block with various combinations of valid and invalid properties. Usage:
   #    with_properties valid: :p1, invalid: [:p2, :p3], fixed_property: 'Value' do |props|

@@ -14,35 +14,12 @@ class CitiesController < ApplicationController
     @categories = Category.all
   end
 
-  # GET /cities/new
-  def new
-    @city = City.new
-    @states = Geography::STATES
-  end
-
   # GET /cities/1/edit
   def edit
   end
 
   def itemLookupResult
     render
-  end
-
-  # POST /cities
-  # POST /cities.json
-  def create
-    @city = City.create(city_params)
-    if @city.invalid?
-      flash[:error] = @city.errors.full_messages
-      render 'new'
-    else
-      bin = @city.add_bin! 'recycling'
-      if params[:item_ids] && !params[:item_ids].empty?
-        bin.items += Item.find(params[:item_ids])
-      end
-      flash[:success] = "#{@city.name}, #{@city.state} successfully created!"
-      redirect_to @city
-    end
   end
 
   # PATCH/PUT /cities/1
@@ -77,7 +54,7 @@ class CitiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def city_params
-      params.require(:city).permit(:name, :state, :zip)
+      params.require(:city).permit(:name, :state)
     end
 
 

@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   resources :categories
   resources :items
   resources :bins
-  resources :cities
+  resources :cities, except: [:new, :create]
 
   get 'bins/new'
 
