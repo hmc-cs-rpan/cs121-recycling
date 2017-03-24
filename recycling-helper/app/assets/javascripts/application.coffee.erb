@@ -25,11 +25,14 @@ type: the type of notification. Can be "info", "success", "warning", or "danger"
 dismissible: whether the notification can be closed by the user. Default is true.
 selector: JQuery selector indicating the DOM element that should contain the message. Default is the
     global flash notification section of the application layout.
+timeout: duration in milliseconds after which the notification should fade away. If set to a
+    negative value, the notification will not disappear until the user dismisses it. Default is 5000.
 ###
-@flash = (msg, {type, dismissible, selector} = {}) ->
+@flash = (msg, {type, dismissible, selector, timeout} = {}) ->
     type ?= 'notify'
     dismissible ?= true
     selector ?= '#flash'
+    timeout ?= 5000
 
     error = $('<div>')
     error.addClass "alert alert-#{type}"
@@ -38,13 +41,26 @@ selector: JQuery selector indicating the DOM element that should contain the mes
         error.append $('<button type="button" class="close" data-dismiss="alert">&times;</button>')
     error.append msg
 
+    if timeout >= 0
+        setTimeout (-> error.fadeOut { complete: -> error.remove() }), timeout
+
     $(selector).append $(error)
 
-@flash_error = (msg, {dismissible, selector} = {}) ->
-    flash msg, type: 'danger', dismissible: dismissible, selector: selector
+###
+Convenience function for displaying error messages to the user. Accepts the same arguments as flash
+(with the exception of type, which is automatically set to 'danger').
+###
+@flash_error = (msg, {dismissible, selector, timeout} = {}) ->
+    flash msg, type: 'danger', dismissible: dismissible, selector: selector, timeout: timeout
 
-@flash_success = (msg, {dismissible, selector} = {}) ->
-    flash msg, type: 'success', dismissible: dismissible, selector: selector
+###
+Convenience function for success messages (type = 'success'). Use this function sparingly, as flash
+messages quickly become overwhelming if they are displayed after every successful action. Where
+possible, provide feedback to the user via a more direct result of their action, and use flash only
+for errors.
+###
+@flash_success = (msg, {dismissible, selector, timeout} = {}) ->
+    flash msg, type: 'success', dismissible: dismissible, selector: selector, timeout: timeout
 
 ###
 Get a JSON object from a REST API call. The endpoint specified by URL must support JSON requests

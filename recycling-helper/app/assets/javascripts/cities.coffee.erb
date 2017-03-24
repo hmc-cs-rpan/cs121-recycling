@@ -106,9 +106,6 @@ Add a new item to the items picker based on the contents of #new-item-form
 
       # And select it
       activate $("#items li[name=\"#{item.name}\"]")
-
-      # Let the user know we did it
-      flash_success("Item \"#{item.name}\" created")
     .on_error (err) ->
         flash_error(err, selector: '#new-item-errors')
 
@@ -131,7 +128,6 @@ Add a new bin to the city based on the contents of #new-bin-form
       $('#new-bin-form [name=name]').val('')
 
       refresh_bins()
-      flash_success("Bin \"#{bin.name}\" created.")
     .on_error flash_error
 
 ###
@@ -181,8 +177,6 @@ delete_bin = (id) ->
       else
         bins.splice index, 1
       refresh_bins()
-
-      flash_success 'Bin deleted'
     .on_error flash_error
 
 ###
@@ -206,7 +200,6 @@ rename_bin = (id, new_name) ->
   get_json "/bins/#{id}", method: 'PATCH', data: { bin: bin }
     .on_success ->
       refresh_bins()
-      flash_success "Renamed bin."
     .on_error flash_error
     .on_errors ->
       bin.name = old_name
