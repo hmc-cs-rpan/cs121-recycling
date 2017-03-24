@@ -109,11 +109,11 @@ Add a new item to the items picker based on the contents of #new-item-form
 
       # Scroll to the new item
       first = $('#items li').first().position().top
-      elem = $("#items li[name=#{item.name}]").position().top
+      elem = $("#items li[name=\"#{item.name}\"]").position().top
       $('#items').scrollTop(elem - first);
 
       # And select it
-      activate $("#items li[name=#{item.name}")
+      activate $("#items li[name=\"#{item.name}\"]")
 
       # Let the user know we did it
       flash_success("Item \"#{item.name}\" created")
