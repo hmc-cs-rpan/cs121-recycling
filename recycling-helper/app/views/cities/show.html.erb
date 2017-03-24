@@ -3,21 +3,23 @@
   <%= javascript_include_tag "application", "cities", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 4e6a8af8f14ed99e625f73c9341f1c57ce0d9f22
 <header>
   <nav>
     <img class="" id ="logo" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
     <b><%= @city.name %>, <%= @city.state %></b>
 
-	<% @city.categories.each do |category| %>
+	<% @categories.each do |category| %>
 		<% link = "#" + category.name.downcase %>
 		<a href= "<%=link%>" ><%= category.name %></a>
 	<% end %>
   </nav>
 </header>
-
 
 <% @categories.each do |category| %>
 	<% myId = category.name.downcase %>
@@ -28,17 +30,28 @@
 	</div>
 
 	<div class="info">
-		Need to add a few query statements
-		<% mycategory = @city.categories.find(category) %>
-		<% if mycategory.present? %>
-			<% ordered = mycategory.items.sort_by{|item| item.name} %>
-			<% ordered.each do |item| %>
-				<% bin = item.bins.where(city: @city).first %>
-				<% description = item.name + ': ' + bin.name.capitalize + " bin" %>
+		<!-- Only print items if there are items of the particular category in the city -->
+		<% if @city.categories.include? category %>
+			<% allitems = [] %>
+
+			<!-- Find all the items within a particular category and save their bin.
+			Order alphabetically -->
+			<% @city.bins.each do |bin| %>
+				<% items = bin.items.where(category: category) %>
+				<% items.each do |item| %>
+					<% allitems.concat [[item, bin]] %>
+				<% end %>
+			<% end %>
+			<% ordered = allitems.sort_by{|obj| obj[0].name} %>
+
+			<!-- Print each item with its bin information -->
+			<% ordered.each do |obj| %>
+				<% description = obj[0].name + ': ' + obj[1].name.capitalize + " bin" -%> 
 				<li class = "box" onclick="myFunction()"><%= description %></li>
 			<% end %>
+			
 		<% else %>
-			<%= "Sorry, there is no info about the " + mycategory.name + " items in this city. Suggest a change!" %>
+			<%= "Sorry, there is no info about the " + category.name + " items in this city. Suggest a change!" %>
 		<% end %>
 
 	</div>
@@ -47,25 +60,6 @@
 <div id="paper" class="portion Paper">
   <h2>Paper</h2>
 </div>
-
-<div class="info">
-<% @city.bins.each do |bin| %>
-	<% category = 'Paper' %>
-	<% ordered = bin.items.select { |item| item.category.name == category }.sort_by{|item| item.name} %>
-	<% if ordered.empty? %>
-		<%= "Sorry, there is no info about the " + category + " items in this city." %>
-		<%= "Suggest a change!" %>
-	<% else %>
-	<ol>
-		<% ordered.each do |item| %>
-			<% description = item.name + ": " + bin.name.capitalize + " bin" %>
-			<li class = "box" onclick="myFunction()"><%= description %></li>
-		<% end %>
-	</ol>
-	<% end %>
-<% end %>
-</div>
-
 
 
 <footer class="info">

@@ -11,6 +11,11 @@ class CategoriesController < ApplicationController
   # GET /categories/1
   # GET /categories/1.json
   def show
+    begin
+      @category = Category.find(params[:id])
+    rescue ActiveRecord::RecordNotFound  
+      return
+    end
   end
 
   # GET /categories/new
