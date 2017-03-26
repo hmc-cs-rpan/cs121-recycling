@@ -28,10 +28,10 @@ class CitiesController < ApplicationController
     respond_to do |format|
       if @city.update(city_params)
         format.html { redirect_to @city, notice: 'City was successfully updated.' }
-        format.json { render :show, status: :ok, location: @city }
+        format.json { render json: { ok: true, city: @city } }
       else
         format.html { render :edit }
-        format.json { render json: @city.errors, status: :unprocessable_entity }
+        format.json { render json: { ok: false, errors: @city.errors.full_messages } }
       end
     end
   end
@@ -54,7 +54,7 @@ class CitiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def city_params
-      params.require(:city).permit(:name, :state)
+      params.require(:city).permit(:name, :state, :website_url)
     end
 
 

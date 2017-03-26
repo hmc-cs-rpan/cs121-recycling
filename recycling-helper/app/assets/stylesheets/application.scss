@@ -58,7 +58,6 @@
  * The .icon class is similar to Bootstrap's .close, but without the right-align
  */
 .icon {
-  float: left;
   font-size: 21px;
   font-weight: bold;
   line-height: 1;
@@ -80,6 +79,10 @@ button.icon {
   background: transparent;
   border: 0;
   -webkit-appearance: none;
+}
+
+.left-align {
+  float: left;
 }
 
 .concentric {

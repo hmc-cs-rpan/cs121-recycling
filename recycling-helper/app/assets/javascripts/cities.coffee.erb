@@ -165,6 +165,41 @@ Render the data contained in bins
   else
     input.focus()
 
+@show_url = (city_id, url) ->
+  $("#url").empty()
+
+  edit_btn = $("<button type=\"button\" class=\"icon inline\">")
+  edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
+  edit_btn.click -> show_url_form city_id, url
+
+  $("#url").append edit_btn, " ", $("<a href=\"#{url}\">#{remove_http url}</a>")
+
+@show_url_form = (city_id, url = "") ->
+  $("#url").empty()
+
+  form = $("<form>")
+  prompt = $("<div class=\"input-group\">").append $("<span class=\"input-group-addon\">http://</span>")
+  input = $("<input type=\"text\" class=\"form-control\" value=\"#{remove_http url}\" placeholder=\"Add a link to your website\">")
+  input.blur -> form.submit()
+  prompt.append input
+  form.append prompt
+
+  form.submit (e) ->
+    e.preventDefault()
+
+    url = input.val()
+    if url
+      url = 'http://' + url
+
+    get_json "/cities/#{city_id}", method: 'PATCH', data: { city: {website_url: url} }
+      .on_error flash_error
+      .on_success ->
+        if url
+          show_url city_id, url
+
+  $("#url").append form
+  input.focus()
+
 ###
 Delete the specified bin from the database and the DOM.
 ###
@@ -230,7 +265,7 @@ append_bin_header = (parent, bin) ->
     e.preventDefault()
     rename_bin bin.id, input.val()
 
-  edit_btn = $("<button type=\"button\" class=\"icon\">")
+  edit_btn = $("<button type=\"button\" class=\"icon left-align\">")
   edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
   edit_btn.click ->
     header.empty().append(form)
@@ -351,3 +386,5 @@ hypothetical_element = (elem, cont) ->
 
 all_items = ->
   _.sortBy (_.flatten Object.values(items_by_category), true), 'name'
+
+remove_http = (url) -> url.replace /^http:\/\//, ""

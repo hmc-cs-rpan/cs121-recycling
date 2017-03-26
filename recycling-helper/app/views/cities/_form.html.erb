@@ -20,6 +20,12 @@
     refresh_bins()
     display_all_items()
 
+    <% if @city.website_url.blank? %>
+      show_url_form(<%= @city.id %>)
+    <% else %>
+      show_url(<%= @city.id %>, '<%= @city.website_url %>')
+    <% end %>
+
     $('.modal').on('shown.bs.modal', function() {
       // Autofocus input when popup is shown
       $(this).find('[autofocus]').focus();
@@ -48,6 +54,12 @@
     })
   })
 </script>
+
+<h1><%= @city.name %>, <%= @city.state %></h1>
+
+<div id="url"></div>
+
+<hr>
 
 <!-- New item popup -->
 <div class="modal fade" id="new-item" tabindex="-1">
