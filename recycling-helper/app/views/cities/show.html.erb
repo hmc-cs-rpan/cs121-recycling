@@ -18,44 +18,45 @@
   </nav>
 </header>
 
+<body>
 
-<% @categories.each do |category| %>
-	<% myId = category.name.downcase %>
-	<% myClass = "portion " + category.name %>
+	<% @categories.each do |category| %>
+		<% myId = category.name.downcase %>
+		<% myClass = "portion " + category.name %>
 
-	<div id="<%=myId%>" class="<%=myClass%>">
-		<h2><%=category.name%></h2>
-	</div>
+		<div id="<%=myId%>" class="<%=myClass%>">
+			<h2><%=category.name%></h2>
+		</div>
 
-	<div class="info">
-		<!-- Only print items if there are items of the particular category in the city -->
-		<% if @city.categories.include? category %>
-			<% allitems = [] %>
+		<div class="info" >
+			<!-- Only print items if there are items of the particular category in the city -->
+			<% if @city.categories.include? category %>
+				<% allitems = [] %>
 
-			<!-- Find all the items within a particular category and save their bin.
-			Order alphabetically -->
-			<% @city.bins.each do |bin| %>
-				<% items = bin.items.where(category: category) %>
-				<% items.each do |item| %>
-					<% allitems.concat [[item, bin]] %>
+				<!-- Find all the items within a particular category and save their bin.
+				Order alphabetically -->
+				<% @city.bins.each do |bin| %>
+					<% items = bin.items.where(category: category) %>
+					<% items.each do |item| %>
+						<% allitems.concat [[item, bin]] %>
+					<% end %>
 				<% end %>
-			<% end %>
-			<% ordered = allitems.sort_by{|obj| obj[0].name} %>
+				<% ordered = allitems.sort_by{|obj| obj[0].name} %>
 
-			<!-- Print each item with its bin information -->
-			<% ordered.each do |obj| %>
-				<% description = obj[0].name + ': ' + obj[1].name.capitalize + " bin" -%> 
-				<li class="box" onclick="myFunction()"><%= description %></li>
-			<% end %>
+				<!-- Print each item with its bin information -->
+				<% ordered.each do |obj| %>
+					<% description = obj[0].name + ': ' + obj[1].name.capitalize + " bin" %> 
+					<li class="box" onclick="myFunction()" ><%= description %></li>
+				<% end %>
 			
-		<% else %>
-			<%= "Sorry, there is no info about the " + category.name + " items in this city. Suggest a change!" %>
-		<% end %>
+			<% else %>
+				<%= "Sorry, there is no info about the " + category.name + " items in this city. Suggest a change!" %>
+			<% end %>
 
-	</div>
-<% end %>
+		</div>
+	<% end %>
 
-
+</body>
 
 
 <footer class="info">

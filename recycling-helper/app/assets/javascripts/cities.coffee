@@ -6,7 +6,7 @@
 # Smooth Scroll on clicking nav items
 $('nav a').click ->
   $href = $(this).attr('href')
-  $('body').stop().animate { scrollTop: $($href).offset().top }, 1000
+  $('body').stop().animate { scrollTop: $($href).offset().top-100 }, 1000
   false
 # back to top
 $('#toTop a').click ->
