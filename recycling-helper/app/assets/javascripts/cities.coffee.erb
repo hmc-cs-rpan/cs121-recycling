@@ -1,6 +1,14 @@
 # Include routes helpers
 <% environment.context_class.instance_eval { include Rails.application.routes.url_helpers } %>
 
+all_items = JSON.parse('<%= raw Item.order(:name).to_json %>')
+
+items_by_category = JSON.parse(
+  '<%= raw Category.order(:name).map { |category|
+    [category.id, category.items.order(:name)]
+  }.to_h.to_json %>'
+)
+
 @init_smooth_scrolling = ->
   # Smooth Scroll on clicking nav items
   $('nav a').click ->
@@ -76,6 +84,27 @@ Set or unset (based on value of select) active class on all the Items within a c
       toggle_active $(this)
 
 ###
+Add items to the appropriate bins
+###
+@add_to_bin = (bin) ->
+  cat = active_category()
+  items = all_items
+  if cat
+    items = items_by_category[cat]
+  for item in items
+    if is_active($("#item#{item.id}"))
+      deactivate($("#item#{item.id}"))
+      bin.items.push item
+  refresh_bins()
+
+###
+Remove selected items
+###
+@remove_items = (bin) ->
+  bin.items = _.filter(bin.items, (item) -> !is_active($("#item_in_bin#{item.id}")))
+  refresh_bins()
+
+###
 Add a new item to the items picker based on the contents of #new-item-form
 ###
 @save_new_item = ->
@@ -147,15 +176,24 @@ Render the data contained in bins
 @refresh_bins = ->
   last_bin = $("#bins li").last()
   $("#bins li").not(last_bin).remove()
+  $("#drop1").empty()
   last_bin.detach()
 
   for bin in bins
     bin_li = $("<li class=\"bin-group-item\" name=\"#{bin.name}\">")
     $("#bins").append bin_li
     append_bin bin_li, bin
+    append_bin_dropdown($("#drop1") , bin) 
 
   $("#bins").append last_bin
   fit_to last_bin.find('.heading'), last_bin.find('input')
+  fit_to last_bin.find('.footer'), last_bin.find('input')
+
+append_bin_dropdown = (parent, bin) ->
+  button = $("<button class=\"dropdown-item\">")
+  button.append bin.name
+  button.click -> add_to_bin(bin)
+  parent.append button
 
 @click_new_bin = ->
   form = $("#new-bin-form")
@@ -247,6 +285,7 @@ append_bin = (parent, bin) ->
   parent.append panel
   append_bin_header panel, bin
   append_bin_body panel, bin
+  append_bin_footer panel, bin
 
 ###
 Create and a DOM structure representing a given bin and append it to parent. The structure includes
@@ -287,12 +326,23 @@ Create a DOM structure representing the items in a given bin and append it to pa
 append_bin_body = (parent, bin) ->
   list = $('<ul class="body scrollable-list">')
   for item in bin.items
-    list.append create_button item.name
+    btn = create_button(item)
+    btn.attr('id', "item_in_bin#{item.id}")
+    list.append btn
 
   parent.append list
 
 is_active = (elem) ->
   elem.hasClass 'active'
+
+append_bin_footer = (parent, bin) ->
+  panel = $("<div class = \"footer\">")
+  remove_btn = $("<button type=\"button\" class=\"btn btn-default\">")
+  remove_btn.append $("<span class=\"glyphicon glyphicon-remove\">")
+  remove_btn.append " Remove selected"
+  remove_btn.click -> remove_items(bin)
+  panel.append remove_btn
+  parent.append panel
 
 ###
 Remove all items from the items picker.
@@ -314,16 +364,18 @@ Add the given items to the items picker.
 ###
 append_items = (items) ->
   items.forEach (item) ->
-    $('#items').append create_button(item.name)
+    btn = create_button(item)
+    btn.attr('id', "item#{item.id}")
+    $('#items').append btn
 
 ###
 Helper function to create a button for each JS Item
 ###
-create_button = (name) ->
+create_button = (item) ->
   list_item = $('<li>')
-  list_item.attr('name', name)
+  list_item.attr('name', item.name)
   list_item.addClass 'list-group-item btn btn-default'
-  list_item.append name
+  list_item.append item.name
 
   list_item.click ->
     toggle_active list_item

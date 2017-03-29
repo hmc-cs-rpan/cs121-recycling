@@ -52,7 +52,9 @@
       e.preventDefault()
       save_new_bin()
     })
+
   })
+
 </script>
 
 <h1><%= @city.name %>, <%= @city.state %></h1>
@@ -145,12 +147,17 @@
         <div class="btn-group" >
           <button type="button" class="btn btn-default" onclick="select_all(true)">Select All</button>
           <button type="button" class="btn btn-default" onclick="select_all(false)">Unselect All</button>
-          <button type="button" class="btn btn-default" data-keyboard="true" data-toggle="modal" data-target="#new-item">
+          <button type="button" class="btn btn-default" data-keyboard="true"data-toggle="modal" data-target="#new-item">
             <span class = "glyphicon glyphicon-plus"> </span>
             New item
           </button>
         </div>
 
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add to bin</span> <span class="caret"></span></button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="drop1">
+          </div>
+        </div>
       </div> <!-- col -->
     </div> <!-- row -->
 
@@ -173,6 +180,8 @@
         <div class="clickable well inset" onclick="click_new_bin()">
           <span class = "glyphicon glyphicon-plus"></span>
         </div>
+      </div>
+      <div class="footer">
       </div>
     </form>
   </li>
