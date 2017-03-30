@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class BinTest < ActiveSupport::TestCase
-  require_properties_for Bin, :name, :city, :color
+  properties_for Bin, required: [:name, :city, :color]
 
   test "can get city" do
     assert_equal cities(:claremont), bins(:claremont_recycling).city

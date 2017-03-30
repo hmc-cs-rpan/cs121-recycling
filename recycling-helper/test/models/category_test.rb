@@ -1,24 +1,11 @@
 require 'test_helper'
 
 class CategoryTest < ActiveSupport::TestCase
-  require_properties_for Category, :name
   define_property :image_url, as: :url
 
-  test "can create category with name and valid image URL" do
-    with_properties valid: :image_url, name: 'new category' do |props|
-      assert_valid Category, props
-    end
-  end
-
-  test "can create category without image" do
-    assert_valid Category, name: 'new category'
-  end
-
-  test "cannot create category with invalid image URL" do
-    with_properties invalid: :image_url, name: 'new category' do |props|
-      assert_invalid Category, { image_url: :invalid }, props
-    end
-  end
+  properties_for Category,
+    required: [:name],
+    optional: [:image_url]
 
   test "cannot create two categories with the same name" do
     existing = categories(:plastic)

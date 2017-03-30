@@ -1,26 +1,11 @@
 require 'test_helper'
 
 class CityTest < ActiveSupport::TestCase
-  require_properties_for City, :name, :state, :location_id
   define_property :website_url, as: :url
 
-  test "can create city with name, state, location, and valid url" do
-    with_properties valid: [:state, :website_url, :location_id], name: 'Claremont' do |props|
-      assert_valid City, props
-    end
-  end
-
-  test "cannot create city with invalid state" do
-    with_properties invalid: :state, valid: :location_id, name: 'Claremont' do |props|
-      assert_invalid City, { state: :invalid }, props
-    end
-  end
-
-  test "cannot create city with invalid url" do
-    with_properties invalid: :website_url, valid: [:state, :location_id], name: 'Claremont' do |props|
-      assert_invalid City, { website_url: :invalid }, props
-    end
-  end
+  properties_for City,
+    required: [:name, :state, :location_id, :latitude, :longitude],
+    optional: [:website_url]
 
   test "can get all city officials" do
     assert_equal CityOfficial.where(city: cities(:claremont)), cities(:claremont).officials
@@ -46,6 +31,17 @@ class CityTest < ActiveSupport::TestCase
   test "can get items by category" do
     category = categories(:paper)
     assert_equal category.items, cities(:pasadena).categories.where(name: category.name)[0].items
+  end
+
+  test "can get nearby cities given a location" do
+    claremont = cities(:claremont)
+    pasadena = cities(:pasadena)
+    schmorbodia = cities(:schmorbodia)
+
+    assert_equal [claremont, pasadena], City.near([claremont.latitude, claremont.longitude], 100),
+      'could not find cities nearby to Claremont'
+    assert_equal [schmorbodia], City.near([schmorbodia.latitude, schmorbodia.longitude]),
+      'could not find cities nearby to Schmorbodia'
   end
 
 end

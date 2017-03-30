@@ -64,3 +64,6 @@ gem 'redcarpet'
 
 # Color picker for bin editor
 gem 'bootstrap-colorpicker-rails'
+
+# Store and interpret geographic information for cities
+gem 'geocoder'

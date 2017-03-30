@@ -21,6 +21,8 @@ food = Category.create!(
 
 claremont = City.create!  name: 'Claremont',
                           state: 'California',
+                          latitude: 34.12,
+                          longitude: -117.71,
                           location_id: 'NA-US-CA-CLAREMONT',
                           website_url: 'http://www.ci.claremont.ca.us/'
 
@@ -116,8 +118,10 @@ claremont_trash_bin.add_items!([
 # It's useful to have a kind of sandbox city for testing
 schmorbodia = City.create!(
   name: 'Schmorbodia',
-  state: 'California',
-  location_id: 'NA-US-CA-SCHMORBODIA'
+  state: 'California',  # Not actually, just has to be a valid state
+  latitude: 82.86,      # It's actually in Antarctica, apparently
+  longitude: 135.00,
+  location_id: 'AN-AN-AN-SCHMORBODIA'
 )
 
 schmorbodia.zip_codes.create! name: '00000'
