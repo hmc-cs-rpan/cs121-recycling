@@ -1,23 +1,11 @@
 require 'csv'
 require Rails.root.join('db', 'seeds', 'helpers')
 
-# Categories (based heavily on Claremont, so we will want to relook when we add more cities to avoid
-# overfitting our categories)
-metal = Category.create!(
-  name: 'Metal',
-  image_url: 'http://www.knappsnacks.com/wp-content/uploads/2014/08/aluminumcan1.jpg')
-paper = Category.create!(
-  name: 'Paper',
-  image_url: 'https://static.vecteezy.com/system/resources/previews/000/094/161/original/free-notebook-paper-vector.jpg')
-glass = Category.create!(
-  name: 'Glass',
-  image_url: 'http://www.ikea.com/PIAimages/0183694_PE334729_S5.JPG')
-plastic = Category.create!(
-  name: 'Plastic',
-  image_url: 'http://www.alternet.org/sites/default/files/styles/story_image/public/story_images/plastic.png?itok=8_NKVjx4')
-food = Category.create!(
-  name: 'Food',
-  image_url: 'http://www.ikea.com/PIAimages/0183694_PE334729_S5.JPG')
+metal = Category.find_by name: 'Metal'
+paper = Category.find_by name: 'Paper'
+glass = Category.find_by name: 'Glass'
+plastic = Category.find_by name: 'Plastic'
+food = Category.find_by name: 'Food'
 
 claremont = City.create!  name: 'Claremont',
                           state: 'California',
@@ -113,7 +101,7 @@ claremont_compost_bin.add_items!([
 claremont_trash_bin.add_items!([
   { name: 'Plastic #7', category: plastic },
 ])
-  
+
 
 # It's useful to have a kind of sandbox city for testing
 schmorbodia = City.create!(
