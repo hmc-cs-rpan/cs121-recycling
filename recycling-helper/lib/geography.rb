@@ -51,7 +51,15 @@ module Geography
     'West Virginia'  => 'WV',
     'Wisconsin'  => 'WI',
     'Wyoming'=> 'WY',
-    'Puerto Rico' => 'PR'
+
+    'American Samoa' => 'AS',
+    'Federated States of Micronesia' => 'FM',
+    'Guam' => 'GU',
+    'Marshall Islands' => 'MH',
+    'Northern Mariana Islands' => 'MP',
+    'Palau' => 'PW',
+    'Puerto Rico' => 'PR',
+    'Virgin Islands' => 'VI'
   }
 
 module_function
@@ -72,6 +80,11 @@ module_function
         break
       end
     end
+
+    unless state
+      Rails.logger.error "Unknown state abbreviation #{abbreviation}"
+    end
+
     return state
   end
 

@@ -4,7 +4,10 @@ def eval_city_csv(row)
     city = City.find_by location_id: row['Location']
 
     unless city
-      Rails.logger.debug('foo: ' + row['Lat'])
+      unless row['City'] && row['State'] && row['Lat'] && row['Long'] && row['Location']
+        Rails.logger.fatal "Missing data in row: #{row}"
+      end
+
       city = City.create! name: row['City'].titleize,
                           state: Geography.abbreviation_to_state(row['State']),
                           latitude: row['Lat'].to_f,
