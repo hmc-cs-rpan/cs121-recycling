@@ -102,3 +102,17 @@ button.icon {
   height: 95%;
   width: 95%;
 }
+
+// Use the whole width of the page on mobile devices
+body {
+  padding: 0;
+  margin: 0;
+}
+
+// Add margins on larger screens
+@media screen and (min-device-width: 768px) {
+  body {
+    margin-left: 15%;
+    margin-right: 15%;
+  }
+}
