@@ -29,6 +29,10 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   resources :cities
 
-  #get to 'cities#itemLookupResult'
-  root 'cities#index'
+  get 'cities/find/location', to: 'cities#by_location', as: 'city_by_location'
+
+  # The root url points to a stub page. The only role of this page is to see if a user has location
+  # enabled and, if so, direct them to their cities page. Otherwise, they are sent to the real home
+  # page, which is cities#index.
+  root to: 'root#redirect'
 end

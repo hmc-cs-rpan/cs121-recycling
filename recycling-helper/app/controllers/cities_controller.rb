@@ -23,6 +23,17 @@ class CitiesController < ApplicationController
     render
   end
 
+  # GET /cities/location?latitude=:latitude&longitude=:longitude
+  def by_location
+    nearby = City.near([params[:latitude].to_f, params[:longitude].to_f])
+    if nearby.first
+      redirect_to nearby.first
+    else
+      flash[:error] = "We couldn't find any cities near you."
+      redirect_to 'index'
+    end
+  end
+
   # PATCH/PUT /cities/1
   # PATCH/PUT /cities/1.json
   def update
