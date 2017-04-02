@@ -9,9 +9,6 @@ metal = Category.create!(
 paper = Category.create!(
   name: 'Paper',
   image_url: 'https://static.vecteezy.com/system/resources/previews/000/094/161/original/free-notebook-paper-vector.jpg')
-cardboard = Category.create!(
-  name: 'Cardboard',
-  image_url: 'https://recycling.ncsu.edu/wp-content/uploads/2014/10/cardboard.png')
 glass = Category.create!(
   name: 'Glass',
   image_url: 'http://www.ikea.com/PIAimages/0183694_PE334729_S5.JPG')
@@ -58,19 +55,17 @@ claremont_recycle_bin.add_items!([
   { name: 'Crayon drawings', category: paper },
   { name: 'Office paper', category: paper },
   { name: 'Copy paper', category: paper },
-
-  # Cardboard items
-  { name: 'Cereal boxes', category: cardboard },
-  { name: 'Tissue boxes', category: cardboard },
-  { name: 'Food boxes', category: cardboard },
-  { name: 'Milk cartons', category: cardboard },
-  { name: 'Juice boxes', category: cardboard },
-  { name: 'Soda/beer cartons', category: cardboard },
-  { name: 'Egg cartons', category: cardboard },
-  { name: 'Paper bags', category: cardboard },
-  { name: 'Cardboard boxes', category: cardboard },
-  { name: 'Gift boxes', category: cardboard },
-  { name: 'Styrofoam packaging (large pieces)', category: cardboard },
+  { name: 'Cereal boxes', category: paper },
+  { name: 'Tissue boxes', category: paper },
+  { name: 'Food boxes', category: paper },
+  { name: 'Milk cartons', category: paper },
+  { name: 'Juice boxes', category: paper },
+  { name: 'Soda/beer cartons', category: paper },
+  { name: 'Egg cartons', category: paper },
+  { name: 'Cardboard bags', category: paper },
+  { name: 'Cardboard boxes', category: paper },
+  { name: 'Gift boxes', category: paper },
+  { name: 'Styrofoam packaging (large pieces)', category: paper },
 
   # Glass items
   { name: 'Juice bottles', category: glass },
@@ -129,10 +124,8 @@ schmorbodia_bin_blue.add_items!([
   # Paper items
   { name: 'Junk mail', category: paper },
   { name: 'Telephone books', category: paper },
-
-  # Cardboard items
-  { name: 'Cereal boxes', category: cardboard },
-  { name: 'Tissue boxes', category: cardboard },
+  { name: 'Cereal boxes', category: paper },
+  { name: 'Tissue boxes', category: paper },
 ])
 
 schmorbodia_bin_green.add_items! ([
