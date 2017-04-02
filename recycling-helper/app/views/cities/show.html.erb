@@ -11,46 +11,35 @@
     <img class="" id ="logo" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
     <b><%= @city.name %>, <%= @city.state %></b>
 
-	<% @categories.each do |category| %>
-		<% link = "#" + category.name.downcase %>
-		<a href= "<%=link%>" ><%= category.name %></a>
+	<% @bins.each do |bin| %>
+		<% link = "#" + bin.name.downcase %>
+		<a href= "<%=link%>" ><%= bin.name.titleize %></a>
 	<% end %>
   </nav>
 </header>
 
 <body>
 
-	<% @categories.each do |category| %>
-		<% myId = category.name.downcase %>
-		<% myClass = "portion " + category.name %>
+	<% @city.bins.each do |bin| %>
+		<% myId = bin.name.downcase %>
+		<% myClass = "portion " + bin.name.downcase %>
 
 		<div id="<%=myId%>" class="<%=myClass%>">
-			<h2><%=category.name%></h2>
+			<h2><%=bin.name.titleize%></h2>
 		</div>
 
 		<div class="info" >
-			<!-- Only print items if there are items of the particular category in the city -->
-			<% if @city.categories.include? category %>
-				<% allitems = [] %>
+			<% items = bin.items.sort_by{|obj| obj.name} %>
 
-				<!-- Find all the items within a particular category and save their bin.
-				Order alphabetically -->
-				<% @city.bins.each do |bin| %>
-					<% items = bin.items.where(category: category) %>
-					<% items.each do |item| %>
-						<% allitems.concat [[item, bin]] %>
-					<% end %>
-				<% end %>
-				<% ordered = allitems.sort_by{|obj| obj[0].name} %>
+			<% if items.empty? %>
+				<%= "No items in this bin. Add information!" %>
+			<% else %>
 
 				<!-- Print each item with its bin information -->
-				<% ordered.each do |obj| %>
-					<% description = obj[0].name + ': ' + obj[1].name.capitalize + " bin" %> 
-					<li class="box" onclick="myFunction()" ><%= description %></li>
+				<% items.each do |obj| %>
+					<% description = obj.name %> 
+					<li class="box" ><%= description %></li>
 				<% end %>
-			
-			<% else %>
-				<%= "Sorry, there is no info about the " + category.name + " items in this city. Suggest a change!" %>
 			<% end %>
 
 		</div>

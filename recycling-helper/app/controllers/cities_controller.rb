@@ -12,6 +12,7 @@ class CitiesController < ApplicationController
   def show
     @city = City.find(params[:id])
     @categories = Category.all
+    @bins = @city.bins
   end
 
   # GET /cities/new
