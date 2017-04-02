@@ -80,16 +80,23 @@ claremont_recycle_bin.add_items!([
   { name: 'Salad dressing bottles', category: glass },
 
   # Plastic items
-  { name: 'Plastic water bottles', category: plastic },
-  { name: 'Plastic soda bottles', category: plastic },
-  { name: 'Plastic milk jugs', category: plastic },
-  { name: 'Plastic laundry jugs', category: plastic },
-  { name: 'Shampoo bottles', category: plastic },
-  { name: 'Lotion bottles', category: plastic },
-  { name: 'Food containers', category: plastic },
-  { name: 'Condiment bottles', category: plastic },
-  { name: 'Motor oil containers', category: plastic },
-  { name: 'Vegetable oil bottles', category: plastic },
+  { name: 'Plastic #1', category: plastic },
+  { name: 'Plastic #2', category: plastic },
+  { name: 'Plastic #3', category: plastic },
+  { name: 'Plastic #4', category: plastic },
+  { name: 'Plastic #5', category: plastic },
+  { name: 'Plastic #6', category: plastic },
+
+  # { name: 'Plastic water bottles', category: plastic },
+  # { name: 'Plastic soda bottles', category: plastic },
+  # { name: 'Plastic milk jugs', category: plastic },
+  # { name: 'Plastic laundry jugs', category: plastic },
+  # { name: 'Shampoo bottles', category: plastic },
+  # { name: 'Lotion bottles', category: plastic },
+  # { name: 'Food containers', category: plastic },
+  # { name: 'Condiment bottles', category: plastic },
+  # { name: 'Motor oil containers', category: plastic },
+  # { name: 'Vegetable oil bottles', category: plastic },
 ])
 
 # Random items for food
@@ -100,6 +107,11 @@ claremont_compost_bin.add_items!([
   { name: 'Compostable paper plates', category: paper },
   { name: 'Biodegradable glass', category: glass },
 ])
+
+claremont_trash_bin.add_items!([
+  { name: 'Plastic #7', category: plastic },
+])
+  
 
 # It's useful to have a kind of sandbox city for testing
 schmorbodia = City.create!(
