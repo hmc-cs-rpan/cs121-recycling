@@ -3,11 +3,11 @@
 claremont:
   name: Claremont
   state: California
-  zip: 91711
+  location_id: NA-US-CA-CLAREMONT
   website_url: http://www.ci.claremont.ca.us/
 
 pasadena:
   name: Pasadena
   state: California
-  zip: 91001
+  location_id: NA-US-CA-PASADENA
   website_url: http://www.cityofpasadena.net/

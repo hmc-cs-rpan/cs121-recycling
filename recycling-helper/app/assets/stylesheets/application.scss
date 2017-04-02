@@ -14,6 +14,7 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "articles";
+@import "cities";
 
 .clickable {
   cursor: pointer;
@@ -23,4 +24,80 @@
   &:active {
     box-shadow: 0px 1px 3px inset;
   }
+}
+
+.alert-error {
+  @extend .alert-danger;
+}
+
+.scrollable-list {
+  @extend .list-group;
+
+  height: inherit;
+  overflow-y: auto;
+  border-radius: 0px;
+
+  li {
+    border-radius: 0px;
+  }
+
+  .list-group-item:first-child {
+    border-radius: 0px;
+  }
+
+  .list-group-item:last-child {
+    border-radius: 0px;
+  }
+}
+
+.inline {
+    display: inline-block;
+}
+
+/**
+ * The .icon class is similar to Bootstrap's .close, but without the right-align
+ */
+.icon {
+  font-size: 21px;
+  font-weight: bold;
+  line-height: 1;
+  color: #000;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.2;
+  filter: alpha(opacity=20);
+}
+.icon:hover, .icon:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}
+button.icon {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  -webkit-appearance: none;
+}
+
+.left-align {
+  float: left;
+}
+
+.concentric {
+  position: relative;
+
+  * {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    margin: auto;
+  }
+}
+
+.inset {
+  height: 95%;
+  width: 95%;
 }

@@ -15,12 +15,6 @@ class CitiesController < ApplicationController
     @bins = @city.bins
   end
 
-  # GET /cities/new
-  def new
-    @city = City.new
-    @states = Geography::STATES
-  end
-
   # GET /cities/1/edit
   def edit
   end
@@ -29,33 +23,16 @@ class CitiesController < ApplicationController
     render
   end
 
-  # POST /cities
-  # POST /cities.json
-  def create
-    @city = City.create(city_params)
-    if @city.invalid?
-      flash[:error] = @city.errors.full_messages
-      render 'new'
-    else
-      bin = @city.add_bin! 'recycling'
-      if params[:item_ids] && !params[:item_ids].empty?
-        bin.items += Item.find(params[:item_ids])
-      end
-      flash[:success] = "#{@city.name}, #{@city.state} successfully created!"
-      redirect_to @city
-    end
-  end
-
   # PATCH/PUT /cities/1
   # PATCH/PUT /cities/1.json
   def update
     respond_to do |format|
       if @city.update(city_params)
         format.html { redirect_to @city, notice: 'City was successfully updated.' }
-        format.json { render :show, status: :ok, location: @city }
+        format.json { render json: { ok: true, city: @city } }
       else
         format.html { render :edit }
-        format.json { render json: @city.errors, status: :unprocessable_entity }
+        format.json { render json: { ok: false, errors: @city.errors.full_messages } }
       end
     end
   end
@@ -78,7 +55,7 @@ class CitiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def city_params
-      params.require(:city).permit(:name, :state, :zip)
+      params.require(:city).permit(:name, :state, :website_url)
     end
 
 

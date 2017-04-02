@@ -3,8 +3,11 @@
   <%= javascript_include_tag "application", "cities", "data-turbolinks-track" => true %>
   <%= csrf_meta_tags %>
 
-
-
+<script type="text/javascript">
+  $(document).ready(function() {
+    init_smooth_scrolling()
+  })
+</script>
 
 <header>
   <nav>
@@ -34,15 +37,14 @@
 			<% if items.empty? %>
 				<%= "No items in this bin. Add information!" %>
 			<% else %>
-
 				<!-- Print each item with its bin information -->
 				<% items.each do |obj| %>
 					<% description = obj.name %> 
 					<li class="box" ><%= description %></li>
 				<% end %>
 			<% end %>
-
 		</div>
+		
 	<% end %>
 
 </body>
@@ -53,5 +55,5 @@
 <%= link_to 'Back', cities_path %>
   <div id="toTop"><a href="#">Back To Top</a></div>
  <!--  <p>&copy; 2014 Arif Hussain Bangash</p> -->
-  
+
 </footer>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170312135117) do
+ActiveRecord::Schema.define(version: 20170324040927) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -66,10 +66,11 @@ ActiveRecord::Schema.define(version: 20170312135117) do
   create_table "cities", force: :cascade do |t|
     t.string   "name"
     t.string   "state"
-    t.string   "zip"
     t.string   "website_url"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "location_id"
+    t.index ["location_id"], name: "index_cities_on_location_id", unique: true
   end
 
   create_table "city_officials", force: :cascade do |t|
@@ -122,6 +123,15 @@ ActiveRecord::Schema.define(version: 20170312135117) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_terms_on_name", unique: true
+  end
+
+  create_table "zip_codes", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "city_id"
+    t.index ["city_id"], name: "index_zip_codes_on_city_id"
+    t.index ["name"], name: "index_zip_codes_on_name", unique: true
   end
 
 end

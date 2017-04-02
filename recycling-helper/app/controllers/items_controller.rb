@@ -25,16 +25,19 @@ class ItemsController < ApplicationController
   # POST /items
   # POST /items.json
   def create
-    @item = Item.create(item_params)
-    if @item.invalid?
-      flash[:error] = @item.errors.full_messages
-      render 'new'
-    else
-      flash[:success] = "#{@item.name},successfully created!"
-      redirect_to @item
-    end
-  end
+    @item = Item.new(item_params)
 
+    respond_to do |format|
+      if save_item(@item)
+        format.html { redirect_to @item }
+        format.json { render json: { ok: true, item: @item } }
+      else
+        format.html { render 'new' }
+        format.json { render json: { ok: false, errors: @item.errors.full_messages } }
+      end
+    end
+
+  end
 
   # PATCH/PUT /items/1
   # PATCH/PUT /items/1.json
@@ -69,5 +72,18 @@ class ItemsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def item_params
       params.require(:item).permit(:name, :category_id)
+    end
+
+    # Create a new item and return a boolean indicating success
+    def save_item(item)
+      begin
+        item.save
+      rescue ActiveRecord::RecordNotUnique
+        item.errors.add :base, :not_unique, message:
+          "An item with the name \"#{item.name}\" already exists " +
+          "(in the category \"#{Item.find_by(name: item.name).category.name}\")"
+      end
+
+      return item.errors.empty?
     end
 end

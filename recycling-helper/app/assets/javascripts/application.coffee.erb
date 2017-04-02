@@ -1,0 +1,120 @@
+# This is a manifest file that'll be compiled into application.js, which will include all the files
+# listed below.
+#
+# Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+# or any plugin's vendor/assets/javascripts directory can be referenced here using a relative path.
+#
+# It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+# compiled file. JavaScript code in this file should be added after the last require_* statement.
+#
+# Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
+# about supported directives.
+#
+#= require jquery
+#= require jquery_ujs
+#= require underscore
+#= require turbolinks
+#= require bootstrap-sprockets
+#= require ckeditor/init
+#= require ckeditor-autogrow
+#= require_tree .
+
+###
+Display a notification to the user, as if it were rendered by the server with flash.
+type: the type of notification. Can be "info", "success", "warning", "danger", or "error".
+    Default is "info".
+dismissible: whether the notification can be closed by the user. Default is true.
+selector: JQuery selector indicating the DOM element that should contain the message. Default is the
+    global flash notification section of the application layout.
+timeout: duration in milliseconds after which the notification should fade away. If set to a
+    negative value, the notification will not disappear until the user dismisses it. Default is 5000.
+###
+@flash = (msg, {type, dismissible, selector, timeout} = {}) ->
+    type ?= 'notify'
+    dismissible ?= true
+    selector ?= '#flash'
+    timeout ?= 5000
+
+    error = $('<div>')
+    error.addClass "alert alert-#{type}"
+    if dismissible
+        error.addClass "alert-dismissible"
+        error.append $('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+    error.append msg
+
+    if timeout >= 0
+        setTimeout (-> error.fadeOut { complete: -> error.remove() }), timeout
+
+    $(selector).append $(error)
+
+###
+Convenience function for displaying error messages to the user. Accepts the same arguments as flash
+(with the exception of type, which is automatically set to 'danger').
+###
+@flash_error = (msg, {dismissible, selector, timeout} = {}) ->
+    flash msg, type: 'danger', dismissible: dismissible, selector: selector, timeout: timeout
+
+###
+Convenience function for success messages (type = 'success'). Use this function sparingly, as flash
+messages quickly become overwhelming if they are displayed after every successful action. Where
+possible, provide feedback to the user via a more direct result of their action, and use flash only
+for errors.
+###
+@flash_success = (msg, {dismissible, selector, timeout} = {}) ->
+    flash msg, type: 'success', dismissible: dismissible, selector: selector, timeout: timeout
+
+###
+Get a JSON object from a REST API call. The endpoint specified by URL must support JSON requests
+and return an object with a boolean property "ok", and, if !ok, must contain a property "errors"
+which is a list of error messages. These are the conventions followed by our own API. The return
+value of this function supports the callbacks described in JSONRequest.
+
+method: specify the HTTP method to use. Default is "GET".
+data: specify data to be sent in the request. Default is {}.
+###
+@get_json = (url, {method, data} = {}) -> new JSONRequest url, method: method, data: data
+
+###
+Object representing an outstanding REST API call and supporting success and error callbacks.
+###
+class JSONRequest
+    constructor: (url, {method, data} = {}) ->
+        method ?= 'GET'
+        data ?= {}
+
+        @xhr = $.ajax url, {
+            method: method,
+            dataType: 'json',
+            data: data
+        }
+
+    ###
+    If the request is successful, the response JSON will be passed to cb.
+    ###
+    on_success: (cb) ->
+        @xhr.done (res) ->
+            if res.ok
+                cb res
+        return this
+
+    ###
+    If the request is unsuccessful, either because of an HTTP error code or an API response
+    indicating failure, cb will be called once for each error, and passed an error message each time.
+    ###
+    on_error: (cb) ->
+        @on_errors (errs) ->
+            for err in errs
+                cb err
+        return this
+
+    ###
+    If the request is unsuccessful, cb will be passed an array of error messages.
+    ###
+    on_errors: (cb) ->
+        @xhr
+        .done (res) ->
+            if !res.ok
+                cb res.errors
+        .fail (req, status, message) ->
+            cb ["#{status} (#{req.status}): #{message}"]
+        return this

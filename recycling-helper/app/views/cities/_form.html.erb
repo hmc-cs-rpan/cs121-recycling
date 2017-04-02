@@ -1,32 +1,188 @@
-<%= form_for(city) do |f| %>
-  <% if city.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(city.errors.count, "error") %> prohibited this city from being saved:</h2>
+<script type="text/javascript">
+  $(document).ready(function() {
 
-      <ul>
-      <% city.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+    // Initialize the state of the world
+    bins = JSON.parse(
+      '<%= raw @city.bins.order(:id).to_json %>'
+    )
+    items_by_category = JSON.parse(
+      '<%= raw Category.order(:name).map { |category|
+        [category.id, category.items.order(:name).select(:name, :id)]
+      }.to_h.to_json %>'
+    )
+
+    // Make sure each bin's items exist and are sorted
+    <% @city.bins.order(:id).each do |bin| %>
+      bin = _.find(bins, (b) => b.id == <%= bin.id %>)
+      bin.items = JSON.parse('<%= raw bin.items.order(:name).to_json %>')
+    <% end %>
+
+    refresh_bins()
+    display_all_items()
+
+    <% if @city.website_url.blank? %>
+      show_url_form(<%= @city.id %>)
+    <% else %>
+      show_url(<%= @city.id %>, '<%= @city.website_url %>')
+    <% end %>
+
+    $('.modal').on('shown.bs.modal', function() {
+      // Autofocus input when popup is shown
+      $(this).find('[autofocus]').focus();
+
+      // Autoset category if one of the categories is selected
+      $(this).find('[name=category_id]').val(active_category() || '')
+    });
+
+    // Reset popup dialog when closed
+    $('#new-item').on('hidden.bs.modal', function() {
+      $('#new-item-errors').empty()
+      $('#new-item').find('[name=name]').val('')
+      $('#new-item').find('[name=category_id]').val('')
+    })
+
+    // Do not redirect on new item submission
+    $('#new-item-form').submit(function(e) {
+      e.preventDefault()
+      save_new_item()
+    })
+
+    // Handle new bin submission
+    $('#new-bin-form').submit(function(e) {
+      e.preventDefault()
+      save_new_bin()
+    })
+
+  })
+
+</script>
+
+<h1><%= @city.name %>, <%= @city.state %></h1>
+
+<div id="url"></div>
+
+<hr>
+
+<!-- New item popup -->
+<div class="modal fade" id="new-item" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">New Item</h4>
+      </div>
+      <div class="modal-body">
+        <div id="new-item-errors">
+          <!-- Filled in dynamically -->
+        </div>
+
+        <form id="new-item-form">
+          <div class="form-group">
+            <input type="text" placeholder="Name" class="form-control" name="name" autofocus>
+          </div>
+          <div class="form-group">
+            <%= collection_select :item, :category_id, Category.all, :id, :name,
+              {prompt: 'Choose a category'},
+              {class: 'form-control', name: 'category_id'} %>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="$('#new-item-form').submit()">Save</button>
+      </div>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
   </div>
+</div>
 
-  <div class="field">
-    <%= f.label :state %>
-    <%= f.text_field :state %>
-  </div>
+<div class="container">
 
-  <div class="field">
-    <%= f.label :zip %>
-    <%= f.text_field :zip %>
-  </div>
+  <div class="panel panel-default">
 
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
+    <div class="panel-heading">
+      <div class="row no-gutters">
+        <div class="col-xs-6">
+          <h3 class="panel-title">Categories</h3>
+        </div>
+        <div class="col-xs-6">
+          <h3 class="panel-title">Items</h3>
+        </div>
+      </div>
+    </div>
+
+    <% def set_height
+        list_height = (Category.count + 2) * 35 + 2
+        "max-height: #{list_height}px; min-height: #{list_height}px;"
+      end
+    %>
+
+    <% def set_width
+        list_width = 250
+        "max-width: #{list_width}px; min-width: #{list_width}px;"
+      end
+    %>
+
+    <div class="row no-gutters">
+      <div class="col-xs-6" style="padding-right: 0;">
+
+        <ul id="categories" class="scrollable-list" style="<%= set_height %>">
+          <li id="all_categories" onclick="display_all_items()" class="list-group-item btn btn-default">
+            All Items
+          </li>
+
+          <% Category.all.each do |category| %>
+            <li id="category<%= category.id %>" onclick="filter_by_category(<%= category.id %>)" class="list-group-item btn btn-default">
+              <%= category.name %>
+            </li>
+          <% end %>
+        </ul>
+
+      </div> <!-- col -->
+
+      <div class="col-xs-6" style="padding-left: 0;">
+        <ul id="items" class="scrollable-list" style="<%= set_height %>">
+          <!-- Filled in by JS -->
+        </ul>
+
+        <div class="btn-group" >
+          <button type="button" class="btn btn-default" onclick="select_all(true)">Select All</button>
+          <button type="button" class="btn btn-default" onclick="select_all(false)">Unselect All</button>
+          <button type="button" class="btn btn-default" data-keyboard="true"data-toggle="modal" data-target="#new-item">
+            <span class = "glyphicon glyphicon-plus"> </span>
+            New item
+          </button>
+        </div>
+
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add to bin</span> <span class="caret"></span></button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="drop1">
+          </div>
+        </div>
+      </div> <!-- col -->
+    </div> <!-- row -->
+
+  </div> <!-- panel -->
+</div>
+
+<ul id="bins" class="bin-group">
+  <!-- Filled in dynamically -->
+
+  <li class="bin-group-item">
+    <!-- New bin -->
+    <form class="bin" id="new-bin-form">
+      <div class="heading">
+        <div class="form-group">
+          <input class="form-control" type="text" name="name" placeholder="Add a new bin"/>
+        </div>
+        <input type="hidden" name="city_id" value="<%= @city.id %>"/>
+      </div>
+      <div class="body concentric">
+        <div class="clickable well inset" onclick="click_new_bin()">
+          <span class = "glyphicon glyphicon-plus"></span>
+        </div>
+      </div>
+      <div class="footer">
+      </div>
+    </form>
+  </li>
+</ul>
