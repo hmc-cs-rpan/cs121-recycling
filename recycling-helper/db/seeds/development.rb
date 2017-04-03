@@ -143,9 +143,17 @@ schmorbodia_bin_green.add_items! ([
 ])
 
 # Add some real, empty cities, but not all of them (it takes way too long)
+if ENV["NUM_CITIES"].nil?
+  num_cities = 1000
+elsif ENV["NUM_CITIES"].downcase == "inf"
+  num_cities = Float::INFINITY
+else
+  num_cities = ENV["NUM_CITIES"].to_i
+end
+
 CSV.foreach Rails.root.join('sample-data', 'all-cities.csv'), headers: true do |row|
   eval_city_csv row
-  break if City.count > 10
+  break if City.count >= num_cities
 end
 
 # Create some test users

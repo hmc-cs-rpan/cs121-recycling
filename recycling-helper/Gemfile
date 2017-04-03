@@ -67,3 +67,6 @@ gem 'bootstrap-colorpicker-rails'
 
 # Store and interpret geographic information for cities
 gem 'geocoder'
+
+# Fuzzy matching for, eg, looking up cities by name or state
+gem 'fuzzily'

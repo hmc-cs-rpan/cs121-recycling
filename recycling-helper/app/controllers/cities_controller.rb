@@ -1,10 +1,11 @@
 class CitiesController < ApplicationController
   before_action :set_city, only: [:show, :edit, :update, :destroy]
+  before_action :empty_cities
 
   # GET /cities
   # GET /cities.json
   def index
-    @cities = City.all
+    @query = ""
   end
 
   # GET /cities/1
@@ -23,7 +24,7 @@ class CitiesController < ApplicationController
     render
   end
 
-  # GET /cities/location?latitude=:latitude&longitude=:longitude
+  # GET /cities/find/location?latitude=:latitude&longitude=:longitude
   def by_location
     nearby = City.near([params[:latitude].to_f, params[:longitude].to_f])
     if nearby.first
@@ -32,6 +33,70 @@ class CitiesController < ApplicationController
       flash[:error] = "We couldn't find any cities near you."
       redirect_to 'index'
     end
+  end
+
+  # GET /cities/search?query=:query
+  def search
+    if params[:query].nil? || params[:query] == ""
+      redirect_to cities_path
+      return
+    end
+
+    @query = params[:query].strip
+    Rails.logger.debug "Processing query for city: #{@query}"
+
+    # Try interpreting the query as a zip code
+    zip = ZipCode.find_by name: @query
+    if zip
+      redirect_to zip.city
+      Rails.logger.debug "Found city #{@query} by zip code"
+      return
+    end
+
+    tokens = @query.split(',').map { |tok| tok.strip }
+
+    if tokens.length == 1
+      Rails.logger.debug "Searching for city named #{@query}"
+      @cities = City.find_by_fuzzy_name(tokens[0].titleize)
+    elsif tokens.length == 2
+      # Try interpreting the query as a City, State pair
+      name = tokens[0].titleize
+      state = tokens[1].titleize
+      if state.length == 2
+        # If the state field corresponds to a postal abbreviation, use it. Otherwise, we'll treat it
+        # as a state name and try to fuzzy match it.
+        state = Geography.abbreviation_to_state(state.upcase) || state
+      end
+
+      Rails.logger.debug "Searching for city: #{name}, #{state}"
+
+      # See if there's an exact match first
+      @cities = City.where(state: state).where(name: name)
+      unless @cities.length == 1
+        Rails.logger.debug "No match or ambiguous match for #{name}, #{state}; falling back to fuzzy search"
+        @cities = City.fuzzy_search(state: state, name: name)
+      end
+    else
+      Rails.logger.debug "Malformed query #{@query}"
+      flash[:error] =
+        "Unable to process query \"#{@query}\". Enter a zip code, city, or \"City, State\" pair."
+      render 'index'
+      return
+    end
+
+    if @cities.empty?
+      Rails.logger.debug "No results for query #{@query}"
+      flash[:error] = "We couldn't find any cities matching \"#{@query}\"."
+      render 'index'
+    elsif @cities.length == 1
+      Rails.logger.debug "Found exact match for #{@query}, redirecting to city #{@cities.first.id}"
+      redirect_to @cities.first
+    else
+      # Display the list of matches
+      Rails.logger.debug "Found #{@cities.length} matches for #{@query}"
+      render 'index'
+    end
+
   end
 
   # PATCH/PUT /cities/1
@@ -62,6 +127,10 @@ class CitiesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_city
       @city = City.find(params[:id])
+    end
+
+    def empty_cities
+      @cities = []
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

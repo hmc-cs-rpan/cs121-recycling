@@ -76,10 +76,12 @@ module_function
     state = nil
     STATES.each do |s, a|
       if a == abbreviation
-        state = s
+        state = +s # s is a hash key and thus is frozen; we assign state to an unfrozen copy
         break
       end
     end
+
+    Rails.logger.debug "state: #{state}"
 
     unless state
       Rails.logger.error "Unknown state abbreviation #{abbreviation}"

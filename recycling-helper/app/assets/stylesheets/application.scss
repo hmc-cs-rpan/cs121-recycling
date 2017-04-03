@@ -86,15 +86,28 @@ button.icon {
   float: left;
 }
 
+._centered {
+  position: absolute;
+  width: inherit;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  margin: auto;
+}
+
+.centerable {
+  position: relative;
+
+  .centered {
+    @extend ._centered;
+  }
+}
+
 .concentric {
   position: relative;
 
   * {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    margin: auto;
+    @extend ._centered;
   }
 }
 
@@ -115,4 +128,20 @@ body {
     margin-left: 15%;
     margin-right: 15%;
   }
+}
+
+// The following rules work together so that the total height of the navbar and any element with
+// class full-window is, when combined, the height of the viewport.
+$navbar_height: 5vh;
+$window_height: 95vh;
+body {
+  padding-top: $navbar_height !important;
+
+  >nav {
+    height: $navbar_height;
+    margin-bottom: 0px !important;
+  }
+}
+.full-window {
+  height: $window_height;
 }

@@ -1,35 +1,43 @@
-<p id="notice"><%= notice %></p>
+<script type="text/javascript">
+  <% unless @cities.empty? %>
+    // Scroll down to search results
+    $(document).ready(function() {
+      $('html, body').animate({
+        scrollTop: $("#cities").offset().top
+      }, 2000);
+    })
+  <% end %>
+</script>
 
-<h1>Welcome to the Recycling Helper</h1>
-  <p> Click on your city to get started </p>
+<div class="full-window centerable">
+  <div id="cities_search" class="centered">
 
-<table>
-  <thead>
-    <tr>
-      <th  width="40%">Name</th>
-      <th width="30%">State</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
+    <div class="centered">
+      <h3>Find your city</h3>
+      <hr>
 
-  <tbody>
+      <%= form_tag search_cities_path, method: :get, class: "" do %>
 
-  	<% @cities.each do |city| %>
-	<tr>
-        <td ><%= link_to city.name, city_path(city) %> </td>
-        <td><%= city.state %></td>
-    </tr>
+        <div class="form-group">
+          <%= text_field_tag :query, nil, {
+            class: 'form-control',
+            placeholder: 'Enter your zip code or search for a city...',
+            value: @query,
+            tabindex: 1,
+            autofocus: true
+          } %>
+        </div>
 
+        <%= submit_tag 'Go', class: 'btn btn-default btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+</div>
 
-	<% end %>
-
-
-
-
-
-  </tbody>
-</table>
-
-
-
-<br>
+<ul id="cities" class="list-group">
+  <% @cities.each do |city| %>
+    <li class="list-group-item btn btn-default" onclick="window.location.href = '<%= city_path city %>'">
+      <%= "#{city.name}, #{city.state}" %>
+    </li>
+  <% end %>
+</ul>
