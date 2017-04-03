@@ -11,7 +11,7 @@ items_by_category = JSON.parse(
 
 @init_smooth_scrolling = ->
   # Smooth Scroll on clicking nav items
-  $('nav a').click ->
+  $('#bin_links a').click ->
     $href = $(this).attr('href')
     $('body').stop().animate { scrollTop: $($href).offset().top }, 1000
     false
@@ -26,22 +26,22 @@ items_by_category = JSON.parse(
     $('.portion').css 'background-positionY', $movebg + 'px'
     # add class active to nav a on scroll
     scrollPos = $(document).scrollTop() + 100
-    $('nav a').each ->
+    $('#bin_links a').each ->
       currLink = $(this)
       refElement = $(currLink.attr('href'))
       if refElement.position().top <= scrollPos and refElement.position().top + refElement.height() > scrollPos
-        $('nav a').removeClass 'active'
+        $('#bin_links a').removeClass 'active'
         currLink.addClass 'active'
       return
     # changing padding of nav a on scroll
     if scrollPos > 250
-      $('nav a').addClass 'small'
-      $('nav img').addClass 'move'
-      $('nav span').removeClass 'movetext'
+      $('#bin_links a').addClass 'small'
+      $('#bin_links img').addClass 'move'
+      $('#bin_links span').removeClass 'movetext'
     else
-      $('nav a').removeClass 'small'
-      $('nav img').removeClass 'move'
-      $('nav span').addClass 'movetext'
+      $('#bin_links a').removeClass 'small'
+      $('#bin_links img').removeClass 'move'
+      $('#bin_links span').addClass 'movetext'
     return
 
 ###

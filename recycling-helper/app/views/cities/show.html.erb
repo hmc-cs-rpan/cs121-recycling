@@ -10,7 +10,7 @@
 </script>
 
 <header>
-  <nav>
+  <nav id="bin_links">
     <img class="" id ="logo" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
     <b><%= @city.name %>, <%= @city.state %></b>
 
@@ -39,12 +39,12 @@
 			<% else %>
 				<!-- Print each item with its bin information -->
 				<% items.each do |obj| %>
-					<% description = obj.name %> 
+					<% description = obj.name %>
 					<li class="box" ><%= description %></li>
 				<% end %>
 			<% end %>
 		</div>
-		
+
 	<% end %>
 
 </body>
