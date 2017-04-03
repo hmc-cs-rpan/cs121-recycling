@@ -6,8 +6,8 @@ Rails.application.routes.draw do
 
   resources :articles
   resources :cities, except: [:new, :create]
-  resources :items, only: [:create]
-  resources :bins, only: [:create, :update, :delete]
+  resources :items, only: [:create, :update, :destroy]
+  resources :bins, only: [:create, :update, :destroy]
 
   devise_for :admins
   devise_for :city_officials

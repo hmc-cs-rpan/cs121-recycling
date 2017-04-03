@@ -1,26 +1,5 @@
 class BinsController < ApplicationController
-  before_action :set_bin, only: [:show, :edit, :update, :destroy]
-
-  # GET /bins
-  # GET /bins.json
-  def index
-    @bins = Bin.all
-  end
-
-  # GET /bins/1
-  # GET /bins/1.json
-  def show
-    @bin = Bin.find(params[:id])
-  end
-
-  # GET /bins/new
-  def new
-    @bin = Bin.new
-  end
-
-  # GET /bins/1/edit
-  def edit
-  end
+  before_action :set_bin, only: [:update, :destroy]
 
   # POST /bins
   # POST /bins.json

@@ -1,26 +1,5 @@
 class ItemsController < ApplicationController
-  before_action :set_item, only: [:show, :edit, :update, :destroy]
-
-  # GET /items
-  # GET /items.json
-  def index
-    @items = Item.all
-  end
-
-  # GET /items/1
-  # GET /items/1.json
-  def show
-  @items = Item.find(params[:id])
-  end
-
-  # GET /items/new
-  def new
-    @item = Item.new
-  end
-
-  # GET /items/1/edit
-  def edit
-  end
+  before_action :set_item, only: [:update, :destroy]
 
   # POST /items
   # POST /items.json
