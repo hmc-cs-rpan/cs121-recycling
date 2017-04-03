@@ -309,7 +309,7 @@ init_new_bin_form = ->
 refresh_new_bin_form = ->
   $bin = $("#bins").children().last()
   hsl = "hsl(#{next_color.h}, #{next_color.s}%, #{next_color.l}%)"
-  $bin.find('.heading').css 'backgroundColor', hsl
+  $bin.find('.heading, .footer').css 'backgroundColor', hsl
   $bin.find('[name="color_input"]')
     .css 'backgroundColor', hsl
     .colorpicker 'setValue', hsl
@@ -380,7 +380,7 @@ refresh_bin = (bin) ->
   $bin.find('[name="title"]').html bin.name
   $bin.find('[name="name_input"]').attr 'placeholder', bin.name
 
-  $bin.find(".heading").css 'backgroundColor', bin.color
+  $bin.find(".heading, .footer").css 'backgroundColor', bin.color
   $bin.find('[name="color_input"]').css 'backgroundColor', bin.color
 
   $items = $bin.find '[name="items"]'
