@@ -1,27 +1,38 @@
-<%= form_for(bin) do |f| %>
-  <% if bin.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(bin.errors.count, "error") %> prohibited this bin from being saved:</h2>
+<!--
+This file contains a template detailing the structure used to display a bin in the city editor.
+Because bins are created, deleted, and edited dynamically in the browser, we do not use this
+template to render any specific bins on the server side. Rather, this is a generic outline with
+holes which will be filled in clientside. A somewhat peculiar necessity that arises out of this is
+that we use name attributes like we would usually use ids, since this template will be duplicated
+many times and thus the ids would not be unique. Whenever a new bin is instantiated, each element
+with a name attribute will receive an id of the form bin#{bin.id}_#{name}.
+-->
 
-      <ul>
-      <% bin.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+<div class="bin" id="bin_template">
+  <div class="heading">
+    <form class="inline" name="form">
+      <div class="input-group">
+        <input type="text" class="form-control" name="name_input"/>
+        <span class="input-group-addon">
+          <a class="btn btn-default" name="color_input"></a>
+        </span>
+      </div>
+    </form>
 
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
+    <span name="title_bar">
+      <button type="button" name="edit" class="icon left-align">
+        <span class="glyphicon glyphicon-pencil"></span>
+      </button>
+      <h3 class="title inline" name="title"></h3>
+      <button type="button" name="delete" class="close">&times;</button>
+    </span>
   </div>
 
-  <div class="field">
-    <%= f.label :city %>
-    <%= f.text_field :city %>
-  </div>
 
-  <div class="actions">
-    <%= f.submit %>
+  <ul class="body scrollable-list" name="items">
+  </ul>
+
+  <div class="footer">
+    <button type="button" class="btn btn-default" name="remove_items">Remove selected</button>
   </div>
-<% end %>
+</div>

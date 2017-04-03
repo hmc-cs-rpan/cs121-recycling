@@ -4,13 +4,16 @@ claremont_recycling:
   name: recycling
   city: claremont
   items: newspaper, plastic_bottle
+  color: '#0000c8'
 
 pasadena_green:
   name: green
   city: pasadena
   items: plastic_bottle
+  color: '#008000'
 
 pasadena_compost:
   name: compost
   city: pasadena
   items: newspaper
+  color: '#A52A2A'

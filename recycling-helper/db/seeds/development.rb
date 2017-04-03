@@ -26,9 +26,9 @@ claremont = City.create!  name: 'Claremont',
 
 claremont.zip_codes.create! name: '91711'
 
-claremont_recycle_bin = claremont.add_bin! 'recycling'
-claremont_compost_bin = claremont.add_bin! 'compost'
-claremont_trash_bin = claremont.add_bin! 'trash'
+claremont_recycle_bin = claremont.bins.create! name: 'recycling', color: '#0000c8'
+claremont_compost_bin = claremont.bins.create! name: 'compost', color: '#A52A2A'
+claremont_trash_bin = claremont.bins.create! name: 'trash', color: '#000000'
 
 # Items for Claremont (based on the information at http://www.ci.claremont.ca.us/home/showdocument?id=610)
 claremont_recycle_bin.add_items!([
@@ -123,8 +123,8 @@ schmorbodia = City.create!(
 schmorbodia.zip_codes.create! name: '00000'
 schmorbodia.zip_codes.create! name: '55555'
 
-schmorbodia_bin_blue = schmorbodia.add_bin! 'blue'
-schmorbodia_bin_green = schmorbodia.add_bin! 'green'
+schmorbodia_bin_blue = schmorbodia.bins.create! name: 'blue', color: '#0000c8'
+schmorbodia_bin_green = schmorbodia.bins.create! name: 'green', color: '#008000'
 
 schmorbodia_bin_blue.add_items!([
   # Aluminum items

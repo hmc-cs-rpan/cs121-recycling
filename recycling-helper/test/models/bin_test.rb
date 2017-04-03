@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class BinTest < ActiveSupport::TestCase
-  require_properties_for Bin, :name, :city
+  require_properties_for Bin, :name, :city, :color
 
   test "can get city" do
     assert_equal cities(:claremont), bins(:claremont_recycling).city
@@ -16,7 +16,7 @@ class BinTest < ActiveSupport::TestCase
     bin = bins(:claremont_recycling)
 
     assert_raise ActiveRecord::RecordNotUnique do
-      Bin.create(name: bin.name, city: bin.city)
+      Bin.create(name: bin.name, city: bin.city, color: '#000000')
     end
   end
 

@@ -33,7 +33,11 @@ class BinsController < ApplicationController
         format.json { render json: { ok: true, bin: @bin } }
       else
         format.html { render :new }
-        format.json { render json: { ok: false, errors: @bin.errors.full_messages } }
+        format.json {
+          bin = Bin.find_by(id: @bin.id) || {}
+          render json:
+          { ok: false, errors: @bin.errors.full_messages, bin: bin }
+        }
       end
     end
   end
@@ -41,6 +45,7 @@ class BinsController < ApplicationController
   # PATCH/PUT /bins/1
   # PATCH/PUT /bins/1.json
   def update
+    Rails.logger.debug bin_params[:color]
     @bin.assign_attributes bin_params
 
     respond_to do |format|
@@ -72,7 +77,7 @@ class BinsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def bin_params
-      params.require(:bin).permit(:name, :city_id)
+      params.require(:bin).permit(:name, :city_id, :color)
     end
 
     # Create a new bin and return a boolean indicating success

@@ -208,34 +208,31 @@ nav span {
   font-size: 1.5em;
 }
 
-ul.bin-group {
-
-  li.bin-group-item {
+#bins {
+  .bin {
+    @extend .panel, .panel-default;
     display: inline-table;
+    vertical-align: top;
     width: 250px;
 
-    .bin {
-      @extend .panel, .panel-default;
+    h3.title {
+      @extend .panel-title;
+    }
 
-      h3.title {
-        @extend .panel-title;
-      }
+    .heading {
+      @extend .panel-heading;
+    }
 
-      .heading {
-        @extend .panel-heading;
-      }
+    .body {
+      @extend .panel-body;
 
-      .body {
-        @extend .panel-body;
+      width: inherit;
+      height: 300px;
+      padding: 0px;
+    }
 
-        width: inherit;
-        height: 300px;
-        padding: 0px;
-      }
-
-      .footer {
-        @extend .panel-footer;
-      }
+    .footer {
+      @extend .panel-footer;
     }
   }
 }

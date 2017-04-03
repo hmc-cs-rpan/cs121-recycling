@@ -69,6 +69,9 @@ class ActiveSupport::TestCase
   valid :location, 'NA-US-CA-CLAREMONT'
   define_property :location_id, as: :location
 
+  valid :color, '#000000', '#abcdef', '#123456', '#123abc', '#123ABC'
+  invalid :color, '#bcdefg', '#abcde', '123456', 'a#123456', '#1234567'
+
   # Run a block with various combinations of valid and invalid properties. Usage:
   #    with_properties valid: :p1, invalid: [:p2, :p3], fixed_property: 'Value' do |props|
   #        assert ...something with props

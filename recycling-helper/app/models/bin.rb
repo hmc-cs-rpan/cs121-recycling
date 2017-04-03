@@ -1,5 +1,6 @@
 class Bin < ApplicationRecord
-  validates :name, :city, presence: true
+  validates :name, :city, :color, presence: true
+  validates_format_of :color, with: /\A#[0-9a-fA-F]{6}\Z/, if: 'color.present?'
 
   belongs_to :city
   has_and_belongs_to_many :items
