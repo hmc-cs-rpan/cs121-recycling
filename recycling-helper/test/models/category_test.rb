@@ -35,4 +35,15 @@ class CategoryTest < ActiveSupport::TestCase
       assert_equal items.where(category: c), c.items
     end
   end
+
+  test "items are sorted by name" do
+    category = Category.create! name: 'test'
+    category.items.create! [
+      { name: 'c' },
+      { name: 'z' },
+      { name: 'a' }
+    ]
+
+    assert_equal category.items.order(:name), category.items, 'items were not sorted'
+  end
 end

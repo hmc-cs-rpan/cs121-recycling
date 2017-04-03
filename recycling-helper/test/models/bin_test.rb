@@ -12,6 +12,17 @@ class BinTest < ActiveSupport::TestCase
                  bins(:claremont_recycling).items
   end
 
+  test "items are sorted by name" do
+    bin = Bin.create! name: 'test', city: cities(:claremont), color: '#000000'
+    bin.items.create! [
+      { name: 'c', category: categories(:paper) },
+      { name: 'z', category: categories(:paper) },
+      { name: 'a', category: categories(:paper) }
+    ]
+
+    assert_equal bin.items.order(:name), bin.items, 'items were not sorted'
+  end
+
   test "cannot create duplicate bins for the same city" do
     bin = bins(:claremont_recycling)
 

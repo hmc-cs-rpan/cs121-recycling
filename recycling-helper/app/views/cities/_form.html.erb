@@ -1,20 +1,12 @@
 <script type="text/javascript">
   $(document).ready(function() {
 
-    bins = JSON.parse('<%= raw @city.bins.order(:id).to_json %>')
-
-    // Make sure each bin's items exist and are sorted
-    <% @city.bins.order(:id).each do |bin| %>
-      bin = _.find(bins, (b) => b.id == <%= bin.id %>)
-      bin.items = JSON.parse('<%= raw bin.items.order(:name).to_json %>')
-    <% end %>
-
     // Initialize the state of the world
-    init_bins(bins)
+    init_bins(JSON.parse('<%= raw @city.bins.order(:created_at).to_json(include: :items) %>'))
     init_items(
       JSON.parse(
         '<%= raw Category.order(:name).map { |category|
-          [category.id, category.items.order(:name).select(:name, :id)]
+          [category.id, category.items]
         }.to_h.to_json %>'
       )
     )

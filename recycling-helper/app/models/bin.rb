@@ -3,7 +3,7 @@ class Bin < ApplicationRecord
   validates_format_of :color, with: /\A#[0-9a-fA-F]{6}\Z/, if: 'color.present?'
 
   belongs_to :city
-  has_and_belongs_to_many :items
+  has_and_belongs_to_many :items, ->{ order :name }
   has_many :categories, -> { distinct }, through: :items
 
   # Add an item to this bin, reusing an existing item if possible. Returns the added item. If the

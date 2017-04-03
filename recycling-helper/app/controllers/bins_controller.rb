@@ -53,8 +53,12 @@ class BinsController < ApplicationController
         format.html { redirect_to @bin, notice: 'Bin was successfully updated.' }
         format.json { render json: { ok: true, bin: @bin } }
       else
+        Rails.logger.error "Failed to update bin #{params[:id]}"
         format.html { render :edit }
-        format.json { render json: { ok: false, errors: @bin.errors.full_messages } }
+        format.json { render json: {
+          # Respond with the current state of the bin in the database
+          ok: false, errors: @bin.errors.full_messages, bin: Bin.find_by(id: params[:id]) }
+        }
       end
     end
   end
