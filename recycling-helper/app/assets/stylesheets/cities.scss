@@ -1,6 +1,9 @@
 // Place all the styles related to the Cities controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
 
 body {
   padding-top: 100px;
@@ -28,6 +31,7 @@ b {
   list-style-type: none;
   display: grid;
   height: 100%;
+<<<<<<< HEAD
   
 }
 
@@ -80,7 +84,7 @@ header nav{
   margin-left: auto;
   margin-right: auto;
   right: 0%;
-  
+
 }
 
 
@@ -107,17 +111,17 @@ header nav a:hover {
 }
 
 .portion {
-  
+
   background-position: center ;
   text-align: center;
   background-attachment: fixed;
   background-size: cover;
- 
+
 }
 
 
 .portion.Metal {
-  
+
   background-image: url('https://aos.iacpublishinglabs.com/question/aq/700px-394px/make-homemade-aluminum-polish_547f3f63c57fa8d9.jpg?domain=cx.aos.ask.com');
 
 }
@@ -215,4 +219,47 @@ nav span {
   top: -40px;
   color: #000;
   font-size: 1.5em;
+}
+
+#bins {
+  .bin {
+    @extend .panel, .panel-default;
+    display: inline-table;
+    vertical-align: top;
+    width: 250px;
+
+    h3.title {
+      @extend .panel-title;
+    }
+
+    .heading {
+      @extend .panel-heading;
+    }
+
+    .body {
+      @extend .panel-body;
+
+      width: inherit;
+      height: 300px;
+      padding: 0px;
+    }
+
+    .footer {
+      @extend .panel-footer;
+    }
+  }
+}
+
+#cities_search {
+  height: 50%;
+  width: 75%;
+  margin: auto;
+  padding: 45px 45px;
+
+  border-style: solid;
+  border-width: thin;
+  border-radius: 10px;
+  border-color: #e5e5e5;
+
+  box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.2);
 }

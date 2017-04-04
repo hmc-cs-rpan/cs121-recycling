@@ -15,9 +15,24 @@
 #= require underscore
 #= require turbolinks
 #= require bootstrap-sprockets
+#= require bootstrap-colorpicker
 #= require ckeditor/init
 #= require ckeditor-autogrow
 #= require_tree .
+
+class Promise
+    constructor: (deferred) ->
+        @on_success = deferred.done
+        @on_error = deferred.fail
+        @on_complete = deferred.always
+
+###
+Turn a function taking success and failure callbacks into a Promise.
+###
+@promise = (f) ->
+    deferred = $.Deferred()
+    f deferred.resolve, deferred.reject
+    new Promise deferred
 
 ###
 Display a notification to the user, as if it were rendered by the server with flash.
@@ -102,9 +117,9 @@ class JSONRequest
     indicating failure, cb will be called once for each error, and passed an error message each time.
     ###
     on_error: (cb) ->
-        @on_errors (errs) ->
+        @on_errors (errs, res) ->
             for err in errs
-                cb err
+                cb err, res
         return this
 
     ###
@@ -114,7 +129,7 @@ class JSONRequest
         @xhr
         .done (res) ->
             if !res.ok
-                cb res.errors
+                cb res.errors, res
         .fail (req, status, message) ->
-            cb ["#{status} (#{req.status}): #{message}"]
+            cb ["#{status} (#{req.status}): #{message}"], {}
         return this

@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class TermTest < ActiveSupport::TestCase
-  require_properties_for Term, :name, :definition
+  properties_for Term, required: [:name, :definition]
 
   test "cannot create duplicate terms" do
     term = Term.all[0]

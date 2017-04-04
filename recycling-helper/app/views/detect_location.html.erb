@@ -1,0 +1,22 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+    console.log("location")
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          window.location.replace(
+            '<%= city_by_location_path %>?' +
+              'latitude=' + pos.coords.latitude + '&' +
+              'longitude=' + pos.coords.longitude)
+        },
+        (err) => {
+          console.log(err)
+          window.location.replace('<%= cities_path %>')
+        }
+      )
+    } else {
+      console.log("no location")
+      window.location.replace('<%= cities_path %>')
+    }
+  })
+</script>

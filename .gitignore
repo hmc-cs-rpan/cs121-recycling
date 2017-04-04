@@ -22,3 +22,9 @@
 
 # For Mac people
 */.DS_Store
+
+# Ignore rake tasks file
+*/.rake_tasks~
+
+# Ignore compiled assets
+*/public/assets/

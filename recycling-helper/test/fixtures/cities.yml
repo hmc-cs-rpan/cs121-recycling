@@ -3,11 +3,22 @@
 claremont:
   name: Claremont
   state: California
+  latitude: 34.12
+  longitude: -117.71
   location_id: NA-US-CA-CLAREMONT
   website_url: http://www.ci.claremont.ca.us/
 
 pasadena:
   name: Pasadena
   state: California
+  latitude: 34.15
+  longitude: -118.15
   location_id: NA-US-CA-PASADENA
   website_url: http://www.cityofpasadena.net/
+
+schmorbodia:
+  name: Schmorbodia
+  state: California # Not actually, just has to be a valid state
+  latitude: 82.86   # It's actually in Antarctica, apparently
+  longitude: 135.00
+  location_id: AN-AN-AN-SCHMORBODIA

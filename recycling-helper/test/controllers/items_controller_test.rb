@@ -5,32 +5,12 @@ class ItemsControllerTest < ActionDispatch::IntegrationTest
     @item = items(:newspaper)
   end
 
-  test "should get index" do
-    get items_url
-    assert_response :success
-  end
-
-  test "should get new" do
-    get new_item_url
-    assert_response :success
-  end
-
   test "should create item" do
     assert_difference('Item.count') do
       post items_url, params: { item: { name: 'new item', category_id: categories(:plastic).id } }
     end
 
     assert_redirected_to item_url(Item.last)
-  end
-
-  test "should show item" do
-    get item_url(@item)
-    assert_response :success
-  end
-
-  test "should get edit" do
-    get edit_item_url(@item)
-    assert_response :success
   end
 
   test "should update item name" do

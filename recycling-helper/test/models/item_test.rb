@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ItemTest < ActiveSupport::TestCase
-  require_properties_for Item, :name, :category
+  properties_for Item, required: [:name, :category]
 
   test "can get category" do
     assert_equal categories(:plastic), items(:plastic_bottle).category

@@ -1,34 +1,24 @@
 require 'csv'
 require Rails.root.join('db', 'seeds', 'helpers')
 
-# Categories (based heavily on Claremont, so we will want to relook when we add more cities to avoid
-# overfitting our categories)
-metal = Category.create!(
-  name: 'Metal',
-  image_url: 'http://www.knappsnacks.com/wp-content/uploads/2014/08/aluminumcan1.jpg')
-paper = Category.create!(
-  name: 'Paper',
-  image_url: 'https://static.vecteezy.com/system/resources/previews/000/094/161/original/free-notebook-paper-vector.jpg')
-glass = Category.create!(
-  name: 'Glass',
-  image_url: 'http://www.ikea.com/PIAimages/0183694_PE334729_S5.JPG')
-plastic = Category.create!(
-  name: 'Plastic',
-  image_url: 'http://www.alternet.org/sites/default/files/styles/story_image/public/story_images/plastic.png?itok=8_NKVjx4')
-food = Category.create!(
-  name: 'Food',
-  image_url: 'http://www.ikea.com/PIAimages/0183694_PE334729_S5.JPG')
+metal = Category.find_by name: 'Metal'
+paper = Category.find_by name: 'Paper'
+glass = Category.find_by name: 'Glass'
+plastic = Category.find_by name: 'Plastic'
+food = Category.find_by name: 'Food'
 
 claremont = City.create!  name: 'Claremont',
                           state: 'California',
+                          latitude: 34.12,
+                          longitude: -117.71,
                           location_id: 'NA-US-CA-CLAREMONT',
                           website_url: 'http://www.ci.claremont.ca.us/'
 
 claremont.zip_codes.create! name: '91711'
 
-claremont_recycle_bin = claremont.add_bin! 'recycling'
-claremont_compost_bin = claremont.add_bin! 'compost'
-claremont_trash_bin = claremont.add_bin! 'trash'
+claremont_recycle_bin = claremont.bins.create! name: 'recycling', color: '#0000c8'
+claremont_compost_bin = claremont.bins.create! name: 'compost', color: '#A52A2A'
+claremont_trash_bin = claremont.bins.create! name: 'trash', color: '#000000'
 
 # Items for Claremont (based on the information at http://www.ci.claremont.ca.us/home/showdocument?id=610)
 claremont_recycle_bin.add_items!([
@@ -111,20 +101,22 @@ claremont_compost_bin.add_items!([
 claremont_trash_bin.add_items!([
   { name: 'Plastic #7', category: plastic },
 ])
-  
+
 
 # It's useful to have a kind of sandbox city for testing
 schmorbodia = City.create!(
   name: 'Schmorbodia',
-  state: 'California',
-  location_id: 'NA-US-CA-SCHMORBODIA'
+  state: 'California',  # Not actually, just has to be a valid state
+  latitude: 82.86,      # It's actually in Antarctica, apparently
+  longitude: 135.00,
+  location_id: 'AN-AN-AN-SCHMORBODIA'
 )
 
 schmorbodia.zip_codes.create! name: '00000'
 schmorbodia.zip_codes.create! name: '55555'
 
-schmorbodia_bin_blue = schmorbodia.add_bin! 'blue'
-schmorbodia_bin_green = schmorbodia.add_bin! 'green'
+schmorbodia_bin_blue = schmorbodia.bins.create! name: 'blue', color: '#0000c8'
+schmorbodia_bin_green = schmorbodia.bins.create! name: 'green', color: '#008000'
 
 schmorbodia_bin_blue.add_items!([
   # Aluminum items
@@ -151,9 +143,17 @@ schmorbodia_bin_green.add_items! ([
 ])
 
 # Add some real, empty cities, but not all of them (it takes way too long)
+if ENV["NUM_CITIES"].nil?
+  num_cities = 1000
+elsif ENV["NUM_CITIES"].downcase == "inf"
+  num_cities = Float::INFINITY
+else
+  num_cities = ENV["NUM_CITIES"].to_i
+end
+
 CSV.foreach Rails.root.join('sample-data', 'all-cities.csv'), headers: true do |row|
   eval_city_csv row
-  break if City.count > 10
+  break if City.count >= num_cities
 end
 
 # Create some test users

@@ -61,3 +61,12 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Markdown renderer
 gem 'redcarpet'
+
+# Color picker for bin editor
+gem 'bootstrap-colorpicker-rails'
+
+# Store and interpret geographic information for cities
+gem 'geocoder'
+
+# Fuzzy matching for, eg, looking up cities by name or state
+gem 'fuzzily'

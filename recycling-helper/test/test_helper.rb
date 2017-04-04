@@ -37,17 +37,17 @@ class ActiveSupport::TestCase
   # the valid and invalid url examples via the methods valid_image_url, etc.) you could write:
   #    define_property :image_url, as: :url
   def self.define_property(property, as:)
-    define_method('valid_' + property.to_s) do
-      public_send('valid_' + as.to_s)
-    end
-    define_method('valid_' + property.to_s.pluralize(2)) do
-      public_send('valid_' + as.to_s.pluralize(2))
-    end
-    define_method('invalid_' + property.to_s) do
-      public_send('invalid_' + as.to_s)
-    end
-    define_method('invalid_' + property.to_s.pluralize(2)) do
-      public_send('invalid_' + as.to_s.pluralize(2))
+    ['valid', 'invalid'].each do |prefix|
+      if method_defined? "#{prefix}_#{as}"
+        define_method "#{prefix}_#{property}" do
+          public_send "#{prefix}_#{as}"
+        end
+      end
+      if method_defined? "#{prefix}_#{as.to_s.pluralize}"
+        define_method "#{prefix}_#{property.to_s.pluralize}" do
+          public_send "#{prefix}_#{as.to_s.pluralize}"
+        end
+      end
     end
   end
 
@@ -66,8 +66,14 @@ class ActiveSupport::TestCase
   valid :zip, '28717', '20817-1411'
   invalid :zip, '2871', '287178', '208171411', '20817-141', '20814-14111'
 
+  valid :latitude, 34.12, 34.15, 82.86
+  valid :longitude, -117.71, -118.15, 135.00
+
   valid :location, 'NA-US-CA-CLAREMONT'
   define_property :location_id, as: :location
+
+  valid :color, '#000000', '#abcdef', '#123456', '#123abc', '#123ABC'
+  invalid :color, '#bcdefg', '#abcde', '123456', 'a#123456', '#1234567'
 
   # Run a block with various combinations of valid and invalid properties. Usage:
   #    with_properties valid: :p1, invalid: [:p2, :p3], fixed_property: 'Value' do |props|
@@ -82,19 +88,53 @@ class ActiveSupport::TestCase
     end
   end
 
-  # Check that a model can be created with the given properties, and cannot be created without any
-  # one of those properties. Usage:
-  #    require_properties Model, :property1, :property2, ...
-  def self.require_properties_for(model, *properties)
-    test "can create #{model} with #{properties.join(', ')}" do
-      assert_valid model, default_properties(model, properties)
+  # Check that a model
+  # 1. can be created with valid values for the required properties only
+  # 2. cannot be created if any required property is missing
+  # 3. can be created with valid values for the required properties and any optional property
+  # 4. cannot be created with an invalid value for any optional property.
+  # Usage:
+  #    properties_for Model,
+  #       required: [:required1, :required2, ...],
+  #       optional: [:optional1, :optional2, ...]
+  def self.properties_for(model, required: [], optional: [])
+    test "can create #{model} with required properties: #{required.join(', ')}" do
+      assert_valid model, default_properties(model, required)
     end
 
-    properties.each do |property|
-      test "cannot create #{model} without #{property}" do
-        assert_invalid model, {property => :blank}, default_properties(model, properties).except(property)
+    required.each do |property|
+      test "cannot create #{model} without required property: #{property}" do
+        assert_invalid model, {property => :blank}, default_properties(model, required).except(property)
+      end
+
+      if method_defined? "invalid_#{property.to_s.pluralize}"
+        test "cannot create #{model} with invalid #{property}" do
+          public_send("invalid_#{property.to_s.pluralize}").each do |invalid|
+            props = default_properties(model, required).except(property).merge(property => invalid)
+            assert_invalid model, {property => :invalid}, props
+          end
+        end
       end
     end
+
+    optional.each do |property|
+      if method_defined? "valid_#{property.to_s.pluralize}"
+        test "can create #{model} with optional property: #{property}" do
+          public_send("valid_#{property.to_s.pluralize}").each do |valid|
+            assert_valid model, default_properties(model, required).merge(property => valid)
+          end
+        end
+      end
+
+      if method_defined? "invalid_#{property.to_s.pluralize}"
+        test "cannot create #{model} with invalid #{property}" do
+          public_send("invalid_#{property.to_s.pluralize}").each do |invalid|
+            assert_invalid model, {property => :invalid}, default_properties(model, required).merge(property => invalid)
+          end
+        end
+      end
+    end
+
   end
 
   # Check that a model can be created with the given properties. Usage:

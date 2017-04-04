@@ -1,26 +1,5 @@
 class BinsController < ApplicationController
-  before_action :set_bin, only: [:show, :edit, :update, :destroy]
-
-  # GET /bins
-  # GET /bins.json
-  def index
-    @bins = Bin.all
-  end
-
-  # GET /bins/1
-  # GET /bins/1.json
-  def show
-    @bin = Bin.find(params[:id])
-  end
-
-  # GET /bins/new
-  def new
-    @bin = Bin.new
-  end
-
-  # GET /bins/1/edit
-  def edit
-  end
+  before_action :set_bin, only: [:update, :destroy]
 
   # POST /bins
   # POST /bins.json
@@ -33,7 +12,11 @@ class BinsController < ApplicationController
         format.json { render json: { ok: true, bin: @bin } }
       else
         format.html { render :new }
-        format.json { render json: { ok: false, errors: @bin.errors.full_messages } }
+        format.json {
+          bin = Bin.find_by(id: @bin.id) || {}
+          render json:
+          { ok: false, errors: @bin.errors.full_messages, bin: bin }
+        }
       end
     end
   end
@@ -41,6 +24,7 @@ class BinsController < ApplicationController
   # PATCH/PUT /bins/1
   # PATCH/PUT /bins/1.json
   def update
+    Rails.logger.debug bin_params[:color]
     @bin.assign_attributes bin_params
 
     respond_to do |format|
@@ -48,8 +32,12 @@ class BinsController < ApplicationController
         format.html { redirect_to @bin, notice: 'Bin was successfully updated.' }
         format.json { render json: { ok: true, bin: @bin } }
       else
+        Rails.logger.error "Failed to update bin #{params[:id]}"
         format.html { render :edit }
-        format.json { render json: { ok: false, errors: @bin.errors.full_messages } }
+        format.json { render json: {
+          # Respond with the current state of the bin in the database
+          ok: false, errors: @bin.errors.full_messages, bin: Bin.find_by(id: params[:id]) }
+        }
       end
     end
   end
@@ -72,7 +60,7 @@ class BinsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def bin_params
-      params.require(:bin).permit(:name, :city_id)
+      params.require(:bin).permit(:name, :city_id, :color)
     end
 
     # Create a new bin and return a boolean indicating success

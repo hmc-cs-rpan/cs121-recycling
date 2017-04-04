@@ -11,7 +11,7 @@ items_by_category = JSON.parse(
 
 @init_smooth_scrolling = ->
   # Smooth Scroll on clicking nav items
-  $('nav a').click ->
+  $('#bin_links a').click ->
     $href = $(this).attr('href')
     $('body').stop().animate { scrollTop: $($href).offset().top }, 1000
     false
@@ -26,22 +26,22 @@ items_by_category = JSON.parse(
     $('.portion').css 'background-positionY', $movebg + 'px'
     # add class active to nav a on scroll
     scrollPos = $(document).scrollTop() + 100
-    $('nav a').each ->
+    $('#bin_links a').each ->
       currLink = $(this)
       refElement = $(currLink.attr('href'))
       if refElement.position().top <= scrollPos and refElement.position().top + refElement.height() > scrollPos
-        $('nav a').removeClass 'active'
+        $('#bin_links a').removeClass 'active'
         currLink.addClass 'active'
       return
     # changing padding of nav a on scroll
     if scrollPos > 250
-      $('nav a').addClass 'small'
-      $('nav img').addClass 'move'
-      $('nav span').removeClass 'movetext'
+      $('#bin_links a').addClass 'small'
+      $('#bin_links img').addClass 'move'
+      $('#bin_links span').removeClass 'movetext'
     else
-      $('nav a').removeClass 'small'
-      $('nav img').removeClass 'move'
-      $('nav span').addClass 'movetext'
+      $('#bin_links a').removeClass 'small'
+      $('#bin_links img').removeClass 'move'
+      $('#bin_links span').addClass 'movetext'
     return
 
 ###
@@ -95,14 +95,14 @@ Add items to the appropriate bins
     if is_active($("#item#{item.id}"))
       deactivate($("#item#{item.id}"))
       bin.items.push item
-  refresh_bins()
+  refresh_bin bin
 
 ###
 Remove selected items
 ###
 @remove_items = (bin) ->
   bin.items = _.filter(bin.items, (item) -> !is_active($("#item_in_bin#{item.id}")))
-  refresh_bins()
+  refresh_bin bin
 
 ###
 Add a new item to the items picker based on the contents of #new-item-form
@@ -131,22 +131,22 @@ Add a new item to the items picker based on the contents of #new-item-form
       # Scroll to the new item
       first = $('#items li').first().position().top
       elem = $("#items li[name=\"#{item.name}\"]").position().top
-      $('#items').scrollTop(elem - first);
+      $('#items').scrollTop(elem - first)
 
       # And select it
       activate $("#items li[name=\"#{item.name}\"]")
     .on_error (err) ->
-        flash_error(err, selector: '#new-item-errors')
+      flash_error(err, selector: '#new-item-errors')
 
 ###
 Add a new bin to the city based on the contents of #new-bin-form
 ###
-@save_new_bin = ->
-  bin = form_to_json $('#new-bin-form')
+@save_new_bin = ({name, color}) -> promise (succeed, fail) ->
+  bin = { name: name, color: color, city_id: $("#new-bin-form [name=\"city_input\"]").val() }
 
   if !bin.name
     flash_error('Please enter a name for the bin.')
-    return
+    return fail()
 
   get_json '<%= bins_path %>', method: 'POST', data: { bin: bin }
     .on_success (res) ->
@@ -156,8 +156,13 @@ Add a new bin to the city based on the contents of #new-bin-form
       # Clear the form
       $('#new-bin-form [name=name]').val('')
 
-      refresh_bins()
+      create_bin res.bin
+      create_bin_dropdown res.bin
+      succeed()
+
     .on_error flash_error
+    .on_errors ->
+      fail()
 
 ###
 Get the category_id by which we are currently filtering, or null if we are not.
@@ -171,29 +176,25 @@ Get the category_id by which we are currently filtering, or null if we are not.
       return null
 
 ###
-Render the data contained in bins
+Create DOM elements for each bin currently owned by the city
 ###
-@refresh_bins = ->
-  last_bin = $("#bins li").last()
-  $("#bins li").not(last_bin).remove()
-  $("#drop1").empty()
-  last_bin.detach()
+@init_bins = (bins) ->
+  @bins = bins
 
-  for bin in bins
-    bin_li = $("<li class=\"bin-group-item\" name=\"#{bin.name}\">")
-    $("#bins").append bin_li
-    append_bin bin_li, bin
-    append_bin_dropdown($("#drop1") , bin) 
+  for bin in @bins
+    create_bin bin
+    create_bin_dropdown bin
 
-  $("#bins").append last_bin
-  fit_to last_bin.find('.heading'), last_bin.find('input')
-  fit_to last_bin.find('.footer'), last_bin.find('input')
+  init_new_bin_form()
+  refresh_new_bin_form()
 
-append_bin_dropdown = (parent, bin) ->
-  button = $("<button class=\"dropdown-item\">")
-  button.append bin.name
-  button.click -> add_to_bin(bin)
-  parent.append button
+  $last_bin = $("#bins").children().last()
+  fit_to $last_bin.find('.heading'), $last_bin.find('input')
+  fit_to $last_bin.find('.footer'), $last_bin.find('input')
+
+@init_items = (items) ->
+  @items = items
+  display_all_items()
 
 @click_new_bin = ->
   form = $("#new-bin-form")
@@ -241,108 +242,162 @@ append_bin_dropdown = (parent, bin) ->
 ###
 Delete the specified bin from the database and the DOM.
 ###
-delete_bin = (id) ->
-  get_json "/bins/#{id}", method: 'DELETE'
+delete_bin = (bin) ->
+  get_json "/bins/#{bin.id}", method: 'DELETE'
     .on_success ->
-      index = _.findIndex bins, (bin) -> bin.id == id
+      index = _.findIndex bins, (b) -> b.id == bin.id
       if index == -1
-        console.log "Unable to remove bin #{id} from GUI"
+        console.log "Unable to remove bin #{bin.id} from GUI"
       else
         bins.splice index, 1
-      refresh_bins()
+      $("#" + bin_id(bin)).remove()
+
     .on_error flash_error
 
 ###
-Set the name of the bin with the given id.
+Set the name and color of the bin with the given id.
 ###
-rename_bin = (id, new_name) ->
-
-  bin = _.find bins, (bin) -> bin.id == id
-  unless bin?
-    console.log "Could not find bin with id #{id}"
-    return
-
-  # Save old name so we can rollback if the transaction fails
-  old_name = bin.name
-  if !new_name || new_name == old_name
+patch_bin = (bin, {name, color}) -> promise (succeed, fail) ->
+  # Save old data so we can rollback if the transaction fails
+  [old_name, old_color] = [bin.name, bin.color]
+  bin.name = name || old_name
+  bin.color = color || old_color
+  if name == old_name and color == old_color
     # Nothing to do, just close the form
-    refresh_bins()
-    return
-  bin.name = new_name
+    return succeed bin
 
-  get_json "/bins/#{id}", method: 'PATCH', data: { bin: bin }
-    .on_success ->
-      refresh_bins()
+  get_json "/bins/#{bin.id}", method: 'PATCH', data: { bin: bin }
+    .on_success (res) ->
+      succeed res.bin
     .on_error flash_error
-    .on_errors ->
-      bin.name = old_name
+    .on_errors (_, res) ->
+      # Revert bin to whatever state it's in in the db right now (contained in the response)
+      if res.bin
+        i = _.findIndex bins, (bin) -> bin.id == res.bin.id
+        bins[i] = res.bin
+      else
+        delete_bin bin
+      fail()
 
-###
-Create a DOM structure representing a bin and append it to parent.
-###
-append_bin = (parent, bin) ->
-  panel = $("<div class=\"bin\">")
-  parent.append panel
-  append_bin_header panel, bin
-  append_bin_body panel, bin
-  append_bin_footer panel, bin
+init_new_bin_form = ->
+  @next_color = {
+    h: 120,
+    s: 100,
+    l: 50
+  }
 
-###
-Create and a DOM structure representing a given bin and append it to parent. The structure includes
-the name of the bin, a button to edit the name, and a button to delete the bin.
-###
-append_bin_header = (parent, bin) ->
-  header = $('<div class="heading">')
+  $bin = $("#bins").children().last()
+  $color_input = $bin.find '[name="color_input"]'
+  $name_input = $bin.find '[name="name_input"]'
 
-  title = $("<h3 class=\"title inline\">#{bin.name}</h3>")
+  $color_input
+    .data 'color', '#000000' # This will be overridden when we refresh, but we need to set it or
+                             # the colorpicker constructor will fail
+    .colorpicker().on 'changeColor', (e) ->
+      $color_input.css 'backgroundColor', e.color.toHex()
+      $bin.children('.heading').css 'backgroundColor', e.color.toHex()
 
-  form = $("<form class=\"inline\">")
-  input = $("<input type=\"text\" placeholder=\"#{bin.name}\" class=\"form-control\">")
-  input.blur -> form.submit() # Submit form on focus out
-  form.append input
-  form.submit (e) ->
+  $form = $bin.find('form')
+  $form.submit (e) ->
     e.preventDefault()
-    rename_bin bin.id, input.val()
+    save_new_bin name: $name_input.val(), color: $color_input.data('colorpicker').color.toHex()
+      .on_success ->
+        next_color.h = next_color.h + 20 % 360
+        $form.find('[name="name_input"]').val '' # Clear the form for next time
+        refresh_new_bin_form()
 
-  edit_btn = $("<button type=\"button\" class=\"icon left-align\">")
-  edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
-  edit_btn.click ->
-    header.empty().append(form)
-    input.focus()
-
-  delete_btn = $("<button type=\"button\" class=\"close\">&times;</button>")
-  delete_btn.click ->
-    delete_bin(bin.id)
-
-  header.append edit_btn, title, delete_btn
-  parent.append header
-
-  # Make the header large enough to fit the form
-  fit_to header, form
+refresh_new_bin_form = ->
+  $bin = $("#bins").children().last()
+  hsl = "hsl(#{next_color.h}, #{next_color.s}%, #{next_color.l}%)"
+  $bin.find('.heading, .footer').css 'backgroundColor', hsl
+  $bin.find('[name="color_input"]')
+    .css 'backgroundColor', hsl
+    .colorpicker 'setValue', hsl
 
 ###
-Create a DOM structure representing the items in a given bin and append it to parent.
+Create a DOM structure representing a bin and append it to the list of bins.
 ###
-append_bin_body = (parent, bin) ->
-  list = $('<ul class="body scrollable-list">')
+create_bin = (bin) ->
+  $bin = $("#bin_template").clone().detach()
+  $bin.attr 'id', bin_id(bin)
+
+  # Give each child with a name an id which is unique to this bin
+  $bin.children().each ->
+    if $(this).attr('name') != ''
+      $(this).attr 'id', bin_id(bin, $(this).attr 'name')
+
+  # Insert the new bin just before the last bin in the list (which will always be the new bin button)
+  $bin.insertBefore $("#bins").children().last()
+
+  init_bin bin
+  refresh_bin bin
+
+init_bin = (bin) ->
+  $bin = $("#" + bin_id(bin))
+
+  $heading = $bin.children('.heading')
+  $form = $heading.find('[name="form"]').hide()
+  $title = $heading.find('[name="title_bar"]')
+
+  # Make the heading big enough to fit the form, even when the form is not displayed
+  fit_to $heading, $form
+
+  $color_input = $form.find('[name="color_input"]')
+  $color_input
+    .data 'color', bin.color
+    .colorpicker().on 'changeColor', (e) ->
+      $color_input.css 'backgroundColor', e.color.toHex()
+      $heading.css 'backgroundColor', e.color.toHex()
+      bin.target_color = e.color.toHex()
+
+  $form.submit (e) ->
+    e.preventDefault()
+    patch_bin bin, name: $form.find('input').val(), color: bin.target_color
+      .on_success ->
+        $form.hide()
+        $form.find('input').val '' # Reset the form for next time
+        $title.show()
+      .on_complete ->
+        refresh_bin bin
+
+  $bin.find('[name="edit"]').click ->
+    $title.hide()
+    $form.show()
+    $(document.body).one 'click', (e) ->
+      save_bin_on_focusout e, $form, $heading.add('.colorpicker').add($form).add($title)
+    $heading.append $form
+    $form.find('input').focus()
+
+  $bin.find('[name="delete"]').click ->
+    delete_bin bin
+
+  $bin.find('[name="remove_items"]').click ->
+    remove_items bin
+
+refresh_bin = (bin) ->
+  $bin = $("#" + bin_id(bin))
+
+  $bin.find('[name="title"]').html bin.name
+  $bin.find('[name="name_input"]').attr 'placeholder', bin.name
+
+  $bin.find(".heading, .footer").css 'backgroundColor', bin.color
+  $bin.find('[name="color_input"]').css 'backgroundColor', bin.color
+
+  $items = $bin.find '[name="items"]'
+  $items.empty()
   for item in bin.items
     btn = create_button(item)
     btn.attr('id', "item_in_bin#{item.id}")
-    list.append btn
+    $items.append btn
 
-  parent.append list
+create_bin_dropdown = (bin) ->
+  $button = $("<button class=\"dropdown-item\">")
+  $button.append bin.name
+  $button.click -> add_to_bin(bin)
+  $("#bin_dropdown").append $button
 
 is_active = (elem) ->
   elem.hasClass 'active'
-
-append_bin_footer = (parent, bin) ->
-  panel = $("<div class = \"footer\">")
-  remove_btn = $("<button type=\"button\" class=\"btn btn-default\">")
-  remove_btn.append $("<span class=\"glyphicon glyphicon-remove\">")
-  remove_btn.append " Remove selected"
-  remove_btn.click -> remove_items(bin)
-  panel.append remove_btn
-  parent.append panel
 
 ###
 Remove all items from the items picker.
@@ -440,3 +495,15 @@ all_items = ->
   _.sortBy (_.flatten Object.values(items_by_category), true), 'name'
 
 remove_http = (url) -> url.replace /^http:\/\//, ""
+
+save_bin_on_focusout = (e, $form, $outof) ->
+  if $outof.has($(e.target)).size() == 0
+    $form.submit()
+  else
+    $(document.body).one 'click', (e) -> save_bin_on_focusout e, $form, $outof
+
+bin_id = (bin, name) ->
+  if name
+    "bin#{bin.id}_#{name}"
+  else
+    "bin_#{bin.id}"
