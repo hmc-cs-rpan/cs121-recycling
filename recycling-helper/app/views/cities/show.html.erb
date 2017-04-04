@@ -40,18 +40,11 @@
 				<!-- Print each item with its bin information -->
 				<% items.each do |obj| %>
 					<% description = obj.name %> 
-					<li class="boxbackground" >
-						<div class="transbox">
-							<p><%= description %></p>
-						</div>
-					</li>
-
-					<% description = obj.name %>
 					<li class="box" ><%= description %></li>
 				<% end %>
 			<% end %>
 		</div>
-
+		
 	<% end %>
 
 </body>
