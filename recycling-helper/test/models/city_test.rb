@@ -40,7 +40,7 @@ class CityTest < ActiveSupport::TestCase
 
     assert_equal [claremont, pasadena], City.near([claremont.latitude, claremont.longitude], 100),
       'could not find cities nearby to Claremont'
-    assert_equal [schmorbodia], City.near([schmorbodia.latitude, schmorbodia.longitude]),
+    assert_equal [schmorbodia], City.near([schmorbodia.latitude, schmorbodia.longitude], 20),
       'could not find cities nearby to Schmorbodia'
   end
 
