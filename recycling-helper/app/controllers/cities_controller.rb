@@ -26,12 +26,14 @@ class CitiesController < ApplicationController
 
   # GET /cities/find/location?latitude=:latitude&longitude=:longitude
   def by_location
-    nearby = City.near([params[:latitude].to_f, params[:longitude].to_f])
+    Rails.logger.debug(params[:latitude].to_f)
+    Rails.logger.debug(params[:longitude].to_f)
+    nearby = City.near([params[:latitude].to_f, params[:longitude].to_f], 20)
     if nearby.first
       redirect_to nearby.first
     else
       flash[:error] = "We couldn't find any cities near you."
-      redirect_to 'index'
+      redirect_to '/cities'
     end
   end
 
