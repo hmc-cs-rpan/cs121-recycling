@@ -1,7 +1,10 @@
 <script type="text/javascript">
   $(document).ready(function() {
-    console.log("location")
+
+    $("#progress").hide()
+
     if (navigator.geolocation) {
+      $("#progress").show()
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           window.location.replace(
@@ -15,8 +18,14 @@
         }
       )
     } else {
-      console.log("no location")
       window.location.replace('<%= cities_path %>')
     }
   })
 </script>
+
+<div id="progress" class="full-window centerable">
+  <div class="centered">
+    <h2>Detecting your location...</h2>
+    <img src="https://s-media-cache-ak0.pinimg.com/originals/25/d7/83/25d78319891c914ec8e9aec6e04dc4a2.gif">
+  </div>
+</div>
