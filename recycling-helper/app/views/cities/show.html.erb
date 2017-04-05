@@ -26,8 +26,9 @@
 	<% @city.bins.each do |bin| %>
 		<% myId = bin.name.downcase %>
 		<% myClass = "portion " + bin.name.downcase %>
+		<% myBinStyle = "background-color: " + bin.color + ";" %>
 
-		<div id="<%=myId%>" class="<%=myClass%>">
+		<div id="<%=myId%>" class="<%=myClass%>" style = "<%=myBinStyle%>">
 			<h2><%=bin.name.titleize%></h2>
 		</div>
 
@@ -40,7 +41,9 @@
 				<!-- Print each item with its bin information -->
 				<% items.each do |obj| %>
 					<% description = obj.name %> 
-					<li class="boxbackground" >
+					<!-- <li class="boxbackground" style="background: url("plastic-bottles-photo.jpg") repeat;")> -->
+					<% myStyle = "background-color: " + bin.color + ";" %>
+					<li class="boxbackground" style="<%=myStyle%>" >
 						<div class="transbox">
 							<p><%= description %></p>
 						</div>
