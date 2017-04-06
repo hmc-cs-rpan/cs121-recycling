@@ -28,7 +28,7 @@
 		<% myClass = "portion " + bin.name.downcase %>
 
 		<div id="<%=myId%>" class="<%=myClass%>">
-			<h2><%=bin.name.titleize%></h2>
+			<h2><%=bin.name.titleize %></h2>
 		</div>
 
 		<div class="info" >
@@ -39,9 +39,11 @@
 			<% else %>
 				<!-- Print each item with its bin information -->
 				<% items.each do |obj| %>
+					<% itemImage = image_tag(obj.image, width: '150', height: '100') %>
 					<% description = obj.name %> 
 					<li class="boxbackground" >
 						<div class="transbox">
+							<p><%= itemImage%><p>
 							<p><%= description %></p>
 						</div>
 					</li>

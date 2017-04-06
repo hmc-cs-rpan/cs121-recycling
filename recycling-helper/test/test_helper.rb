@@ -75,6 +75,9 @@ class ActiveSupport::TestCase
   valid :color, '#000000', '#abcdef', '#123456', '#123abc', '#123ABC'
   invalid :color, '#bcdefg', '#abcde', '123456', 'a#123456', '#1234567'
 
+  valid :image, 'Metals/beer_can.jpg', 'Metals/veggie_can.jpg', 'Glass/wine_bottle.jpg'
+  invalid :image, 'Metals', 'beer_can'
+
   # Run a block with various combinations of valid and invalid properties. Usage:
   #    with_properties valid: :p1, invalid: [:p2, :p3], fixed_property: 'Value' do |props|
   #        assert ...something with props

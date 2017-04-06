@@ -9,9 +9,9 @@ class Bin < ApplicationRecord
   # Add an item to this bin, reusing an existing item if possible. Returns the added item. If the
   # item exists but does not match category, then an exception will be raised and the database will
   # not be touched.
-  def add_item!(name, category)
+  def add_item!(name, category, image)
     begin
-      result = Item.create(name: name, category: category)
+      result = Item.create(name: name, category: category, image: image)
       items << result
     rescue ActiveRecord::RecordNotUnique
       # This item already exists in the database
@@ -35,7 +35,7 @@ class Bin < ApplicationRecord
   # each, and each item should be a hash containing keys :name and :category.
   def add_items!(items)
     items.map do |item|
-      add_item! item[:name], item[:category]
+      add_item! item[:name], item[:category], item[:image]
     end
   end
 
