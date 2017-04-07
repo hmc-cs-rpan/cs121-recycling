@@ -6,7 +6,9 @@ class CitiesController < ApplicationController
   # GET /cities.json
   def index
     @query = ""
+   
   end
+
 
   # GET /cities/1
   # GET /cities/1.json

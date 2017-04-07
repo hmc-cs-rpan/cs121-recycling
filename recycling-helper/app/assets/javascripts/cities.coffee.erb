@@ -13,7 +13,7 @@ items_by_category = JSON.parse(
   # Smooth Scroll on clicking nav items
   $('#bin_links a').click ->
     $href = $(this).attr('href')
-    $('body').stop().animate { scrollTop: $($href).offset().top }, 1000
+    $('body').stop().animate { scrollTop: $($href).offset().top-100 }, 1000
     false
   # back to top
   $('#toTop a').click ->
@@ -25,7 +25,7 @@ items_by_category = JSON.parse(
     $movebg = $(window).scrollTop() * -0.3
     $('.portion').css 'background-positionY', $movebg + 'px'
     # add class active to nav a on scroll
-    scrollPos = $(document).scrollTop() + 100
+    scrollPos = $(document).scrollTop() + 1000
     $('#bin_links a').each ->
       currLink = $(this)
       refElement = $(currLink.attr('href'))

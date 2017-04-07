@@ -28,4 +28,6 @@ class City < ApplicationRecord
     end
   end
 
+
+  
 end
