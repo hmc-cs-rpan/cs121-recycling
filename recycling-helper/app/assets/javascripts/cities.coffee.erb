@@ -239,6 +239,9 @@ Create DOM elements for each bin currently owned by the city
   $("#url").append form
   input.focus()
 
+@search_items = () ->
+  $("#search_items [name=\"scroll_from\"]").val $("body").scrollTop()
+
 ###
 Delete the specified bin from the database and the DOM.
 ###

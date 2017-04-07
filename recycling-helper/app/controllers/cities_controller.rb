@@ -2,6 +2,7 @@ class CitiesController < ApplicationController
   before_action :set_city, except: [:index, :by_location, :search]
   before_action :empty_cities
   before_action :set_query
+  before_action :set_scroll_from
 
   # GET /cities
   # GET /cities.json
@@ -154,6 +155,10 @@ class CitiesController < ApplicationController
 
     def set_query
       @query = ""
+    end
+
+    def set_scroll_from
+      @scroll_from = params[:scroll_from] || 0
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
