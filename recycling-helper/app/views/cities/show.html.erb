@@ -12,65 +12,52 @@
 <header>
 
   <nav id="bin_links">
-  	
+
     <img class="left" id ="logo" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
     <b><%= @city.name %>, <%= @city.state %></b>
 
-	<% @bins.each do |bin| %>
-		<% link = "#" + bin.name.downcase %>
-		<a href= "<%=link%>" ><%= bin.name.titleize %></a>
-	<% end %>
-	<!-- Search bar-->
-	<bar class= "right">
-		<%= form_tag(city_path, :method => "get", id: "search-form") do %>
-    	<%= text_field_tag :search, params[:search], placeholder: "Search Item" %>
-    	<%= submit_tag "Search", :name => nil %>
-	<% end %>
-	</bar>	
+  	<% @city.bins.each do |bin| %>
+  		<% link = "#" + bin.name.downcase %>
+  		<a href= "<%=link%>" ><%= bin.name.titleize %></a>
+  	<% end %>
+  	<!-- Search bar-->
+  	<%= form_tag search_items_path(@city), :method => "get", class: 'navbar-form navbar-right' do %>
+    	<%= text_field_tag :query, nil, {placeholder: "Search Item", class: 'form-control'} %>
+    	<%= submit_tag "Search", class: 'btn btn-default' %>
+  	<% end %>
   </nav>
 
 
 </header>
 
-	
-<body>
+<% if @items %>
+  <div id="search_results" class="info">
+    <%= render partial: 'items/item', collection: @items, locals: {city: @city} %>
+  </div>
+<% end %>
 
-	<% @city.bins.each do |bin| %>
-		<% myId = bin.name.downcase %>
-		<% myClass = "portion " + bin.name.downcase %>
-		<% myBinStyle = "background-color: " + bin.color + ";" %>
+<% @city.bins.each do |bin| %>
+	<% myId = bin.name.downcase %>
+	<% myClass = "portion " + bin.name.downcase %>
+	<% myBinStyle = "background-color: " + bin.color + ";" %>
 
-		<div id="<%=myId%>" class="<%=myClass%>" style = "<%=myBinStyle%>">
-			<h2><%=bin.name.titleize%></h2>
+	<div id="<%=myId%>" class="<%=myClass%>" style = "<%=myBinStyle%>">
+		<h2><%=bin.name.titleize%></h2>
 
-		</div>
+	</div>
 
-		<div class="info" >
-			<% items = bin.items.sort_by{|obj| obj.name} %>
+	<div class="info" >
+		<% items = bin.items.sort_by{|obj| obj.name} %>
 
-			<% if items.empty? %>
-				<%= "No items in this bin. Add information!" %>
-			<% else %>
-				<!-- Print each item with its bin information -->
-				<% items.each do |obj| %>
-					
-					<% myItemStyle = "background-image: url(" + image_path(obj.image) + "); background-repeat: repeat; background-size: cover; width: 55%; height: 55%; background-color: " + bin.color + ";" %>
+		<% if items.empty? %>
+			<%= "No items in this bin. Add information!" %>
+		<% else %>
+			<!-- Print each item with its bin information -->
+			<%= render partial: 'items/item', collection: @items, locals: {city: @city} %>
+		<% end %>
+	</div>
 
-					<li id="placeholder" class="boxbackground" style= "<%=myItemStyle%>")>
-						<div class="transbox">
-							<p><%= obj.name.titleize %></p>
-						</div>
-					</li>
-
-					
-				<% end %>
-			<% end %>
-		</div>
-		
-	<% end %>
-
-</body>
-
+<% end %>
 
 <footer class="info">
 <%= link_to 'Edit', edit_city_path(@city) %> |

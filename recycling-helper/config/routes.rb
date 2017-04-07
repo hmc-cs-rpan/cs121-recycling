@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   get 'cities/find/location', to: 'cities#by_location', as: 'city_by_location'
   get 'cities/search', to: 'cities#search', as: 'search_cities'
-  get 'items/search', to: 'items#search', as: 'search_items'
+  get 'cities/:id/search', to: 'cities#search_items', as: 'search_items'
 
   resources :articles
   resources :cities, except: [:new, :create]

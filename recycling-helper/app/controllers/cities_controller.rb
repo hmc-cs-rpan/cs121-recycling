@@ -1,12 +1,11 @@
 class CitiesController < ApplicationController
-  before_action :set_city, only: [:show, :edit, :update, :destroy]
+  before_action :set_city, except: [:index, :by_location, :search]
   before_action :empty_cities
+  before_action :set_query
 
   # GET /cities
   # GET /cities.json
   def index
-    @query = ""
-   
   end
 
 
@@ -14,8 +13,6 @@ class CitiesController < ApplicationController
   # GET /cities/1.json
   def show
     @city = City.find(params[:id])
-    @categories = Category.all
-    @bins = @city.bins
   end
 
   # GET /cities/1/edit
@@ -103,6 +100,24 @@ class CitiesController < ApplicationController
 
   end
 
+  # GET /cities/1/search
+  def search_items
+    if params[:query].nil? || params[:query] == ""
+      render :show
+      return
+    end
+
+    @query = params[:query].strip
+    Rails.logger.debug "city #{@city.id}: Processing query for item #{@query}"
+
+    @items = Item.find_by_fuzzy_name(@query) & @city.items
+    if @items.empty?
+      Rails.logger.debug "city #{@city.id}: No results for #{@query}"
+      flash[:error] = "No items match #{@query}"
+    end
+    render :show
+  end
+
   # PATCH/PUT /cities/1
   # PATCH/PUT /cities/1.json
   def update
@@ -135,6 +150,10 @@ class CitiesController < ApplicationController
 
     def empty_cities
       @cities = []
+    end
+
+    def set_query
+      @query = ""
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

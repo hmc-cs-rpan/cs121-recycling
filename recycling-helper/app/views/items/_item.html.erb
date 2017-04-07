@@ -1,0 +1,8 @@
+<% bin = item.bins.find_by city: city %>
+<% myItemStyle = "background-image: url(" + image_path(item.image) + "); background-repeat: repeat; background-size: cover; width: 55%; height: 55%; background-color: " + bin.color + ";" %>
+
+<div id="placeholder" class="boxbackground" style= "<%=myItemStyle%>")>
+  <div class="transbox">
+    <p><%= item.name.titleize %></p>
+  </div>
+</div>

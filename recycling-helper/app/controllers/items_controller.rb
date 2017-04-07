@@ -4,9 +4,9 @@ class ItemsController < ApplicationController
   def index
     @items = Item.all
     if params[:search]
-     @items = Item.search(params[:search]).order("created_at DESC")
+     @items = Item.find_by_fuzzy_name params[:search]
     else
-    @items = Item.all.order('created_at DESC')
+      @items = Item.all.order('created_at DESC')
     end
 end
   # POST /items
