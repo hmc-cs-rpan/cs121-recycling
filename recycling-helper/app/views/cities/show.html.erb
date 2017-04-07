@@ -53,16 +53,13 @@
 			<% else %>
 				<!-- Print each item with its bin information -->
 				<% items.each do |obj| %>
-					<% itemImage = image_tag(obj.image, width: '100px', height: '100px') %>
-					<% description = obj.name %> 
-					<% description2 = obj.image%> 
-					<!-- <li class="boxbackground" style="background: url("plastic-bottles-photo.jpg") repeat;")> -->
-					<% myStyle1 = "background-color: " + bin.color + ";" %>
-					<% myStyle2 = "background-image: url(" + obj.image + ");" %>
 					
-					<li class="square" style="<%=myStyle1%>" >
-							<p><%= itemImage%><p>
-							<p><%= description %></p>
+					<% myItemStyle = "background-image: url(" + image_path(obj.image) + "); background-repeat: repeat; background-size: cover; width: 55%; height: 55%; background-color: " + bin.color + ";" %>
+
+					<li id="placeholder" class="boxbackground" style= "<%=myItemStyle%>")>
+						<div class="transbox">
+							<p><%= obj.name.titleize %></p>
+						</div>
 					</li>
 
 					
