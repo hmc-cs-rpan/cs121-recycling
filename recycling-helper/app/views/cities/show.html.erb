@@ -43,12 +43,14 @@
 
 </header>
 
-<div id="search_results" class="portion">
-  <h2>Found <%= @items.length %> results for "<%= @query %>"</h2>
-</div>
-<div class="info">
-  <%= render partial: 'items/item', collection: @items, locals: {city: @city} %>
-</div>
+<% if @items %>
+  <div id="search_results" class="portion">
+    <h2>Found <%= @items.length %> results for "<%= @query %>"</h2>
+  </div>
+  <div class="info">
+    <%= render partial: 'items/item', collection: @items, locals: {city: @city} %>
+  </div>
+<% end %>
 
 <div id="bins">
   <% @city.bins.each do |bin| %>
