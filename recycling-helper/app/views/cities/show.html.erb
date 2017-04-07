@@ -53,7 +53,7 @@
 			<%= "No items in this bin. Add information!" %>
 		<% else %>
 			<!-- Print each item with its bin information -->
-			<%= render partial: 'items/item', collection: @items, locals: {city: @city} %>
+			<%= render partial: 'items/item', collection: items, locals: {city: @city} %>
 		<% end %>
 	</div>
 
