@@ -13,9 +13,7 @@
       // Scroll to search results
       $("#search_results").show()
       $("body").scrollTop($("search_results").outerHeight() + <%= @scroll_from %>)
-      $('html, body').animate({
-        scrollTop: 0
-      }, 2000);
+      scroll_to(0)
     <% end %>
 
   })
@@ -48,7 +46,11 @@
     <h2>Found <%= @items.length %> results for "<%= @query %>"</h2>
   </div>
   <div class="info">
-    <%= render partial: 'items/item', collection: @items, locals: {city: @city} %>
+    <% @items.each do |item| %>
+      <div onclick="scroll_to('#item<%= item.id %>')">
+        <%= render partial: 'items/item', locals: {item: item, city: @city, clickable: true} %>
+      </div>
+    <% end %>
   </div>
 <% end %>
 
@@ -70,7 +72,11 @@
   			<%= "No items in this bin. Add information!" %>
   		<% else %>
   			<!-- Print each item with its bin information -->
-  			<%= render partial: 'items/item', collection: items, locals: {city: @city} %>
+  			<% items.each do |item| %>
+          <div id="item<%= item.id %>">
+            <%= render partial: 'items/item', locals: {item: item, city: @city} %>
+          </div>
+        <% end %>
   		<% end %>
   	</div>
 
