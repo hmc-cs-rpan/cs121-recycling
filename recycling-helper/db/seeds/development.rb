@@ -25,7 +25,7 @@ claremont_recycle_bin.add_items!([
   # Aluminum items
   { name: 'Aluminum soda cans', category: metal, image: "Metals/soda_can.jpg" },
   { name: 'Aluminum beer cans', category: metal, image: "Metals/beer_can.jpg" },
-  { name: 'Fruit cans', category: metal, image: "Metals/beer_can.jpg" },
+  { name: 'Fruit cans', category: metal, image: "Metals/fruit_can.jpg" },
   { name: 'Vegetable cans', category: metal, image: "Metals/veggie_can.jpg" },
   { name: 'Pet food cans', category: metal, image: "Metals/petfood_can.jpg" },
   { name: 'Juice cans', category: metal, image: "Metals/juice_can.png" },
