@@ -21,7 +21,7 @@
         <div class="form-group">
           <%= text_field_tag :query, nil, {
             class: 'form-control',
-            placeholder: 'Enter your zip code or search for a city...',
+            placeholder: 'Enter your zip code or city...',
             value: @query,
             tabindex: 1,
             autofocus: true
@@ -36,8 +36,14 @@
 
 <ul id="cities" class="list-group">
   <% @cities.each do |city| %>
-    <li class="list-group-item btn btn-default" onclick="window.location.href = '<%= city_path city %>'">
-      <%= "#{city.name}, #{city.state}" %>
-    </li>
+    <% if city.zip_codes.length > 1 %>
+      <li class="list-group-item btn btn-default" onclick="window.location.href = '<%= city_path city %>'">
+        <%= "#{city.name}, #{city.state} #{city.zip_codes[0].name} - #{city.zip_codes[1].name}" %>
+      </li>
+    <% else %>
+      <li class="list-group-item btn btn-default" onclick="window.location.href = '<%= city_path city %>'">
+        <%= "#{city.name}, #{city.state} #{city.zip_codes[0].name}" %>
+      </li>
+    <% end %>
   <% end %>
 </ul>
