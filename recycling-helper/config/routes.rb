@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get 'cities/search', to: 'cities#search', as: 'search_cities'
   get 'cities/:id/search', to: 'cities#search_items', as: 'search_items'
 
+  get 'articles/search', to: 'articles#search', as: 'search_articles'
+
   resources :articles
   resources :cities, except: [:new, :create]
   resources :items, only: [:create, :update, :destroy]

@@ -1,4 +1,6 @@
 require 'csv'
+require 'rubygems'
+require 'word_salad'
 require Rails.root.join('db', 'seeds', 'helpers')
 
 metal = Category.find_by name: 'Metal'
@@ -66,7 +68,7 @@ claremont_recycle_bin.add_items!([
   { name: 'Condiment jars', category: glass, image: "Glass/condiment_jar.jpg"  },
   { name: 'Jam jars', category: glass, image: "Glass/jam_jar.jpg"  },
   { name: 'Jelly jars', category: glass, image: "Glass/jelly_jar.jpg" },
-  { name: 'Food Containers', category: glass, image: "Glass/food_container.jpg" }, 
+  { name: 'Food Containers', category: glass, image: "Glass/food_container.jpg" },
   { name: 'Assorted food jars', category: glass, image: "Glass/assortedfood_jar.jpg" },
   { name: 'Salad dressing bottles', category: glass, image: "Glass/dressingsalad_bottle.jpg" },
 
@@ -146,7 +148,7 @@ schmorbodia_bin_green.add_items! ([
 
 # Add some real, empty cities, but not all of them (it takes way too long)
 if ENV["NUM_CITIES"].nil?
-  num_cities = 1000
+  num_cities = 10
 elsif ENV["NUM_CITIES"].downcase == "inf"
   num_cities = Float::INFINITY
 else
@@ -195,7 +197,17 @@ Term.create!([
   }
 ])
 
-# A sample article
+# Lots of randomly generated articles
+if ENV["NUM_ARTICLES"].nil?
+  num_articles = 1
+else
+  num_articles = ENV["NUM_ARTICLES"].to_i
+end
+(1 .. num_articles).each do |i|
+  Article.create! title: "Sample Article #{i}", content: 2.paragraphs.join("<br>")
+end
+
+# A sample article. Created after the above, so it displays first in the index
 md = Redcarpet::Markdown.new(Redcarpet::Render::HTML, autolink: true, tables: true)
 Article.create!(
   title: 'About',

@@ -1,5 +1,9 @@
 class Article < ApplicationRecord
   validates :title, :content, presence: true
-  # has_attached_file :image, styles: { medium: "500x500>", thumb: "100x100>" }, default_url: "/images/:style/missing.png"
-  # validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+
+  fuzzily_searchable :title, :content
+
+  def self.fuzzy_search(query)
+    return find_by_fuzzy_title(query) | find_by_fuzzy_content(query)
+  end
 end

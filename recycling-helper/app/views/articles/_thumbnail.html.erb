@@ -1,0 +1,14 @@
+<% article = thumbnail %>
+
+<div class="panel panel-default article clickable" onclick="location.href='<%= article_path(article) %>'" >
+  <div class="panel-heading">
+    <h3 class="panel-title article-title"><%= article.title %></h3>
+  </div>
+  <div class="panel-body article-text">
+    <% if article.content.length > 500 %>
+      <%= simple_format article.content[0..500] + '... <a>(more)</a>' %>
+    <% else %>
+      <%= simple_format article.content %>
+    <% end %>
+  </div>
+</div>

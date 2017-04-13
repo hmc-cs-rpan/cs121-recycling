@@ -1,16 +1,17 @@
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
+  before_action :set_query, only: [:index, :search]
 
   # GET /articles
   # GET /articles.json
   def index
-    @articles = Article.all
+    @articles = Article.order(created_at: :desc)
   end
 
   # GET /articles/1
   # GET /articles/1.json
   def show
-    @articles = Article.find(params[:id])
+    @article = Article.find(params[:id])
   end
 
   # GET /articles/new
@@ -20,6 +21,25 @@ class ArticlesController < ApplicationController
 
   # GET /articles/1/edit
   def edit
+  end
+
+  # GET /articles/search?query=:query
+  def search
+    if params[:query].nil? || params[:query] == ""
+      redirect_to 'index'
+      return
+    end
+
+    @query = params[:query]
+
+    @articles = Article.fuzzy_search @query
+    if @articles.empty?
+      flash[:error] = "No results for \"#{@query}\"."
+    else
+      flash[:success] = "Found #{@articles.length} articles."
+    end
+
+    render 'index'
   end
 
   # POST /articles
@@ -68,6 +88,10 @@ class ArticlesController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_article
       @article = Article.find(params[:id])
+    end
+
+    def set_query
+      @query = ""
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
