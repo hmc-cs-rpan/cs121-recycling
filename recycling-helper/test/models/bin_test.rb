@@ -1,7 +1,14 @@
 require 'test_helper'
 
 class BinTest < ActiveSupport::TestCase
-  properties_for Bin, required: [:name, :city, :color]
+  refer_property :city, to: City
+  define_property :red, as: :color_channel
+  define_property :green, as: :color_channel
+  define_property :blue, as: :color_channel
+  define_property :alpha, as: :alpha_channel
+
+  bin_properties = [:city, :red, :green, :blue, :alpha]
+  properties_for Bin, required: [:name] + bin_properties
 
   test "can get city" do
     assert_equal cities(:claremont), bins(:claremont_recycling).city
@@ -13,7 +20,7 @@ class BinTest < ActiveSupport::TestCase
   end
 
   test "items are sorted by name" do
-    bin = Bin.create! name: 'test', city: cities(:claremont), color: '#000000'
+    bin = Bin.first
     bin.items.create! [
       { name: 'c', category: categories(:paper) },
       { name: 'z', category: categories(:paper) },
@@ -26,15 +33,20 @@ class BinTest < ActiveSupport::TestCase
   test "cannot create duplicate bins for the same city" do
     bin = bins(:claremont_recycling)
 
-    assert_raise ActiveRecord::RecordNotUnique do
-      Bin.create(name: bin.name, city: bin.city, color: '#000000')
+
+    with_properties valid: bin_properties, name: bin.name do |props|
+      props[:city] = bin.city
+
+      assert_raise ActiveRecord::RecordNotUnique do
+        Bin.create props
+      end
     end
   end
 
   test "can add existing item" do
     bin = bins(:claremont_recycling)
     item = Item.create(name: 'new item', category: categories(:paper))
-    item_in_bin = bin.add_item! item.name, item.category
+    item_in_bin = bin.add_item! item.name, item.category, nil
 
     # Should just refer to the same item
     assert_includes bin.items, item, 'new item is not in bin'
@@ -45,7 +57,7 @@ class BinTest < ActiveSupport::TestCase
   test "can create new item" do
     bin = bins(:claremont_recycling)
     items = Item.select('id')
-    item = bin.add_item! 'new item', categories(:paper)
+    item = bin.add_item! 'new item', categories(:paper), nil
 
     assert_not_includes items, item.id, 'a new item was not created'
     assert_equal item, Item.find(item.id), 'the new item was not in the database'
@@ -67,7 +79,7 @@ class BinTest < ActiveSupport::TestCase
 
     # Misbehave
     assert_raise Errors::InvalidCategoryForItem do
-      bin.add_item! item.name, wrong_category
+      bin.add_item! item.name, wrong_category, nil
     end
 
     # the database should be unchanged

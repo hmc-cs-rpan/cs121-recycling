@@ -24,7 +24,6 @@ class BinsController < ApplicationController
   # PATCH/PUT /bins/1
   # PATCH/PUT /bins/1.json
   def update
-    Rails.logger.debug bin_params[:color]
     @bin.assign_attributes bin_params
 
     respond_to do |format|
@@ -60,7 +59,7 @@ class BinsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def bin_params
-      params.require(:bin).permit(:name, :city_id, :color)
+      params.require(:bin).permit(:name, :city_id, :red, :green, :blue, :alpha)
     end
 
     # Create a new bin and return a boolean indicating success

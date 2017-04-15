@@ -23,12 +23,41 @@ class ActiveSupport::TestCase
   # creates two instance methods:
   #   invalid_#{property}, which returns an arbitrary element from the example values
   #   invalid_#{properties}, which returns an array of all provided values
+  #   expected_#{property}_error(value), which returns the error to expect if an object is created
+  #     with the given property => value pair
+  # Optionally, any argument can be a single-key hash, in which case the key is interpreted as the
+  # invalid value, and the value as the error to expect if an item is created with that property.
+  # The default error is :invalid.
   def self.invalid(property, *values)
     define_method('invalid_' + property.to_s) do
-      values.flatten.first
+      val = values.flatten.first
+      if val.is_a? Hash
+        val.keys[0]
+      else
+        val
+      end
     end
     define_method('invalid_' + property.to_s.pluralize(2)) do
-      values.flatten
+      values.flatten.map do |val|
+        if val.is_a? Hash
+          val.keys[0]
+        else
+          val
+        end
+      end
+    end
+    define_method('invalid_' + property.to_s + '_error') do |value|
+      i = values.index {|val| (val.is_a?(Hash) && val.keys.include?(value)) || val == value }
+
+      unless i
+        return nil
+      end
+
+      if values[i].is_a? Hash
+        values[i][value]
+      else
+        :invalid
+      end
     end
   end
 
@@ -47,6 +76,12 @@ class ActiveSupport::TestCase
         define_method "#{prefix}_#{property.to_s.pluralize}" do
           public_send "#{prefix}_#{as.to_s.pluralize}"
         end
+      end
+    end
+
+    if method_defined? "invalid_#{as}_error"
+      define_method "invalid_#{property}_error" do |value|
+        public_send "invalid_#{as}_error", value
       end
     end
   end
@@ -72,8 +107,11 @@ class ActiveSupport::TestCase
   valid :location, 'NA-US-CA-CLAREMONT'
   define_property :location_id, as: :location
 
-  valid :color, '#000000', '#abcdef', '#123456', '#123abc', '#123ABC'
-  invalid :color, '#bcdefg', '#abcde', '123456', 'a#123456', '#1234567'
+  valid :color_channel, 0, 1, 255
+  invalid :color_channel, {-1 => :greater_than_or_equal_to}, {256 => :less_than_or_equal_to}
+
+  valid :alpha_channel, 0, 0.5, 1
+  invalid :alpha_channel, {-0.1 => :greater_than_or_equal_to}, {1.1 => :less_than_or_equal_to}
 
   valid :image, 'Metals/beer_can.jpg', 'Metals/veggie_can.jpg', 'Glass/wine_bottle.jpg'
   invalid :image, 'Metals', 'beer_can'
@@ -114,7 +152,8 @@ class ActiveSupport::TestCase
         test "cannot create #{model} with invalid #{property}" do
           public_send("invalid_#{property.to_s.pluralize}").each do |invalid|
             props = default_properties(model, required).except(property).merge(property => invalid)
-            assert_invalid model, {property => :invalid}, props
+            error = public_send("invalid_#{property}_error", invalid)
+            assert_invalid model, {property => error}, props
           end
         end
       end
@@ -132,7 +171,8 @@ class ActiveSupport::TestCase
       if method_defined? "invalid_#{property.to_s.pluralize}"
         test "cannot create #{model} with invalid #{property}" do
           public_send("invalid_#{property.to_s.pluralize}").each do |invalid|
-            assert_invalid model, {property => :invalid}, default_properties(model, required).merge(property => invalid)
+            error = public_send("invalid_#{property}_error", invalid)
+            assert_invalid model, {property => error}, default_properties(model, required).merge(property => invalid)
           end
         end
       end

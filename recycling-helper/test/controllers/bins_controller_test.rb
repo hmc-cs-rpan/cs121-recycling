@@ -8,7 +8,13 @@ class BinsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create bin" do
     assert_difference('Bin.count') do
-      post bins_url, params: { bin: { name: 'new bin', city_id: cities(:claremont).id, color: '#000000' } }
+      post bins_url, params: {
+        bin: {
+          name: 'new bin',
+          city_id: cities(:claremont).id,
+          red: 0, green: 0, blue: 0, alpha: 1
+        }
+      }
     end
 
     assert_redirected_to bin_url(Bin.last)

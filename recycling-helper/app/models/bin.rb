@@ -1,6 +1,13 @@
 class Bin < ApplicationRecord
-  validates :name, :city, :color, presence: true
-  validates_format_of :color, with: /\A#[0-9a-fA-F]{6}\Z/, if: 'color.present?'
+  validates :name, :city, :red, :green, :blue, :alpha, presence: true
+  validates :red, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 255 },
+    if: 'red.present?'
+  validates :green, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 255 },
+    if: 'green.present?'
+  validates :blue, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 255 },
+    if: 'blue.present?'
+  validates :alpha, numericality: { greater_than_or_equal_to: 0, less_than_or_equal_to: 1 },
+    if: 'alpha.present?'
 
   belongs_to :city
   has_and_belongs_to_many :items, ->{ order :name }
@@ -37,6 +44,10 @@ class Bin < ApplicationRecord
     items.map do |item|
       add_item! item[:name], item[:category], item[:image]
     end
+  end
+
+  def color
+    "rgba(#{red}, #{green}, #{blue}, #{alpha})"
   end
 
 end

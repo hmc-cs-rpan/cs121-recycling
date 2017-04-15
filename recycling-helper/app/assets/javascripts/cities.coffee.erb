@@ -142,7 +142,14 @@ Add a new item to the items picker based on the contents of #new-item-form
 Add a new bin to the city based on the contents of #new-bin-form
 ###
 @save_new_bin = ({name, color}) -> promise (succeed, fail) ->
-  bin = { name: name, color: color, city_id: $("#new-bin-form [name=\"city_input\"]").val() }
+  bin = {
+    name: name,
+    city_id: $("#new-bin-form [name=\"city_input\"]").val(),
+    red: color.r,
+    green: color.g,
+    blue: color.b,
+    alpha: color.a
+  }
 
   if !bin.name
     flash_error('Please enter a name for the bin.')
@@ -261,13 +268,11 @@ delete_bin = (bin) ->
 Set the name and color of the bin with the given id.
 ###
 patch_bin = (bin, {name, color}) -> promise (succeed, fail) ->
-  # Save old data so we can rollback if the transaction fails
-  [old_name, old_color] = [bin.name, bin.color]
-  bin.name = name || old_name
-  bin.color = color || old_color
-  if name == old_name and color == old_color
-    # Nothing to do, just close the form
-    return succeed bin
+  bin.name = name || bin.name
+  bin.red = color.r
+  bin.green = color.g
+  bin.blue = color.b
+  bin.alpha = color.a
 
   get_json "/bins/#{bin.id}", method: 'PATCH', data: { bin: bin }
     .on_success (res) ->
@@ -303,7 +308,7 @@ init_new_bin_form = ->
   $form = $bin.find('form')
   $form.submit (e) ->
     e.preventDefault()
-    save_new_bin name: $name_input.val(), color: $color_input.data('colorpicker').color.toHex()
+    save_new_bin name: $name_input.val(), color: $color_input.data('colorpicker').color.toRGB()
       .on_success ->
         next_color.h = next_color.h + 20 % 360
         $form.find('[name="name_input"]').val '' # Clear the form for next time
@@ -347,11 +352,17 @@ init_bin = (bin) ->
 
   $color_input = $form.find('[name="color_input"]')
   $color_input
-    .data 'color', bin.color
+    .data 'color', "rgba(#{bin.red}, #{bin.green}, #{bin.blue}, #{bin.alpha})"
     .colorpicker().on 'changeColor', (e) ->
       $color_input.css 'backgroundColor', e.color.toHex()
-      $heading.css 'backgroundColor', e.color.toHex()
-      bin.target_color = e.color.toHex()
+      $heading.add($bin.children('.footer')).css 'backgroundColor', e.color.toHex()
+      bin.target_color = e.color.toRGB()
+  bin.target_color = {
+    red: bin.red,
+    green: bin.green,
+    blue: bin.blue,
+    alpha: bin.alpha
+  }
 
   $form.submit (e) ->
     e.preventDefault()
@@ -383,8 +394,9 @@ refresh_bin = (bin) ->
   $bin.find('[name="title"]').html bin.name
   $bin.find('[name="name_input"]').attr 'placeholder', bin.name
 
-  $bin.find(".heading, .footer").css 'backgroundColor', bin.color
-  $bin.find('[name="color_input"]').css 'backgroundColor', bin.color
+  rgba = "rgba(#{bin.red}, #{bin.green}, #{bin.blue}, #{bin.alpha})"
+  $bin.find(".heading, .footer").css 'backgroundColor', rgba
+  $bin.find('[name="color_input"]').css 'backgroundColor', rgba
 
   $items = $bin.find '[name="items"]'
   $items.empty()
