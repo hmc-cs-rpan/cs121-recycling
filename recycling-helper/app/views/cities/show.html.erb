@@ -1,23 +1,24 @@
-<%= stylesheet_link_tag "cities" %>
- <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
-  <%= javascript_include_tag "application", "cities", "data-turbolinks-track" => true %>
-  <%= csrf_meta_tags %>
+<% content_for :js do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      init_smooth_scrolling()
 
-<script type="text/javascript">
-  $(document).ready(function() {
-    init_smooth_scrolling()
-
-    $("#search_results").hide()
-
-    <% if @items %>
-      // Scroll to search results
-      $("#search_results").show()
-      $("body").scrollTop($("search_results").outerHeight() + <%= @scroll_from %>)
-      scroll_to(0)
-    <% end %>
-
-  })
-</script>
+      <% if @items %>
+        // Link search results to the proper bin
+        <% @items.each do |item| %>
+          $item = $("#search_results [name=\"item<%= item.id %>\"]")
+          $item.css('cursor', 'pointer')
+          $item.click(function() {
+            $bin = $("#bin<%= item.bins.find_by(city: @city).id %>")
+            scroll_to($bin)
+            $page = $bin.find('[name=\"categories\"]').children().has("[name=\"item<%= item.id %>\"]")
+            select_page($bin, $page)
+          })
+        <% end %>
+      <% end %>
+    })
+  </script>
+<% end %>
 
 <header>
 
@@ -27,13 +28,11 @@
     <b><%= @city.name %>, <%= @city.state %></b>
 
   	<% @city.bins.each do |bin| %>
-  		<% link = "#" + bin.name.downcase %>
-  		<a href= "<%=link%>" ><%= bin.name.titleize %></a>
+  		<a href= "#bin<%= bin.id%>" ><%= bin.name.titleize %></a>
   	<% end %>
   	<!-- Search bar-->
   	<%= form_tag search_items_path(@city), :method => "get", id: 'search_items', class: 'navbar-form navbar-right', onsubmit: 'search_items()' do %>
     	<%= text_field_tag :query, @query, {placeholder: "Search for an item...", class: 'form-control'} %>
-      <input type="hidden" name="scroll_from">
     	<%= submit_tag "Search", class: 'btn btn-default' %>
   	<% end %>
   </nav>
@@ -42,48 +41,21 @@
 </header>
 
 <% if @items %>
-  <div id="search_results" class="portion">
-    <h2>Found <%= @items.length %> results for "<%= @query %>"</h2>
-  </div>
-  <div class="info">
-    <% @items.each do |item| %>
-      <div onclick="scroll_to('#item<%= item.id %>')">
-        <%= render partial: 'items/item', locals: {item: item, city: @city, clickable: true} %>
-      </div>
-    <% end %>
+  <div id="search_results">
+    <%= render partial: 'items/collection', locals: {
+      items: @items,
+      id: 'search_result_items',
+      name: "Found #{@items.length} items matching \"#{@query}\"",
+      color: { red: 200, green: 255, blue: 200, alpha: 0.5 }
+    } %>
   </div>
 <% end %>
 
 <div id="bins">
-  <% @city.bins.each do |bin| %>
-  	<% myId = bin.name.downcase %>
-  	<% myClass = "portion " + bin.name.downcase %>
-  	<% myBinStyle = "background-color: " + bin.color + ";" %>
-
-  	<div id="<%=myId%>" class="<%=myClass%>" style = "<%=myBinStyle%>">
-  		<h2><%=bin.name.titleize%></h2>
-
-  	</div>
-
-  	<div class="info" >
-  		<% items = bin.items.sort_by{|obj| obj.name} %>
-
-  		<% if items.empty? %>
-  			<%= "No items in this bin. Add information!" %>
-  		<% else %>
-  			<!-- Print each item with its bin information -->
-  			<% items.each do |item| %>
-          <div id="item<%= item.id %>">
-            <%= render partial: 'items/item', locals: {item: item, city: @city} %>
-          </div>
-        <% end %>
-  		<% end %>
-  	</div>
-
-  <% end %>
+  <%= render partial: 'bins/bin', collection: @city.bins, locals: {city: @city} %>
 </div>
 
-<footer class="info">
+<footer>
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>
   <div id="toTop"><a href="#">Back To Top</a></div>

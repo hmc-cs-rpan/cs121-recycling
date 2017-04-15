@@ -44,6 +44,42 @@ items_by_category = JSON.parse(
       $('#bin_links span').addClass 'movetext'
     return
 
+@select_category = (bin_id, category_id) ->
+  $bin = $("#bin#{bin_id}")
+  $page = $bin.find("[name=\"category#{category_id}\"]").first()
+  select_page $bin, $page
+
+@page_category = (bin_id, {backward} = {}) ->
+  backward ?= false
+
+  $bin = $("#bin#{bin_id}")
+  $active_page = $bin.find("[name=\"categories\"]").children(":visible")
+  $next_page = if backward then $active_page.prev() else $active_page.next()
+  if $next_page.length == 0
+    return
+
+  select_page $bin, $next_page
+
+@select_page = ($bin, $page) ->
+  $bin.find('.bin-page').not($page).hide()
+  $page.show()
+
+  # Disable/enable page forward/backwards buttons based on whether we're at the end of the list
+  if $page.prev().length == 0
+    $btn = $bin.find("[name=\"back\"]")
+    $btn.addClass 'disabled'
+  else
+    $bin.find("[name=\"back\"]").removeClass 'disabled'
+  if $page.next().length == 0
+    $bin.find("[name=\"forward\"]").addClass 'disabled'
+  else
+    $bin.find("[name=\"forward\"]").removeClass 'disabled'
+
+  # Activate the appropriate category selector
+  $btn = $bin.find "[name=\"#{$page.data 'category'}\"]"
+  activate $btn
+  deactivate $bin.find("[name=\"tabs\"]").children().not($btn)
+
 ###
 Display only items belonging to the given category in the items picker.
 If !force, then this founction is a noop if the given category is already displayed. Force can be
@@ -411,8 +447,11 @@ create_bin_dropdown = (bin) ->
   $button.click -> add_to_bin(bin)
   $("#bin_dropdown").append $button
 
-is_active = (elem) ->
-  elem.hasClass 'active'
+is_active = ($elem) ->
+  if $elem.data 'active-class'
+    $elem.hasClass $elem.data('active-class')
+  else
+    $elem.hasClass 'active'
 
 ###
 Remove all items from the items picker.
@@ -452,11 +491,23 @@ create_button = (item) ->
 
   list_item
 
-activate = (elem) ->
-  elem.addClass 'active'
+activate = ($elem) ->
+  if $elem.data 'active-class'
+    $elem.addClass $elem.data('active-class')
+  else
+    $elem.addClass 'active'
 
-deactivate = (elem) ->
-  elem.removeClass 'active'
+  if $elem.data 'inactive-class'
+    $elem.removeClass $elem.data('inactive-class')
+
+deactivate = ($elem) ->
+  if $elem.data 'active-class'
+    $elem.removeClass $elem.data('active-class')
+  else
+    $elem.removeClass 'active'
+
+  if $elem.data 'inactive-class'
+    $elem.addClass $elem.data('inactive-class')
 
 toggle_active = (elem) ->
   if is_active elem

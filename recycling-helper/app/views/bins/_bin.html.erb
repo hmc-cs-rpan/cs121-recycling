@@ -1,0 +1,6 @@
+<%= render partial: 'items/collection', locals: {
+  id: bin.id,
+  name: bin.name.titleize,
+  items: bin.items.order(:name),
+  color: bin.color
+} %>

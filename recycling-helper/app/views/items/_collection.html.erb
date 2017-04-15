@@ -1,0 +1,86 @@
+<% # Render a collection of items
+   # parameters:
+   #    id: a unique identifier for this collection
+   #    name: a title for the collection
+   #    items: a collection of items to render
+   #    color: a hash with keys :red, :green, :blue, and :alpha
+%>
+
+<% categories = items.map{ |item| item.category }.uniq{ |cat| cat.id } %>
+
+<% content_for :css do %>
+  <style type="text/css">
+    .bin-<%= id %>-bg-solid {
+      background-color: rgba(<%= color[:red] %>, <%= color[:green] %>, <%= color[:blue] %>, <%= color[:alpha] %>) !important;
+    }
+    .bin-<%= id %>-bg-transparent {
+      background-color: rgba(<%= color[:red] %>, <%= color[:green] %>, <%= color[:blue] %>, <%= color[:alpha] * 0.2 %>) !important;
+    }
+    .bin-<%= id %>-border {
+      border: 4px solid rgba(<%= color[:red] %>, <%= color[:green] %>, <%= color[:blue] %>, <%= color[:alpha] %>) !important;
+    }
+  </style>
+<% end %>
+
+<% unless categories.empty? %>
+  <% content_for :js do %>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        select_category('<%= id %>', '<%= categories.first.id %>')
+      })
+    </script>
+  <% end %>
+<% end %>
+
+<div id="bin<%= id %>" class="bin-view">
+  <div class="bin-header bin-<%= id %>-border bin-<%= id %>-bg-transparent">
+    <div class="film">
+      <h2><%= name %></h2>
+    </div>
+  </div>
+
+  <div class="bin-tabs" name="tabs">
+    <% categories.each do |category| %>
+      <button type="button"
+              class="btn btn-default bin-<%= id %>-bg-transparent bin-<%= id %>-border"
+              name="<%= category.id %>"
+              onclick="select_category('<%= id %>', '<%= category.id %>')"
+              data-inactive-class="bin-<%= id %>-bg-transparent"
+              data-active-class="bin-<%= id %>-bg-solid"
+              data-category="<%= category.id %>">
+        <%= category.name.titleize %>
+      </button>
+    <% end %>
+  </div>
+
+  <div class="bin-body">
+    <% if categories.empty? %>
+      No items.
+    <% else %>
+      <button name="back"
+              class="btn btn-default bin-<%= id %>-bg-transparent bin-<%= id %>-border"
+              onclick="page_category('<%= id %>', {backward: true})">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+      </button>
+
+      <div name="categories" class="bin-categories">
+        <% categories.each do |category| %>
+          <% items.select{ |item| item.category == category }.each_slice(8).with_index do |page, index| %>
+            <div name="category<%= category.id %>"
+                 name="page<%= index %>"
+                 class="bin-page bin-<%= id %>-border no-display"
+                 data-category="<%= category.id %>">
+              <%= render partial: 'items/item', collection: page, locals: { color: color } %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+
+      <button name="forward"
+              class="btn btn-default bin-<%= id%>-bg-transparent bin-<%= id %>-border"
+              onclick="page_category('<%= id %>')">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+      </button>
+    <% end %>
+  </div>
+</div>

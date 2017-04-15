@@ -47,6 +47,10 @@ class Bin < ApplicationRecord
   end
 
   def color
+    { red: red, green: green, blue: blue, alpha: alpha }
+  end
+
+  def css_color
     "rgba(#{red}, #{green}, #{blue}, #{alpha})"
   end
 

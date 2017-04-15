@@ -2,7 +2,6 @@ class CitiesController < ApplicationController
   before_action :set_city, except: [:index, :by_location, :search]
   before_action :empty_cities
   before_action :set_query
-  before_action :set_scroll_from
 
   # GET /cities
   # GET /cities.json
@@ -104,7 +103,7 @@ class CitiesController < ApplicationController
   # GET /cities/1/search
   def search_items
     if params[:query].nil? || params[:query] == ""
-      render :show
+      redirect_to @city
       return
     end
 
@@ -112,10 +111,8 @@ class CitiesController < ApplicationController
     Rails.logger.debug "city #{@city.id}: Processing query for item #{@query}"
 
     @items = Item.find_by_fuzzy_name(@query) & @city.items
-    if @items.empty?
-      Rails.logger.debug "city #{@city.id}: No results for #{@query}"
-      flash[:error] = "No items match #{@query}"
-    end
+    Rails.logger.debug "city #{@city.id}: #{@items.length} results for #{@query}"
+
     render :show
   end
 
@@ -155,10 +152,6 @@ class CitiesController < ApplicationController
 
     def set_query
       @query = ""
-    end
-
-    def set_scroll_from
-      @scroll_from = params[:scroll_from] || 0
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

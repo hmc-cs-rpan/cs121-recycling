@@ -8,12 +8,10 @@
 
 body {
   padding-top: 100px;
-  background-image: url("nature-background.jpg");
-  background-repeat: no-repeat;
+  background: image-url("grass.png");
   background-attachment: fixed;
-  background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
-
 }
 
 
@@ -37,82 +35,113 @@ b {
 
 }
 
-.square {
-    float:left;
-    position: relative;
-    width: 30%;
-    padding-bottom : 30%; /* = width for a 1:1 aspect ratio */
-    margin-top: 100px;
-    margin: 1.66%;
-    background-position:center center;
-    background-repeat:no-repeat;
-    background-size:contain;
-    border-radius: 20px;
-    border: 4px solid black;
-    padding: 25px;
-    font-size: 150%;
-    color: #fff;
-    list-style-type: none;
+.bin-view {
+  height: 80vh;
+  margin-top: 10vh;
+  margin-bottom: 10vh;
 
+  .bin-header {
+    height: 15%;
+    border-radius: 25px 25px 0px 0px;
+    margin-top: 10px;
 
+    h2 {
+      padding-top: 10px;
+      color: white;
+      text-shadow: 0 0 10px black;
+    }
+  }
+
+  .bin-tabs {
+    @extend .btn-group;
+    background-color: rgba(255, 255, 255, 0.5);
+
+    border-radius: 0px 0px 25px 25px;
+    width: 100%;
+    display: flex;
+
+    button {
+      flex-grow: 1;
+      color: white;
+      text-shadow: 0 0 3px black;
+      border-top-style: none !important;
+    }
+
+    button:not(:last-child) {
+      border-right-style: none !important;
+    }
+
+    button:first-child {
+      border-radius: 0px 0px 0px 25px;
+    }
+    button:last-child {
+      border-radius: 0px 0px 25px 0px;
+    }
+    button:only-child {
+      border-radius: 0px 0px 25px 25px;
+    }
+  }
+
+  .bin-body {
+    height: 85%;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 25px;
+    margin: 10px 0px;
+    display: flex;
+
+    button {
+      height: 100%;
+    }
+    button:first-child {
+      border-radius: 25px 0 0 25px;
+    }
+    button:last-child {
+      border-radius: 0 25px 25px 0;
+    }
+
+    .bin-categories {
+      flex-grow: 1;
+    }
+
+    .bin-page {
+      overflow-y: hidden;
+      height: 100%;
+      border-left-style: none !important;
+      border-right-style: none !important;
+
+      .item {
+        display: inline-block;
+
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+
+        border-radius: 10px;
+
+        .item-title {
+          width: 100%;
+          height: 33%;
+          margin: 33% 0px;
+
+          background-color: rgba(0, 0, 0, 0.5);
+          color: white;
+          text-shadow: 0 0 3px black;
+
+          position: relative;
+
+          p {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
 }
-
-.boxbackground {
-  
-  padding-top: 100%;
-  color: #fff;
-  border-radius: 40px;
-  border: 4px solid black;
-  padding: 10px;
-  font-size: 150%;
-  margin-top: 15px;
-  list-style-type: none;
-  display: grid;
-  
-  overflow: hidden;
-  box-sizing: border-box;
-  
-  width: 100%;
-  height: 100%;
-}
-
-div.transbox {
-  margin: 30% 5%;
-  background-color: #ffffff;
-  border: 0px solid black;
-  opacity: 0.6;
-  filter: alpha(opacity=60); /* For IE8 and earlier */
-}
-
-div.transbox p {
-  margin: 5%;
-  font-weight: bold;
-  color: #000000;
-}
-
-.info {
-  background: #FFFFFF;
-  color: #000;
-
-  padding-top: 40px;
-  padding-bottom: 40px;
-  -webkit-columns: 3 50px;
-     -moz-columns: 3 50px;
-          columns: 3 50px;
-  -webkit-column-gap: 1em;
-     -moz-column-gap: 1em;
-
-  -webkit-column-rule: 1px dotted #ddd;
-     -moz-column-rule: 1px dotted #ddd;
-          column-rule: 1px dotted #ddd;
-
-   
-  
-
-}
-
-
-
 
 header nav{
   text-align: center;
@@ -127,7 +156,7 @@ header nav{
   margin-left: auto;
   margin-right: auto;
   right: 0%;
-
+  z-index: 999999999;
 }
 
 

@@ -135,9 +135,9 @@ class JSONRequest
         return this
 
 ###
-Scroll to a vertical location within the page. loc can be a JQuery selector, in which case the
-document will scroll to the top of that element. It can also be a number, in which case the document
-will scroll to that vertical offset.
+Scroll to a vertical location within the page. loc can be a JQuery object or selector, in which case
+the document will scroll to the top of that element. It can also be a number, in which case the
+document will scroll to that vertical offset.
 ###
 @scroll_to = (loc, {duration} = {}) ->
     duration ?= 2000
@@ -145,6 +145,8 @@ will scroll to that vertical offset.
     offset =
         if typeof loc is 'number'
             loc
+        else if loc instanceof jQuery
+            loc.offset().top
         else
             $(loc).offset().top
 
