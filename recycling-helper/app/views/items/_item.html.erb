@@ -1,5 +1,5 @@
 <% bg_style = [
-    "background-image: url(" + image_path(item.image) + ");",
+    "background-image: " + (item.image.nil? ? 'initial' : "url(#{image_path(item.image)})") + ";",
     "border: 4px solid rgba(#{color[:red]}, #{color[:green]}, #{color[:blue]}, #{color[:alpha]});",
     "background-size: cover;",
     "background-color: rgba(#{color[:red]}, #{color[:green]}, #{color[:blue]}, #{0.2*color[:alpha]});"
