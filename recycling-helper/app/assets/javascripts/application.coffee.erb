@@ -1,8 +1,9 @@
 # This is a manifest file that'll be compiled into application.js, which will include all the files
 # listed below.
 #
-# Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
-# or any plugin's vendor/assets/javascripts directory can be referenced here using a relative path.
+# Any JavaScript/Coffee file within this directory, lib/assets/javascripts,
+# vendor/assets/javascripts, or any plugin's vendor/assets/javascripts directory can be referenced
+# here using a relative path.
 #
 # It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 # compiled file. JavaScript code in this file should be added after the last require_* statement.
@@ -21,53 +22,53 @@
 #= require_tree .
 
 class Promise
-    constructor: (deferred) ->
-        @on_success = deferred.done
-        @on_error = deferred.fail
-        @on_complete = deferred.always
+  constructor: (promise) ->
+    @on_success = promise.done
+    @on_error = promise.fail
+    @on_complete = promise.always
 
 ###
 Turn a function taking success and failure callbacks into a Promise.
 ###
 @promise = (f) ->
-    deferred = $.Deferred()
-    f deferred.resolve, deferred.reject
-    new Promise deferred
+  deferred = $.Deferred()
+  f deferred.resolve, deferred.reject
+  new Promise deferred.promise()
 
 ###
 Display a notification to the user, as if it were rendered by the server with flash.
 type: the type of notification. Can be "info", "success", "warning", "danger", or "error".
-    Default is "info".
+  Default is "info".
 dismissible: whether the notification can be closed by the user. Default is true.
 selector: JQuery selector indicating the DOM element that should contain the message. Default is the
-    global flash notification section of the application layout.
+  global flash notification section of the application layout.
 timeout: duration in milliseconds after which the notification should fade away. If set to a
-    negative value, the notification will not disappear until the user dismisses it. Default is 5000.
+  negative value, the notification will not disappear until the user dismisses it. Default is 5000.
 ###
 @flash = (msg, {type, dismissible, selector, timeout} = {}) ->
-    type ?= 'notify'
-    dismissible ?= true
-    selector ?= '#flash'
-    timeout ?= 5000
+  type ?= 'notify'
+  dismissible ?= true
+  selector ?= '#flash'
+  timeout ?= 5000
 
-    error = $('<div>')
-    error.addClass "alert alert-#{type}"
-    if dismissible
-        error.addClass "alert-dismissible"
-        error.append $('<button type="button" class="close" data-dismiss="alert">&times;</button>')
-    error.append msg
+  error = $('<div>')
+  error.addClass "alert alert-#{type}"
+  if dismissible
+    error.addClass "alert-dismissible"
+    error.append $('<button type="button" class="close" data-dismiss="alert">&times;</button>')
+  error.append msg
 
-    if timeout >= 0
-        setTimeout (-> error.fadeOut { complete: -> error.remove() }), timeout
+  if timeout >= 0
+    setTimeout (-> error.fadeOut { complete: -> error.remove() }), timeout
 
-    $(selector).append $(error)
+  $(selector).append $(error)
 
 ###
 Convenience function for displaying error messages to the user. Accepts the same arguments as flash
 (with the exception of type, which is automatically set to 'danger').
 ###
 @flash_error = (msg, {dismissible, selector, timeout} = {}) ->
-    flash msg, type: 'danger', dismissible: dismissible, selector: selector, timeout: timeout
+  flash msg, type: 'danger', dismissible: dismissible, selector: selector, timeout: timeout
 
 ###
 Convenience function for success messages (type = 'success'). Use this function sparingly, as flash
@@ -76,7 +77,7 @@ possible, provide feedback to the user via a more direct result of their action,
 for errors.
 ###
 @flash_success = (msg, {dismissible, selector, timeout} = {}) ->
-    flash msg, type: 'success', dismissible: dismissible, selector: selector, timeout: timeout
+  flash msg, type: 'success', dismissible: dismissible, selector: selector, timeout: timeout
 
 ###
 Get a JSON object from a REST API call. The endpoint specified by URL must support JSON requests
@@ -93,46 +94,46 @@ data: specify data to be sent in the request. Default is {}.
 Object representing an outstanding REST API call and supporting success and error callbacks.
 ###
 class JSONRequest
-    constructor: (url, {method, data} = {}) ->
-        method ?= 'GET'
-        data ?= {}
+  constructor: (url, {method, data} = {}) ->
+    method ?= 'GET'
+    data ?= {}
 
-        @xhr = $.ajax url, {
-            method: method,
-            dataType: 'json',
-            data: data
-        }
+    @xhr = $.ajax url, {
+      method: method,
+      dataType: 'json',
+      data: data
+    }
 
-    ###
-    If the request is successful, the response JSON will be passed to cb.
-    ###
-    on_success: (cb) ->
-        @xhr.done (res) ->
-            if res.ok
-                cb res
-        return this
+  ###
+  If the request is successful, the response JSON will be passed to cb.
+  ###
+  on_success: (cb) ->
+    @xhr.done (res) ->
+      if res.ok
+        cb res
+    return this
 
-    ###
-    If the request is unsuccessful, either because of an HTTP error code or an API response
-    indicating failure, cb will be called once for each error, and passed an error message each time.
-    ###
-    on_error: (cb) ->
-        @on_errors (errs, res) ->
-            for err in errs
-                cb err, res
-        return this
+  ###
+  If the request is unsuccessful, either because of an HTTP error code or an API response
+  indicating failure, cb will be called once for each error, and passed an error message each time.
+  ###
+  on_error: (cb) ->
+    @on_errors (errs, res) ->
+      for err in errs
+        cb err, res
+    return this
 
-    ###
-    If the request is unsuccessful, cb will be passed an array of error messages.
-    ###
-    on_errors: (cb) ->
-        @xhr
-        .done (res) ->
-            if !res.ok
-                cb res.errors, res
-        .fail (req, status, message) ->
-            cb ["#{status} (#{req.status}): #{message}"], {}
-        return this
+  ###
+  If the request is unsuccessful, cb will be passed an array of error messages.
+  ###
+  on_errors: (cb) ->
+    @xhr
+    .done (res) ->
+      if !res.ok
+        cb res.errors, res
+    .fail (req, status, message) ->
+      cb ["#{status} (#{req.status}): #{message}"], {}
+    return this
 
 ###
 Scroll to a vertical location within the page. loc can be a JQuery object or selector, in which case
@@ -140,16 +141,18 @@ the document will scroll to the top of that element. It can also be a number, in
 document will scroll to that vertical offset.
 ###
 @scroll_to = (loc, {duration} = {}) ->
-    duration ?= 2000
+  duration ?= 1000
 
-    offset =
-        if typeof loc is 'number'
-            loc
-        else if loc instanceof jQuery
-            loc.offset().top
-        else
-            $(loc).offset().top
+  offset =
+    if typeof loc is 'number'
+      loc
+    else if loc instanceof jQuery
+      loc.position().top
+    else
+      $(loc).position().top
 
-    $("html, body").animate({
-        scrollTop: offset
-    }, 2000)
+  $("html, body").animate({
+    scrollTop: offset
+  }, duration)
+
+  new Promise $("html, body").promise()

@@ -143,8 +143,7 @@ b {
   }
 }
 
-header nav{
-  text-align: center;
+#bin_links {
   background: #000;
   color: white;
   font-size: 1.5em;
@@ -156,30 +155,38 @@ header nav{
   margin-left: auto;
   margin-right: auto;
   right: 0%;
+
+  display: flex;
+  justify-content: center;
+
   z-index: 999999999;
-}
 
+  .bin-link:first-child {
+    font-weight: bold;
+    margin-left: auto;
+  }
 
+  .bin-link {
+    cursor: pointer;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+    padding: .5em 1em;
 
-header nav a {
-  color: inherit;
-  text-decoration: none;
-  display: inline-block;
-  padding: 2em 1em .5em;
-  -webkit-transition: all .3s ease-in;
+    -webkit-transition: all .1s ease-in;
+  }
 
-}
+  .bin-link:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
 
+  .active {
+    background: rgba(255, 255, 255, 0.3);
+  }
 
-.small {
-  padding: .5em 1em;
-}
-header nav a:hover {
-  text-decoration: underline;
-}
-
-.active {
-  background: rgba(255,255,255,0.3);
+  form {
+    margin-left: auto;
+  }
 }
 
 .portion {
@@ -190,7 +197,6 @@ header nav a:hover {
   background-size: cover;
 
 }
-
 
 .portion h2 {
   color: white;
@@ -252,9 +258,9 @@ nav img {
   transition: all 0.5s linear;
 }
 
-.move {
-  top: -60px;
-}
+// .move {
+//   top: -60px;
+// }
 
 
 nav span {
@@ -263,12 +269,6 @@ nav span {
   top: 10px;
   font-weight: bold;
   transition: all 0.5s ease-in;
-}
-
-.movetext {
-  top: -40px;
-  color: #000;
-  font-size: 1.5em;
 }
 
 #bins {

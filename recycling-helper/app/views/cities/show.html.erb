@@ -20,25 +20,18 @@
   </script>
 <% end %>
 
-<header>
+<nav id="bin_links">
+  <a class="to-top bin-link"><%= @city.name %>, <%= @city.state %></a>
 
-  <nav id="bin_links">
-
-    <img class="left" id ="logo" src="https://openclipart.org/image/2400px/svg_to_png/3880/doctormo-Put-Rubbish-in-Bin-Signs.png">
-    <b><%= @city.name %>, <%= @city.state %></b>
-
-  	<% @city.bins.each do |bin| %>
-  		<a href= "#bin<%= bin.id%>" ><%= bin.name.titleize %></a>
-  	<% end %>
-  	<!-- Search bar-->
-  	<%= form_tag search_items_path(@city), :method => "get", id: 'search_items', class: 'navbar-form navbar-right', onsubmit: 'search_items()' do %>
-    	<%= text_field_tag :query, @query, {placeholder: "Search for an item...", class: 'form-control'} %>
-    	<%= submit_tag "Search", class: 'btn btn-default' %>
-  	<% end %>
-  </nav>
-
-
-</header>
+	<% @city.bins.each do |bin| %>
+		<a href="#bin<%= bin.id%>" class="bin-link"><%= bin.name.titleize %></a>
+	<% end %>
+	<!-- Search bar-->
+	<%= form_tag search_items_path(@city), :method => "get", id: 'search_items', class: 'navbar-form navbar-right', onsubmit: 'search_items()' do %>
+  	<%= text_field_tag :query, @query, {placeholder: "Search for an item...", class: 'form-control'} %>
+  	<%= submit_tag "Search", class: 'btn btn-default' %>
+	<% end %>
+</nav>
 
 <% if @items %>
   <div id="search_results">
@@ -58,7 +51,4 @@
 <footer>
 <%= link_to 'Edit', edit_city_path(@city) %> |
 <%= link_to 'Back', cities_path %>
-  <div id="toTop"><a href="#">Back To Top</a></div>
- <!--  <p>&copy; 2014 Arif Hussain Bangash</p> -->
-
 </footer>

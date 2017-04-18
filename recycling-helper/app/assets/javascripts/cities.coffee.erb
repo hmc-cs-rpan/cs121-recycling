@@ -10,39 +10,35 @@ items_by_category = JSON.parse(
 )
 
 @init_smooth_scrolling = ->
+  $links = $("#bin_links a").not(".to-top")
+
   # Smooth Scroll on clicking nav items
-  $('#bin_links a').click ->
-    $href = $(this).attr('href')
-    $('body').stop().animate { scrollTop: $($href).offset().top-100 }, 1000
-    false
+  $links.click (e) ->
+    e.preventDefault()
+    $link = $(this)
+    scroll_to $link.attr('href')
+      .on_complete ->
+        deactivate $("#bin_links a")
+        activate $link
+
   # back to top
-  $('#toTop a').click ->
-    $('body').animate { scrollTop: 0 }, 1000
-    false
-  # Parallaxing + add class active on scroll
-  $(document).scroll ->
-    # parallaxing
-    $movebg = $(window).scrollTop() * -0.3
-    $('.portion').css 'background-positionY', $movebg + 'px'
-    # add class active to nav a on scroll
-    scrollPos = $(document).scrollTop() + 1000
-    $('#bin_links a').each ->
-      currLink = $(this)
-      refElement = $(currLink.attr('href'))
-      if refElement.position().top <= scrollPos and refElement.position().top + refElement.height() > scrollPos
-        $('#bin_links a').removeClass 'active'
-        currLink.addClass 'active'
-      return
-    # changing padding of nav a on scroll
-    if scrollPos > 250
-      $('#bin_links a').addClass 'small'
-      $('#bin_links img').addClass 'move'
-      $('#bin_links span').removeClass 'movetext'
-    else
-      $('#bin_links a').removeClass 'small'
-      $('#bin_links img').removeClass 'move'
-      $('#bin_links span').addClass 'movetext'
-    return
+  $('.to-top').click (e) ->
+    e.preventDefault()
+    scroll_to 0
+
+  activate_link = ->
+    # activate the link corresponding to our current position
+    scrollPos = $(document).scrollTop()
+    $links.each ->
+      $curr_link = $(this)
+      $ref = $($curr_link.attr 'href')
+      if $ref.position().top <= scrollPos and $ref.position().top + $ref.height() > scrollPos
+        deactivate $links
+        activate $curr_link
+
+  activate_link()
+  $(document).scroll -> activate_link()
+
 
 @select_category = (bin_id, category_id) ->
   $bin = $("#bin#{bin_id}")
