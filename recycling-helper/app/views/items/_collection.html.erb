@@ -22,14 +22,24 @@
   </style>
 <% end %>
 
-<% unless categories.empty? %>
-  <% content_for :js do %>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        select_category('<%= id %>', '<%= categories.first.id %>')
+
+<% content_for :js do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      // Turn page on swipe gesture
+      $("#bin<%= id %> .bin-page").on("swipeleft", function() {
+        page_category("<%= id %>")
       })
-    </script>
-  <% end %>
+      $("#bin<%= id %> .bin-page").on("swiperight", function() {
+        page_category("<%= id %>", {backward: true})
+      })
+
+      <% unless categories.empty? %>
+        // Initialize the bin to page 1
+        select_category('<%= id %>', '<%= categories.first.id %>')
+      <% end %>
+    })
+  </script>
 <% end %>
 
 <div id="bin<%= id %>" class="bin-view">
