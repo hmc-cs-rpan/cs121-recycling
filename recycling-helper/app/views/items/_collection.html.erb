@@ -75,7 +75,7 @@
 
       <div name="categories" class="bin-categories">
         <% categories.each do |category| %>
-          <% items.select{ |item| item.category == category }.each_slice(8).with_index do |page, index| %>
+          <% items.select{ |item| item.category == category }.each_slice(10).with_index do |page, index| %>
             <div name="category<%= category.id %>"
                  name="page<%= index %>"
                  class="bin-page bin-<%= id %>-border no-display"
