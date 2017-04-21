@@ -15,7 +15,7 @@
   <div id="cities_search" class="centered">
 
     <div class="centered">
-      <h3>Find your city</h3>
+      <h3>Welcome to the Recycling Helper</h3>
       <hr>
 
       <%= form_tag search_cities_path, method: :get, class: "" do %>
@@ -43,7 +43,7 @@
         <%= "#{city.name}, #{city.state} #{city.zip_codes[0].name} - #{city.zip_codes[1].name}" %>
       </li>
     <% else %>
-      <li class="list-group-item btn btn-default" onclick="window.location.href = '<%= city_path city %>'">
+      <li class="button" onclick="window.location.href = '<%= city_path city %>'">
         <%= "#{city.name}, #{city.state} #{city.zip_codes[0].name}" %>
       </li>
     <% end %>

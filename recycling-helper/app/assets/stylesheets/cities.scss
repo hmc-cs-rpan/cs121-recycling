@@ -333,18 +333,40 @@ background: url('bw_backgronud.png');
   }
 }
 
+.button {
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+
+    height: 50%;
+    width: 35%;
+
+    background-color: rgba(255, 255, 255, 0.7);
+
+    border-style: solid;
+    border-width: thin;
+    border-radius: 25px;
+    border-color: rgba(255, 255, 255, 0.4);
+
+    box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.5);
+}
+
 #cities_search {
   height: 50%;
   width: 75%;
   margin: auto;
   padding: 45px 45px;
 
-  background-color: rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.5);
 
   border-style: solid;
   border-width: thin;
-  border-radius: 10px;
+  border-radius: 25px;
   border-color: rgba(255, 255, 255, 0.4);
 
-  box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.5);
 }
