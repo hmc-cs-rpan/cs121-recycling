@@ -116,6 +116,12 @@ class ActiveSupport::TestCase
   valid :image, 'Metals/beer_can.jpg', 'Metals/veggie_can.jpg', 'Glass/wine_bottle.jpg'
   invalid :image, 'Metals', 'beer_can'
 
+  valid :email, 'foo@gmail.com', 'foo.bar@domain.co.uk'
+  invalid :email, 'foo@gmail', 'gmail.com', 'foo.gmail.com'
+
+  valid :phone_number, '+15556667777', '555-555-5555', '(555) 555 5555', '(555)-444-3210'
+  invalid :phone_number, {'555555555' => :improbable_phone }, {'555-555-55555' => :improbable_phone}
+
   # Run a block with various combinations of valid and invalid properties. Usage:
   #    with_properties valid: :p1, invalid: [:p2, :p3], fixed_property: 'Value' do |props|
   #        assert ...something with props

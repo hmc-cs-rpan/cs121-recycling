@@ -189,7 +189,6 @@ b {
 
   .bin-link:first-child {
     font-weight: bold;
-    margin-left: auto;
   }
 
   .bin-link {
@@ -208,10 +207,6 @@ b {
 
   .active {
     background: rgba(255, 255, 255, 0.3);
-  }
-
-  form {
-    margin-left: auto;
   }
 }
 
@@ -353,20 +348,4 @@ background: url('bw_backgronud.png');
     border-color: rgba(255, 255, 255, 0.4);
 
     box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.5);
-}
-
-#cities_search {
-  height: 50%;
-  width: 75%;
-  margin: auto;
-  padding: 45px 45px;
-
-  background-color: rgba(255, 255, 255, 0.5);
-
-  border-style: solid;
-  border-width: thin;
-  border-radius: 25px;
-  border-color: rgba(255, 255, 255, 0.4);
-
-  box-shadow: 1px 3px 8px rgba(0, 0, 0, 0.5);
 }

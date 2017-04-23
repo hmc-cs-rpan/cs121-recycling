@@ -117,6 +117,10 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (~> 0.3.0)
+    phony (2.15.42)
+    phony_rails (0.14.5)
+      activesupport (>= 3.0)
+      phony (~> 2.15)
     puma (3.7.1)
     rack (2.0.1)
     rack-test (0.6.3)
@@ -215,6 +219,7 @@ DEPENDENCIES
   jquery_mobile_rails
   listen (~> 3.0.5)
   paperclip (~> 5.0.0)
+  phony_rails
   puma (~> 3.0)
   rails (~> 5.0.1)
   redcarpet

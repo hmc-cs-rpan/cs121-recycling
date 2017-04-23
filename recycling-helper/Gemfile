@@ -74,3 +74,6 @@ gem 'fuzzily'
 
 # Random word generation, for test data
 gem 'word_salad'
+
+# Phone number validation
+gem 'phony_rails'

@@ -5,7 +5,7 @@ class CityTest < ActiveSupport::TestCase
 
   properties_for City,
     required: [:name, :state, :location_id, :latitude, :longitude],
-    optional: [:website_url]
+    optional: [:website_url, :email, :phone_number]
 
   test "can get all city officials" do
     assert_equal CityOfficial.where(city: cities(:claremont)), cities(:claremont).officials

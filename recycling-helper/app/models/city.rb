@@ -4,6 +4,11 @@ class City < ApplicationRecord
   validates :state, state: true, if: 'state.present?'
   validates :website_url, format: { with: URI.regexp, message: 'is not a valid URL' },
     if: 'website_url.present?'
+  validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i },
+    if: 'email.present?'
+  validates :phone_number, phony_plausible: true, if: 'phone_number.present?'
+
+  phony_normalize :phone_number, default_country_code: 'US'
 
   reverse_geocoded_by :latitude, :longitude
   after_validation :geocode, if: 'latitude_changed? || longitude_changed?'
@@ -29,5 +34,5 @@ class City < ApplicationRecord
   end
 
 
-  
+
 end

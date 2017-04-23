@@ -4,15 +4,13 @@
   <% unless @cities.empty? %>
     // Scroll down to search results
     $(document).ready(function() {
-      $('html, body').animate({
-        scrollTop: $("#cities").offset().top
-      }, 2000);
+      scroll_to("#cities")
     })
   <% end %>
 </script>
 
 <div class="full-window centerable">
-  <div id="cities_search" class="centered">
+  <div class="rh-panel">
 
     <div class="centered">
       <h3>Welcome to the Recycling Helper</h3>

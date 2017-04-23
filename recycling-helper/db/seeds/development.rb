@@ -14,7 +14,9 @@ claremont = City.create!  name: 'Claremont',
                           latitude: 34.12,
                           longitude: -117.71,
                           location_id: 'NA-US-CA-CLAREMONT',
-                          website_url: 'http://www.ci.claremont.ca.us/'
+                          website_url: 'http://www.ci.claremont.ca.us/',
+                          email: 'team.daniel.cs121@gmail.com',
+                          phone_number: '555-555-5555'
 
 claremont.zip_codes.create! name: '91711'
 

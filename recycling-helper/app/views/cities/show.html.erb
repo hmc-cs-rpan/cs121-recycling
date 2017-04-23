@@ -4,6 +4,9 @@
       init_smooth_scrolling()
 
       <% if @items %>
+        // Scroll to search results
+        scroll_to("#search_results")
+
         // Link search results to the proper bin
         <% @items.each do |item| %>
           $item = $("#search_results [name=\"item<%= item.id %>\"]")
@@ -26,12 +29,38 @@
 	<% @city.bins.each do |bin| %>
 		<a href="#bin<%= bin.id%>" class="bin-link"><%= bin.name.titleize %></a>
 	<% end %>
-	<!-- Search bar-->
-	<%= form_tag search_items_path(@city), :method => "get", id: 'search_items', class: 'navbar-form navbar-right', onsubmit: 'search_items()' do %>
-  	<%= text_field_tag :query, @query, {placeholder: "Search for an item...", class: 'form-control'} %>
-  	<%= submit_tag "Search", class: 'btn btn-default' %>
-	<% end %>
 </nav>
+
+<div class="full-window centerable">
+  <div class="rh-panel">
+    <div class="centered">
+      <h1><%= @city.name %>, <%= @city.state %></h1>
+      <h3><%= @city.zip_codes.first.name %></h3>
+
+      <% if @city.website_url.present? %>
+        <a href="<%= @city.website_url %>"><%= @city.website_url %></a><br>
+      <% end %>
+      <% if @city.phone_number.present? || @city.email.present? %>
+        Contact:
+        <% if @city.phone_number.present? && @city.email.present? %>
+          <%= @city.phone_number %> or <%= @city.email %>
+        <% elsif @city.phone_number.present? %>
+          <%= @city.phone_number %>
+        <% else %>
+          <%= @city.email %>
+        <% end %>
+      <% end %>
+
+      <hr>
+
+      <!-- Search bar-->
+      <%= form_tag search_items_path(@city), :method => "get", id: 'search_items', class: 'form-inline', onsubmit: 'search_items()' do %>
+        <%= text_field_tag :query, @query, {placeholder: "Search for an item...", class: 'form-control'} %>
+        <%= submit_tag "Search", class: 'btn btn-default btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+</div>
 
 <% if @items %>
   <div id="search_results">

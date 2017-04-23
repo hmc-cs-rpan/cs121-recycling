@@ -278,6 +278,68 @@ Create DOM elements for each bin currently owned by the city
   $("#url").append form
   input.focus()
 
+@show_email = (city_id, email) ->
+  $("#email").empty()
+
+  $edit_btn = $("<button type=\"button\" class=\"icon inline\">")
+  $edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
+  $edit_btn.click -> show_email_form city_id, email
+
+  $("#email").append $edit_btn, " ", email
+
+@show_email_form = (city_id, email = "") ->
+  $("#email").empty()
+
+  $form = $("<form>")
+  $input = $("<input type=\"text\" class=\"form-control\" value=\"#{email}\" placeholder=\"Add a contact email address\">")
+  $input.blur -> $form.submit()
+  $form.append $input
+
+  $form.submit (e) ->
+    e.preventDefault()
+
+    email = $input.val()
+
+    get_json "/cities/#{city_id}", method: 'PATCH', data: { city: {email: email} }
+      .on_error flash_error
+      .on_success (res) ->
+        if res.city && res.city.email
+          show_email city_id, res.city.email
+
+  $("#email").append $form
+  $input.focus()
+
+@show_phone = (city_id, phone) ->
+  $("#phone").empty()
+
+  $edit_btn = $("<button type=\"button\" class=\"icon inline\">")
+  $edit_btn.append $("<span class=\"glyphicon glyphicon-pencil\">")
+  $edit_btn.click -> show_phone_form city_id, phone
+
+  $("#phone").append $edit_btn, " ", phone
+
+@show_phone_form = (city_id, phone = "") ->
+  $("#phone").empty()
+
+  $form = $("<form>")
+  $input = $("<input type=\"text\" class=\"form-control\" value=\"#{phone}\" placeholder=\"Add a contact phone number\">")
+  $input.blur -> $form.submit()
+  $form.append $input
+
+  $form.submit (e) ->
+    e.preventDefault()
+
+    phone = $input.val()
+
+    get_json "/cities/#{city_id}", method: 'PATCH', data: { city: {phone_number: phone} }
+      .on_error flash_error
+      .on_success (res) ->
+        if res.city && res.city.phone_number
+          show_phone city_id, res.city.phone_number
+
+  $("#phone").append $form
+  $input.focus()
+
 @search_items = () ->
   $("#search_items [name=\"scroll_from\"]").val $("body").scrollTop()
 

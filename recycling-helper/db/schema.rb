@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170415013125) do
+ActiveRecord::Schema.define(version: 20170423045014) do
 
   create_table "admins", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -71,11 +71,13 @@ ActiveRecord::Schema.define(version: 20170415013125) do
     t.string   "name"
     t.string   "state"
     t.string   "website_url"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
     t.string   "location_id"
     t.float    "latitude"
     t.float    "longitude"
+    t.string   "email"
+    t.string   "phone_number"
     t.index ["location_id"], name: "index_cities_on_location_id", unique: true
   end
 
