@@ -17,6 +17,7 @@
 @import "articles";
 @import "cities";
 
+
 .clickable {
   cursor: pointer;
   &:hover {
@@ -111,7 +112,7 @@ button.icon {
   margin: auto;
   padding: 45px 45px;
 
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.8);
 
   border-style: solid;
   border-width: thin;
