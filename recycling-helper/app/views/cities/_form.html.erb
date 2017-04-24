@@ -54,23 +54,13 @@
 
 </script>
 
-<style type="text/css">
-body {
- background-color: #006954;
-background-image: url("https://www.transparenttextures.com/patterns/squares.png");
-/* This is mostly intended for prototyping; please download the pattern and re-host for production environments. Thank you! */
+<div class="rh-panel" style="margin-top: 15px; margin-bottom: 15px;">
+  <h1><%= @city.name %>, <%= @city.state %></h1>
 
-}
-
-</style>
-
-<h1 style="color:black"><%= @city.name %>, <%= @city.state %></h1>
-
-<div id="url" style="background-color:black"></div>
-<div id="email" style="background-color:black"></div>
-<div id="phone" style="background-color:black"></div>
-
-<br>
+  <div id="url"></div>
+  <div id="email"></div>
+  <div id="phone"></div>
+</div>
 
 <!-- New item popup -->
 <div class="modal fade" id="new-item" tabindex="-1">
@@ -104,9 +94,9 @@ background-image: url("https://www.transparenttextures.com/patterns/squares.png"
   </div>
 </div>
 
-<div class="container">
+<div class="container rh-panel">
 
-  <div class="panel panel-success">
+  <div class="panel">
 
     <div class="panel-heading">
       <div class="row no-gutters">
@@ -173,7 +163,7 @@ background-image: url("https://www.transparenttextures.com/patterns/squares.png"
   </div> <!-- panel -->
 </div>
 
-<div id="bins">
+<div id="bins" class="rh-panel" style="margin-top: 15px;">
   <!-- Filled in dynamically -->
 
   <!-- New bin -->
@@ -194,7 +184,7 @@ background-image: url("https://www.transparenttextures.com/patterns/squares.png"
         <span class = "glyphicon glyphicon-plus"></span>
       </div>
     </div>
-    <div class="header" >
+    <div class="footer" >
     </div>
   </div>
 </div>

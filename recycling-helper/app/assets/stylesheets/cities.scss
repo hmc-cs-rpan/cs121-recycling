@@ -228,14 +228,6 @@ b {
   text-shadow: 0 0 10px black;
   background: rgba(0,0,0,0.6);
 }
-.panel > .panel-heading {
-    background-image: url('https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR5BuD6VDdykOZaE7XXIZQWBYLHgOmZNyH5Oy_atNPkgEadsGXmmw');
-    background-color:none;
-    color: white;
-
-}
-
-
 
 .button {
   text-align: center;
@@ -279,11 +271,6 @@ nav img {
   transition: all 0.5s linear;
 }
 
-// .move {
-//   top: -60px;
-// }
-
-
 nav span {
   position: absolute;
   left: 40px;
@@ -293,8 +280,6 @@ nav span {
 }
 
 #bins {
-background: url('bw_backgronud.png');
-
   .bin {
     @extend .panel, .panel-default;
     display: inline-table;
