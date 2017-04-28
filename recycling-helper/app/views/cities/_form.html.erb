@@ -17,6 +17,11 @@
       show_url(<%= @city.id %>, '<%= @city.website_url %>')
     <% end %>
 
+    <% if @city.city_phone.blank? %>
+    <% else %>
+      show_url(<%= @city.id %>, '<%= @city.website_url %>')
+    <% end %>
+
     $('.modal').on('shown.bs.modal', function() {
       // Autofocus input when popup is shown
       $(this).find('[autofocus]').focus();

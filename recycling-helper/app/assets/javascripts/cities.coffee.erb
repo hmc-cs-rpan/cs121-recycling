@@ -86,22 +86,63 @@ Set or unset (based on value of select) active class on all the Items within a c
 ###
 Add items to the appropriate bins
 ###
-@add_to_bin = (bin) ->
+@add_to_bin = (bin) -> promise (succeed, fail) ->
   cat = active_category()
-  items = all_items
+  items = all_items()
+  items_list = new Array()
   if cat
     items = items_by_category[cat]
+  for item in bin.items
+    items_list.push $("#{item.name}")
   for item in items
     if is_active($("#item#{item.id}"))
       deactivate($("#item#{item.id}"))
-      bin.items.push item
+      if !(in_item_list(items_list, "#{item.name}"))
+        bin.items.push item
+
+  get_json "/bins/#{bin.id}", method: 'PATCH', data: { bin: bin }
+    .on_success (res) ->
+      succeed res.bin
+    .on_error flash_error
+    .on_errors (_, res) ->
+      # Revert bin to whatever state it's in in the db right now (contained in the response)
+      if res.bin
+        i = _.findIndex bins, (bin) -> bin.id == res.bin.id
+        bins[i] = res.bin
+      else
+        delete_bin bin
+      fail()
+
   refresh_bin bin
+
+in_item_list = (items_list, item_name) ->
+  for item in items_list
+    if item_name == item.selector
+      return true
+  return false
 
 ###
 Remove selected items
 ###
-@remove_items = (bin) ->
-  bin.items = _.filter(bin.items, (item) -> !is_active($("#item_in_bin#{item.id}")))
+@remove_items = (bin) -> promise (succeed, fail) ->
+  num_items = bin.items.length
+  for i in [num_items-1 .. 0]
+    if is_active($("#item_in_bin#{bin.items[i].id}"))
+      bin.items.splice(i, 1)
+
+  get_json "/bins/#{bin.id}", method: 'PATCH', data: { bin: bin }
+    .on_success (res) ->
+      succeed res.bin
+    .on_error flash_error
+    .on_errors (_, res) ->
+      # Revert bin to whatever state it's in in the db right now (contained in the response)
+      if res.bin
+        i = _.findIndex bins, (bin) -> bin.id == res.bin.id
+        bins[i] = res.bin
+      else
+        delete_bin bin
+      fail()
+
   refresh_bin bin
 
 ###
@@ -238,6 +279,9 @@ Create DOM elements for each bin currently owned by the city
 
   $("#url").append form
   input.focus()
+
+@search_items = () ->
+  $("#search_items [name=\"scroll_from\"]").val $("body").scrollTop()
 
 ###
 Delete the specified bin from the database and the DOM.
@@ -446,8 +490,10 @@ deactivate = (elem) ->
 toggle_active = (elem) ->
   if is_active elem
     deactivate elem
+    console.log(elem)
   else
     activate elem
+    console.log(elem)
 
 form_to_json = (form) ->
   data = {}

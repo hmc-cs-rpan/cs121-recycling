@@ -4,6 +4,7 @@ class City < ApplicationRecord
   validates :state, state: true, if: 'state.present?'
   validates :website_url, format: { with: URI.regexp, message: 'is not a valid URL' },
     if: 'website_url.present?'
+  validates :city_phone, presence: true
 
   has_many :zip_codes
   has_many :bins, inverse_of: :city
