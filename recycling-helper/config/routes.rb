@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   mount Ckeditor::Engine => '/ckeditor'
-
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  
   get 'cities/find/location', to: 'cities#by_location', as: 'city_by_location'
   get 'cities/search', to: 'cities#search', as: 'search_cities'
   get 'cities/:id/search', to: 'cities#search_items', as: 'search_items'
