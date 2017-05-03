@@ -1,28 +1,59 @@
 # Recycling Helper
 
-_Recycling Helper_ is a web-app built for the Hixon Center for Sustainable Environmental Design in Claremont, CA. The app aims to provide residents with easy-to-access, digestible information about items that are recyclable for a particular city. The app’s recycling information will initially focus on the City of Claremont but the platform will enable expansion across other cities across the state and country.
+Recycling Helper is a web-app built for the Hixon Center for Sustainable
+Environmental Design in Claremont, CA. The app aims to provide residents with
+easy-to-access, digestible information about items that are recyclable for a
+particular city. The platform is designed enable expansion across and country
+by leveraging crowd-sourcing.
 
-# Why do we need it?
+## Installation
 
-Currently, there is no global recycling system that provides clear and accessible information about what is recyclable within a particular area. So, recycling products is often relegated to third parties and doing a quick search on recyclable material is likely to generate an amalgamation of advertisements and conflicting information.
+1. [Install and set up a Ruby on Rails environment.](http://installrails.com/)
 
-For example in New York City, paper & cardboard material may be recycled in blue colored recycling bins; bottles, cans, aluminium & metals must be disposed of in green bins. This can quickly become confusing, requiring the resident to spend a significant amount of time looking up the appropriate information.  To make matters worse, the color-coding system varies by city. For instance, Los Angeles also uses blue and green bins, but the green bins in Los Angeles are meant only for foods and yard waste. It is easy for a new residents to confuse practices and accidentally contaminate a city’s bins.
+2. Get the source code:
+```
+git clone https://github.com/hmc-cs-rpan/cs121-recycling.git ~/recycling
+cd ~/recycling/recycling-helper
+```
 
-# Problems with Attempts to Standardize Information
+3. Install dependencies:
+```
+bin/bundle install
+```
 
-Although some sources present “standardized” informatics, this information is not always correct due to the varying practices. For example, [the first search result for “recycling bin colors”](http://jamesrobertwatson.com/) presents the following information on what it claims to be “universal” bin colors.
+4. Seed the database:
 
-![An attempt at standardized bin color item disposal information.](https://tinyurl.com/jqamgrv)
+* For production:
+```
+RAILS_ENV=production SECRET_KEY_BASE=<production secret> bin/rake db:setup
+```
+This will take some time (10-30 minutes) because it must load data for over
+40,000 built-in cities.
 
-Unfortunately, this breakdown would be incorrect in both New York and Los Angeles.
+* For development:
+```
+bin/rake db:setup
+```
+By default, this command will load only 10 cities and generate 10 randomized
+sample articles. This is very fast, but if you need more of either model for
+testing a particular feature, you can set the environment variables
+`NUM_CITIES` and `NUM_ARTICLES`. These can take any nonnegative integer value.
+In addition, `NUM_CITIES` can take the value `inf` to load all cities from
+[all-cities.csv](https://github.com/hmc-cs-rpan/cs121-recycling/blob/master/recycling-helper/sample-data/all-cities.csv).
 
+5. Start serving requests: `bin/rails s`
 
-# Existing solutions
+## Contributing
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request :D
 
-The [EPA](http://www.epa.gov) includes a list of recyclable materiels yet advises its readers to “Check what your community or office program accepts before you put it into the bin”. It offers links to two databases of recyclable materiels - namely [Earth911](http://www.earth911.com) and [RecycleNation](http://www.recyclenation.com).
+## History
+This application was developed by Jeb Bearer, Ricky Pan, Shailee Samar,
+and Kofi Sekyi-Appiah as a project for CS121 at Harvey Mudd Colleve.
 
-Both of these websites feature item searching by zip code, offering solutions to recycle specific material by location by listing local third party recycling warehouses and services. Unfortunately most users simply wish to look up which colored bin to throw what item into, and are possibly uninterested in being referred to a recycling warehouse out of their way.
-
-The key shortcoming we wish to address with _Recycling Helper_ is that most users would rather have accurate information about what items go in specifically colored bins instead of being redirected to third party recycling warehouses by websites like the above.
-
-This project represents an attempt to centralize information about recycling throughout America, unifying the procedure for looking up disposal practices across states, cities and districts into one easy-to-access reference point. We wish to provide the most convenient solution, by simply allowing the user to know which colored bin is the optimal disposal site for the item they were unsure about.
+## Credits
+This project would not have been possible without assistance from our
+client Louis Spanias and our professor Yekaterina Kharitonova.
