@@ -27,6 +27,18 @@ bin/bundle install
 ```
 RAILS_ENV=production SECRET_KEY_BASE=<production secret> bin/rake db:setup
 ```
+In Rails 4, if your app is called hi, and you set session['a'] = 'b', your
+cookie will look something like this: 
+_hi_session=BAh7B0kiD3%3D%3D--dc40a55cd52fe32bb3b84ae0608956dfb5824689, 
+where _hi_session=<encrypted a=b>--<digital signature>.
+Cookies are set by server and kept client side, with browser resending set 
+cookies to the server every time we request a page. To prevent evil people 
+from tampering cookies, a digital signature is used. To prevent evil people 
+from understanding a=b string, it's encrypted. In both cases 
+secret_key_base value is used (to encrypt/decrypt a=b and to validate 
+digital signature).
+
+
 This will take some time (10-30 minutes) because it must load data for over
 40,000 built-in cities.
 
@@ -49,6 +61,18 @@ In addition, `NUM_CITIES` can take the value `inf` to load all cities from
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
+
+## Tasks for Future Contributors
+1. The `Home` button currently takes you to your home city if you have location 
+services enabled. Otherwise it will take you to the `Cities` page. Perhaps 
+change it so that they will lead to differente pages.
+2. Search is currently implemented with `fuzzily`, and because of similarity of
+item names, do not return exact item matches. Improve it to return exact matches
+where applicable.
+3. Implement synonyms for items (e.g. "water bottle" -> "plastic #x")
+4. Currently the `Edit` button for cities is accessible to the public. Implement
+admin/city official authentication and workflow and hide normal interface
+from users.
 
 ## History
 This application was developed by Jeb Bearer, Ricky Pan, Shailee Samar,
